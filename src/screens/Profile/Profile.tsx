@@ -187,8 +187,8 @@ export const Profile = (): JSX.Element | null => {
     navigate('/home');
   };
 
-  const handleEventManagement = () => {
-    navigate('/event-management');
+  const handleEventView = (eventId: number) => {
+    navigate(`/event-dashboard/${eventId}`);
   };
 
   const nextTicket = () => {
@@ -437,7 +437,7 @@ export const Profile = (): JSX.Element | null => {
     );
   }
 
-  // My Tickets Tab - Updated to match My Tickets page UI
+  // My Tickets Tab - Updated to match My Tickets page UI with white cards
   if (activeTab === 'tickets') {
     return (
       <div className="min-h-screen bg-[#1a1a1a] flex relative overflow-hidden font-['Space_Grotesk']">
@@ -498,13 +498,13 @@ export const Profile = (): JSX.Element | null => {
               ))}
             </div>
 
-            {/* Tickets Grid */}
+            {/* Tickets Grid - Updated with white cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredTickets.map((ticket) => (
-                <div key={ticket.id} className="bg-[#2a2a2a] border border-gray-700 hover:border-gray-600 transition-all duration-300 rounded-xl p-6">
+                <div key={ticket.id} className="bg-white border border-gray-200 hover:border-gray-300 transition-all duration-300 rounded-xl p-6 shadow-lg hover:shadow-xl">
                   <div className="flex justify-between items-start mb-4">
                     <div>
-                      <h3 className="text-xl font-bold text-white mb-1">{ticket.eventName}</h3>
+                      <h3 className="text-xl font-bold text-gray-900 mb-1">{ticket.eventName}</h3>
                       <p className="text-[#FC1924] font-semibold">{ticket.type} Ticket</p>
                     </div>
                     <div className={`px-2 py-1 rounded-full text-xs font-medium text-white ${getStatusColor(ticket.status)}`}>
@@ -513,32 +513,32 @@ export const Profile = (): JSX.Element | null => {
                   </div>
 
                   <div className="space-y-2 mb-4">
-                    <div className="flex items-center space-x-2 text-sm text-gray-300">
+                    <div className="flex items-center space-x-2 text-sm text-gray-600">
                       <Calendar className="w-4 h-4" />
                       <span>{ticket.date}</span>
                     </div>
-                    <div className="flex items-center space-x-2 text-sm text-gray-300">
+                    <div className="flex items-center space-x-2 text-sm text-gray-600">
                       <Clock className="w-4 h-4" />
                       <span>{ticket.time}</span>
                     </div>
-                    <div className="flex items-center space-x-2 text-sm text-gray-300">
+                    <div className="flex items-center space-x-2 text-sm text-gray-600">
                       <MapPin className="w-4 h-4" />
                       <span className="truncate">{ticket.location}</span>
                     </div>
-                    <div className="flex items-center space-x-2 text-sm text-gray-300">
+                    <div className="flex items-center space-x-2 text-sm text-gray-600">
                       <Users className="w-4 h-4" />
                       <span>Hosted by {ticket.host}</span>
                     </div>
                   </div>
 
                   <div className="flex items-center justify-between mb-4">
-                    <p className="text-white font-bold text-lg">₦{ticket.price.toLocaleString()}</p>
-                    <p className="text-gray-400 text-sm">Ticket #{ticket.id}</p>
+                    <p className="text-gray-900 font-bold text-lg">₦{ticket.price.toLocaleString()}</p>
+                    <p className="text-gray-500 text-sm">Ticket #{ticket.id}</p>
                   </div>
 
                   {/* QR Code */}
                   <div className="flex justify-center mb-4">
-                    <div className="bg-white p-2 rounded-lg">
+                    <div className="bg-gray-100 p-2 rounded-lg">
                       <img 
                         src={ticket.qrCode} 
                         alt="QR Code" 
@@ -559,7 +559,7 @@ export const Profile = (): JSX.Element | null => {
                     
                     <button
                       onClick={() => handleShareTicket(ticket.id)}
-                      className="flex-1 bg-transparent border border-gray-600 text-white py-2 rounded-lg font-semibold transition-all duration-300 hover:bg-gray-800 flex items-center justify-center space-x-1"
+                      className="flex-1 bg-transparent border border-gray-300 text-gray-700 py-2 rounded-lg font-semibold transition-all duration-300 hover:bg-gray-50 flex items-center justify-center space-x-1"
                     >
                       <Share2 className="w-4 h-4" />
                       <span>Share</span>
@@ -816,7 +816,10 @@ export const Profile = (): JSX.Element | null => {
                         </div>
                       </div>
                       <div className="flex space-x-2">
-                        <button className="bg-[#FC1924] hover:bg-[#e01620] text-white px-4 py-2 rounded-lg font-semibold transition-all duration-300 hover:scale-105 text-sm">
+                        <button 
+                          onClick={() => handleEventView(event.id)}
+                          className="bg-[#FC1924] hover:bg-[#e01620] text-white px-4 py-2 rounded-lg font-semibold transition-all duration-300 hover:scale-105 text-sm"
+                        >
                           View
                         </button>
                         <button className="bg-[#4a4a4a] hover:bg-[#5a5a5a] text-white p-2 rounded-lg transition-all duration-300 hover:scale-105">

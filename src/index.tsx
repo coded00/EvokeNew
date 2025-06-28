@@ -23,6 +23,7 @@ const Discovery = React.lazy(() => import('./screens/Discovery').then(module => 
 const Games = React.lazy(() => import('./screens/Games').then(module => ({ default: module.Games })));
 const Messages = React.lazy(() => import('./screens/Messages').then(module => ({ default: module.Messages })));
 const EventDashboard = React.lazy(() => import('./screens/EventDashboard').then(module => ({ default: module.EventDashboard })));
+const EventManagement = React.lazy(() => import('./screens/EventManagement').then(module => ({ default: module.EventManagement })));
 const Calendar = React.lazy(() => import('./screens/Calendar').then(module => ({ default: module.Calendar })));
 
 // Loading component for lazy-loaded routes
@@ -56,7 +57,8 @@ ReactDOM.createRoot(document.getElementById('app')!).render(
               <Route path="/discovery" element={<Discovery />} />
               <Route path="/games" element={<Games />} />
               <Route path="/messages" element={<Messages />} />
-              <Route path="/event-dashboard" element={<EventDashboard />} />
+              <Route path="/event-dashboard/:eventId" element={<EventDashboard />} />
+              <Route path="/event-management/:eventId" element={<EventManagement />} />
               <Route path="/calendar" element={<Calendar />} />
             </Routes>
           </Suspense>
