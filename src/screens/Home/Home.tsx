@@ -3,6 +3,7 @@ import { Bell, MessageCircle, Gamepad2, Globe, User, HelpCircle, X, Search, Cale
 import { useNavigate } from "react-router-dom";
 import SEO from "../../components/SEO";
 import { Sidebar } from "../../components/ui/sidebar";
+import { useLoadingScreen } from "../../components/ui/loading";
 
 export const Home = (): JSX.Element => {
   const navigate = useNavigate();
@@ -12,6 +13,7 @@ export const Home = (): JSX.Element => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [ticketQuantity, setTicketQuantity] = useState(1);
   const [ticketType, setTicketType] = useState('Regular');
+  const { isLoading, showLoading, LoadingComponent } = useLoadingScreen();
 
   const notifications = [
     {
@@ -156,13 +158,17 @@ export const Home = (): JSX.Element => {
 
   const handleCardClick = (cardType: string) => {
     if (cardType === 'events') {
-      setCurrentView('events');
+      showLoading(1500);
+      setTimeout(() => setCurrentView('events'), 1500);
     } else if (cardType === 'create-vibe') {
-      navigate('/create-vibe');
+      showLoading(1200);
+      setTimeout(() => navigate('/create-vibe'), 1200);
     } else if (cardType === 'profile') {
-      navigate('/profile');
+      showLoading(1000);
+      setTimeout(() => navigate('/profile'), 1000);
     } else if (cardType === 'calendar') {
-      navigate('/calendar');
+      showLoading(1300);
+      setTimeout(() => navigate('/calendar'), 1300);
     } else if (cardType === 'find-vibe') {
       // Show coming soon message for Find a Vibe
       alert('Find a Vibe feature coming soon! Connect with like-minded people and join existing vibes in your area.');
@@ -177,7 +183,8 @@ export const Home = (): JSX.Element => {
   };
 
   const handleBuyTicket = (event: any) => {
-    navigate(`/event/${event.id}`);
+    showLoading(1000);
+    setTimeout(() => navigate(`/event/${event.id}`), 1000);
   };
 
   const handleBackToHome = () => {
@@ -224,6 +231,11 @@ export const Home = (): JSX.Element => {
     if (!selectedEvent) return 0;
     return selectedEvent.ticketTypes[ticketType] * ticketQuantity;
   };
+
+  // Show loading screen if loading
+  if (isLoading) {
+    return <LoadingComponent />;
+  }
 
   // Home View
   if (currentView === 'home') {

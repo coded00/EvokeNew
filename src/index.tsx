@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import SEO from './components/SEO';
-import { FullScreenLoading } from './components/ui/loading';
+import { GlitchLoadingScreen } from './components/ui/loading';
 
 // Lazy load all components for better performance
 const Home = React.lazy(() => import('./screens/Home').then(module => ({ default: module.Home })));
@@ -27,11 +27,9 @@ const EventManagement = React.lazy(() => import('./screens/EventManagement').the
 const EventEdit = React.lazy(() => import('./screens/EventEdit').then(module => ({ default: module.EventEdit })));
 const Calendar = React.lazy(() => import('./screens/Calendar').then(module => ({ default: module.Calendar })));
 
-// Loading component for lazy-loaded routes
+// Enhanced Loading component with glitch effect
 const RouteLoading = () => (
-  <div className="min-h-screen bg-[#1a1a1a] flex items-center justify-center">
-    <FullScreenLoading text="Loading..." />
-  </div>
+  <GlitchLoadingScreen text="Loading page..." />
 );
 
 ReactDOM.createRoot(document.getElementById('app')!).render(
