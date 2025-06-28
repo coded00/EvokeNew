@@ -25,7 +25,8 @@ import {
   Unlock,
   UserCheck,
   UserX,
-  Camera
+  Camera,
+  Scan
 } from "lucide-react";
 import { Sidebar } from "../../components/ui/sidebar";
 
@@ -238,7 +239,7 @@ export const EventManagement = (): JSX.Element => {
   };
 
   const handlePromoteEvent = () => {
-    alert('Promotion tools coming soon!');
+    alert('Promotion tools coming soon! This will include social sharing, boosting, and marketing features.');
   };
 
   const handleViewAttendees = () => {
@@ -512,7 +513,7 @@ export const EventManagement = (): JSX.Element => {
               onClick={handleScanTickets}
               className="bg-[#FC1924] hover:bg-[#e01620] text-white py-4 rounded-lg font-semibold transition-all duration-300 hover:scale-105 flex items-center justify-center space-x-2"
             >
-              <Camera className="w-5 h-5" />
+              <Scan className="w-5 h-5" />
               <span>Scan Ticket QR Codes</span>
             </button>
             

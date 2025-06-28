@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Calendar, MapPin, Clock, Users, Share2, Heart, Star, MessageCircle, Ticket } from "lucide-react";
+import { ArrowLeft, Calendar, MapPin, Clock, Users, Share2, Heart, Star, MessageCircle, Ticket, Edit, TrendingUp } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent } from "../../components/ui/card";
 
@@ -107,6 +107,15 @@ export const EventDetail = (): JSX.Element => {
     navigate(`/ticket-purchase/${eventId}`);
   };
 
+  const handleEditEvent = () => {
+    navigate(`/event-edit/${eventId}`);
+  };
+
+  const handlePromoteEvent = () => {
+    // Future promotional features will be implemented here
+    alert('Promote Event feature coming soon! This will include social sharing, boosting, and marketing tools.');
+  };
+
   const handleShare = () => {
     // In a real app, this would share the event
     if (navigator.share) {
@@ -186,6 +195,12 @@ export const EventDetail = (): JSX.Element => {
 
         {/* Action Buttons */}
         <div className="absolute top-6 right-6 flex space-x-3">
+          <button 
+            onClick={handleEditEvent}
+            className="p-3 rounded-full bg-black/20 backdrop-blur-sm text-white hover:bg-blue-500/80 transition-all duration-300"
+          >
+            <Edit className="w-5 h-5" />
+          </button>
           <button 
             onClick={handleLike}
             className={`p-3 rounded-full backdrop-blur-sm transition-all duration-300 ${
@@ -359,17 +374,29 @@ export const EventDetail = (): JSX.Element => {
               </CardContent>
             </Card>
 
-            {/* Buy Ticket Button */}
-            <Button
-              onClick={handleBuyTicket}
-              className="w-full bg-[#FC1924] hover:bg-[#e01620] text-white py-4 rounded-lg font-semibold text-lg transition-all duration-300 hover:scale-105"
-            >
-              <Ticket className="w-5 h-5 mr-2" />
-              Buy Tickets Now
-            </Button>
+            {/* Action Buttons */}
+            <div className="space-y-3">
+              {/* Buy Ticket Button */}
+              <Button
+                onClick={handleBuyTicket}
+                className="w-full bg-[#FC1924] hover:bg-[#e01620] text-white py-4 rounded-lg font-semibold text-lg transition-all duration-300 hover:scale-105"
+              >
+                <Ticket className="w-5 h-5 mr-2" />
+                Buy Tickets Now
+              </Button>
+
+              {/* Promote Event Button */}
+              <Button
+                onClick={handlePromoteEvent}
+                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105"
+              >
+                <TrendingUp className="w-5 h-5 mr-2" />
+                Promote Event
+              </Button>
+            </div>
           </div>
         </div>
       </div>
     </div>
   );
-}; 
+};
