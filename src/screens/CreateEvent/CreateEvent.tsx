@@ -415,9 +415,10 @@ export const CreateEvent = (): JSX.Element | null => {
             <div className="flex justify-between mt-8">
               <button 
                 onClick={prevStep}
-                className="bg-[#3a3a3a] hover:bg-[#4a4a4a] text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105"
+                className="flex items-center space-x-2 bg-[#3a3a3a] hover:bg-[#4a4a4a] text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105"
               >
-                < Back
+                <ArrowLeft className="w-4 h-4" />
+                <span>Back</span>
               </button>
               <button 
                 onClick={nextStep}
@@ -587,9 +588,10 @@ export const CreateEvent = (): JSX.Element | null => {
             <div className="flex justify-between mt-8">
               <button 
                 onClick={prevStep}
-                className="bg-[#3a3a3a] hover:bg-[#4a4a4a] text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105"
+                className="flex items-center space-x-2 bg-[#3a3a3a] hover:bg-[#4a4a4a] text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105"
               >
-                < Back
+                <ArrowLeft className="w-4 h-4" />
+                <span>Back</span>
               </button>
               <button 
                 onClick={nextStep}
@@ -722,9 +724,10 @@ export const CreateEvent = (): JSX.Element | null => {
             <div className="flex justify-between items-center mt-8">
               <button 
                 onClick={prevStep}
-                className="bg-[#3a3a3a] hover:bg-[#4a4a4a] text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105"
+                className="flex items-center space-x-2 bg-[#3a3a3a] hover:bg-[#4a4a4a] text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105"
               >
-                < Back
+                <ArrowLeft className="w-4 h-4" />
+                <span>Back</span>
               </button>
               
               <button className="text-white hover:text-gray-300 transition-colors duration-200">
