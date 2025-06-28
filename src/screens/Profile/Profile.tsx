@@ -24,7 +24,9 @@ import {
   Camera,
   Badge,
   Trophy,
-  Heart
+  Heart,
+  Share2,
+  Send
 } from "lucide-react";
 import { Sidebar } from "../../components/ui/sidebar";
 
@@ -33,6 +35,7 @@ export const Profile = (): JSX.Element | null => {
   const [activeTab, setActiveTab] = useState<'overview' | 'tickets' | 'events' | 'management'>('overview');
   const [currentTicketIndex, setCurrentTicketIndex] = useState(0);
   const [currentUsedTicketIndex, setCurrentUsedTicketIndex] = useState(0);
+  const [activeTicketFilter, setActiveTicketFilter] = useState<'all' | 'active' | 'used' | 'transferred'>('all');
 
   // Mock user data
   const userData = {
@@ -101,32 +104,55 @@ export const Profile = (): JSX.Element | null => {
   ];
 
   // Mock tickets data
-  const activeTickets = [
+  const allTickets = [
     {
-      id: 1,
+      id: "TKT-001",
       eventName: "Wet & Rave",
-      date: "May 24 2025",
-      time: "9:00 am",
-      location: "1 Agulyi Ironsi St, Malta...",
-      quantity: 1,
+      date: "12th Of June 2025",
+      time: "12 noon - Till mama calls",
+      location: "252b Ikoroduc cresent Dolphin estate Ikoyi",
+      host: "Freezy Kee",
+      qrCode: "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=TKT-001",
+      price: 1000,
+      type: "VIP",
+      status: "Active" as const,
+      transferable: true
+    },
+    {
+      id: "TKT-002",
+      eventName: "Summer Vibes Festival",
+      date: "15th July 2025",
+      time: "8:00 PM - 2:00 AM",
+      location: "Beach Resort, Lagos",
+      host: "DJ Splash",
+      qrCode: "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=TKT-002",
       price: 500,
-      qrCode: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSJ3aGl0ZSIvPgo8cmVjdCB4PSIyMCIgeT0iMjAiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0iYmxhY2siLz4KPHJlY3QgeD0iNjAiIHk9IjIwIiB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIGZpbGw9ImJsYWNrIi8+CjxyZWN0IHg9IjEwMCIgeT0iMjAiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0iYmxhY2siLz4KPHJlY3QgeD0iMTQwIiB5PSIyMCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiBmaWxsPSJibGFjayIvPgo8cmVjdCB4PSIxODAiIHk9IjIwIiB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIGZpbGw9ImJsYWNrIi8+CjxyZWN0IHg9IjIwIiB5PSI2MCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiBmaWxsPSJibGFjayIvPgo8cmVjdCB4PSI4MCIgeT0iNjAiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0iYmxhY2siLz4KPHJlY3QgeD0iMTIwIiB5PSI2MCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiBmaWxsPSJibGFjayIvPgo8cmVjdCB4PSIxODAiIHk9IjYwIiB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIGZpbGw9ImJsYWNrIi8+Cjwvc3ZnPgo="
+      type: "Regular",
+      status: "Used" as const,
+      transferable: false
+    },
+    {
+      id: "TKT-003",
+      eventName: "Tech Conference 2025",
+      date: "20th August 2025",
+      time: "9:00 AM - 6:00 PM",
+      location: "Convention Center, Abuja",
+      host: "Tech Events Ltd",
+      qrCode: "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=TKT-003",
+      price: 2000,
+      type: "Premium",
+      status: "Active" as const,
+      transferable: true
     }
   ];
 
-  const usedTickets = [
-    {
-      id: 2,
-      eventName: "Wet & Rave",
-      date: "May 24 2025",
-      time: "9:00 am",
-      location: "1 Agulyi Ironsi St, Malta...",
-      quantity: 1,
-      price: 500,
-      status: "USED",
-      qrCode: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSJ3aGl0ZSIvPgo8cmVjdCB4PSIyMCIgeT0iMjAiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0iYmxhY2siLz4KPHJlY3QgeD0iNjAiIHk9IjIwIiB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIGZpbGw9ImJsYWNrIi8+CjxyZWN0IHg9IjEwMCIgeT0iMjAiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0iYmxhY2siLz4KPHJlY3QgeD0iMTQwIiB5PSIyMCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiBmaWxsPSJibGFjayIvPgo8cmVjdCB4PSIxODAiIHk9IjIwIiB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIGZpbGw9ImJsYWNrIi8+CjxyZWN0IHg9IjIwIiB5PSI2MCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiBmaWxsPSJibGFjayIvPgo8cmVjdCB4PSI4MCIgeT0iNjAiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0iYmxhY2siLz4KPHJlY3QgeD0iMTIwIiB5PSI2MCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiBmaWxsPSJibGFjayIvPgo8cmVjdCB4PSIxODAiIHk9IjYwIiB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIGZpbGw9ImJsYWNrIi8+Cjwvc3ZnPgo="
-    }
-  ];
+  const filteredTickets = allTickets.filter(ticket => {
+    if (activeTicketFilter === 'all') return true;
+    return ticket.status.toLowerCase() === activeTicketFilter;
+  });
+
+  const activeTickets = allTickets.filter(ticket => ticket.status === 'Active');
+  const usedTickets = allTickets.filter(ticket => ticket.status === 'Used');
 
   const attendedEvents = [
     {
@@ -179,6 +205,34 @@ export const Profile = (): JSX.Element | null => {
 
   const prevUsedTicket = () => {
     setCurrentUsedTicketIndex((prev) => (prev - 1 + usedTickets.length) % usedTickets.length);
+  };
+
+  const handleDownloadTicket = (ticketId: string) => {
+    console.info(`Downloading ticket ${ticketId}...`);
+    alert('Ticket download started! (Feature coming soon)');
+  };
+
+  const handleShareTicket = (ticketId: string) => {
+    console.info(`Sharing ticket ${ticketId}...`);
+    alert('Share feature coming soon!');
+  };
+
+  const handleTransferTicket = (ticketId: string) => {
+    console.info(`Transferring ticket ${ticketId}...`);
+    alert('Transfer feature coming soon!');
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'Active':
+        return 'bg-green-500';
+      case 'Used':
+        return 'bg-gray-500';
+      case 'Transferred':
+        return 'bg-blue-500';
+      default:
+        return 'bg-gray-500';
+    }
   };
 
   // Profile Overview Tab
@@ -383,7 +437,7 @@ export const Profile = (): JSX.Element | null => {
     );
   }
 
-  // My Tickets Tab
+  // My Tickets Tab - Updated to match My Tickets page UI
   if (activeTab === 'tickets') {
     return (
       <div className="min-h-screen bg-[#1a1a1a] flex relative overflow-hidden font-['Space_Grotesk']">
@@ -393,7 +447,7 @@ export const Profile = (): JSX.Element | null => {
           <div className="max-w-6xl mx-auto">
             {/* Header */}
             <div className="flex items-center justify-between mb-8">
-              <h1 className="text-4xl font-bold text-white">Ticket Bucket</h1>
+              <h1 className="text-4xl font-bold text-white">My Tickets</h1>
               <div className="flex space-x-1 bg-[#2a2a2a] rounded-xl p-2">
                 <button 
                   onClick={() => setActiveTab('overview')}
@@ -402,8 +456,8 @@ export const Profile = (): JSX.Element | null => {
                   Overview
                 </button>
                 <button 
-                  onClick={() => navigate('/my-tickets')}
-                  className="flex-1 py-3 px-6 rounded-lg font-semibold transition-all duration-300 text-gray-400 hover:text-white hover:bg-[#3a3a3a]"
+                  onClick={() => setActiveTab('tickets')}
+                  className="py-3 px-6 rounded-lg font-semibold transition-all duration-300 bg-[#FC1924] text-white"
                 >
                   My Tickets
                 </button>
@@ -422,164 +476,118 @@ export const Profile = (): JSX.Element | null => {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {/* Active Tickets */}
-              <div>
-                <h2 className="text-2xl font-bold text-white mb-6">Active Tickets</h2>
-                <div className="relative">
-                  {activeTickets.length > 0 ? (
-                    <div className="bg-white rounded-2xl p-6 shadow-xl animate-fade-in">
-                      <div className="mb-6">
-                        <h3 className="text-2xl font-bold text-gray-900 mb-4">{activeTickets[currentTicketIndex].eventName}</h3>
-                        <div className="space-y-3">
-                          <div className="flex items-center space-x-3">
-                            <Calendar className="w-5 h-5 text-gray-600" />
-                            <span className="text-gray-700">{activeTickets[currentTicketIndex].date}</span>
-                          </div>
-                          <div className="flex items-center space-x-3">
-                            <Clock className="w-5 h-5 text-gray-600" />
-                            <span className="text-gray-700">{activeTickets[currentTicketIndex].time}</span>
-                          </div>
-                          <div className="flex items-center space-x-3">
-                            <MapPin className="w-5 h-5 text-gray-600" />
-                            <span className="text-gray-700">{activeTickets[currentTicketIndex].location}</span>
-                          </div>
-                          <div className="flex items-center space-x-3">
-                            <Ticket className="w-5 h-5 text-gray-600" />
-                            <span className="text-gray-700">{activeTickets[currentTicketIndex].quantity} Ticket</span>
-                          </div>
-                        </div>
-                      </div>
+            {/* Filter Tabs */}
+            <div className="flex space-x-2 mb-8">
+              {[
+                { key: 'all', label: 'All Tickets', count: allTickets.length },
+                { key: 'active', label: 'Active', count: allTickets.filter(t => t.status === 'Active').length },
+                { key: 'used', label: 'Used', count: allTickets.filter(t => t.status === 'Used').length },
+                { key: 'transferred', label: 'Transferred', count: allTickets.filter(t => t.status === 'Transferred').length }
+              ].map((filter) => (
+                <button
+                  key={filter.key}
+                  onClick={() => setActiveTicketFilter(filter.key as any)}
+                  className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
+                    activeTicketFilter === filter.key
+                      ? 'bg-[#FC1924] text-white'
+                      : 'bg-[#2a2a2a] text-gray-400 hover:text-white hover:bg-[#3a3a3a]'
+                  }`}
+                >
+                  {filter.label} ({filter.count})
+                </button>
+              ))}
+            </div>
 
-                      <div className="bg-green-100 border-t-2 border-dashed border-green-300 p-4 mb-6">
-                        <div className="flex justify-between items-center">
-                          <span className="font-semibold text-gray-900">Total Price:</span>
-                          <span className="font-bold text-xl text-gray-900">₦{activeTickets[currentTicketIndex].price}</span>
-                        </div>
-                      </div>
-
-                      <div className="flex justify-center mb-6">
-                        <img 
-                          src={activeTickets[currentTicketIndex].qrCode} 
-                          alt="QR Code" 
-                          className="w-32 h-32"
-                        />
-                      </div>
-
-                      <div className="text-center text-sm text-gray-600">
-                        <p>Check your email <span className="text-blue-600">solomonadebayo@gmail.com</span></p>
-                        <p>for more info about the event in other to know how to get there</p>
-                        <p className="font-semibold mt-2">Invite friends</p>
-                      </div>
+            {/* Tickets Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredTickets.map((ticket) => (
+                <div key={ticket.id} className="bg-[#2a2a2a] border border-gray-700 hover:border-gray-600 transition-all duration-300 rounded-xl p-6">
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <h3 className="text-xl font-bold text-white mb-1">{ticket.eventName}</h3>
+                      <p className="text-[#FC1924] font-semibold">{ticket.type} Ticket</p>
                     </div>
-                  ) : (
-                    <div className="bg-[#2a2a2a] rounded-2xl p-8 text-center">
-                      <Ticket className="w-16 h-16 text-gray-500 mx-auto mb-4" />
-                      <p className="text-gray-400">No active tickets</p>
+                    <div className={`px-2 py-1 rounded-full text-xs font-medium text-white ${getStatusColor(ticket.status)}`}>
+                      {ticket.status}
                     </div>
-                  )}
+                  </div>
 
-                  {/* Navigation Buttons */}
-                  {activeTickets.length > 1 && (
-                    <div className="flex justify-center space-x-4 mt-6">
-                      <button 
-                        onClick={prevTicket}
-                        className="w-12 h-12 bg-[#FC1924] hover:bg-[#e01620] rounded-full flex items-center justify-center text-white transition-all duration-300 hover:scale-110"
-                      >
-                        <ChevronLeft className="w-6 h-6" />
-                      </button>
-                      <button 
-                        onClick={nextTicket}
-                        className="w-12 h-12 bg-[#FC1924] hover:bg-[#e01620] rounded-full flex items-center justify-center text-white transition-all duration-300 hover:scale-110"
-                      >
-                        <ChevronRight className="w-6 h-6" />
-                      </button>
+                  <div className="space-y-2 mb-4">
+                    <div className="flex items-center space-x-2 text-sm text-gray-300">
+                      <Calendar className="w-4 h-4" />
+                      <span>{ticket.date}</span>
                     </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Used Tickets */}
-              <div>
-                <h2 className="text-2xl font-bold text-white mb-6">Used Tickets</h2>
-                <div className="relative">
-                  {usedTickets.length > 0 ? (
-                    <div className="bg-gray-400 rounded-2xl p-6 shadow-xl animate-fade-in relative">
-                      <div className="absolute inset-0 bg-gray-600 bg-opacity-50 rounded-2xl"></div>
-                      <div className="relative z-10">
-                        <div className="mb-6">
-                          <h3 className="text-2xl font-bold text-gray-900 mb-4">{usedTickets[currentUsedTicketIndex].eventName}</h3>
-                          <div className="space-y-3">
-                            <div className="flex items-center space-x-3">
-                              <Calendar className="w-5 h-5 text-gray-700" />
-                              <span className="text-gray-800">{usedTickets[currentUsedTicketIndex].date}</span>
-                            </div>
-                            <div className="flex items-center space-x-3">
-                              <Clock className="w-5 h-5 text-gray-700" />
-                              <span className="text-gray-800">{usedTickets[currentUsedTicketIndex].time}</span>
-                            </div>
-                            <div className="flex items-center space-x-3">
-                              <MapPin className="w-5 h-5 text-gray-700" />
-                              <span className="text-gray-800">{usedTickets[currentUsedTicketIndex].location}</span>
-                            </div>
-                            <div className="flex items-center space-x-3">
-                              <Ticket className="w-5 h-5 text-gray-700" />
-                              <span className="text-gray-800">{usedTickets[currentUsedTicketIndex].quantity} Ticket</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="bg-gray-300 border-t-2 border-dashed border-gray-500 p-4 mb-6">
-                          <div className="flex justify-between items-center">
-                            <span className="font-semibold text-gray-900">Total Price:</span>
-                            <span className="font-bold text-xl text-gray-900">{usedTickets[currentUsedTicketIndex].status}</span>
-                          </div>
-                        </div>
-
-                        <div className="flex justify-center mb-6 relative">
-                          <img 
-                            src={usedTickets[currentUsedTicketIndex].qrCode} 
-                            alt="QR Code" 
-                            className="w-32 h-32 opacity-50"
-                          />
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <span className="text-[#FC1924] text-4xl font-bold transform -rotate-45">Used</span>
-                          </div>
-                        </div>
-
-                        <div className="text-center text-sm text-gray-700">
-                          <p>Check your email <span className="text-blue-700">solomonadebayo@gmail.com</span></p>
-                          <p>for more info about the event in other to know how to get there</p>
-                          <p className="font-semibold mt-2">Invite friends</p>
-                        </div>
-                      </div>
+                    <div className="flex items-center space-x-2 text-sm text-gray-300">
+                      <Clock className="w-4 h-4" />
+                      <span>{ticket.time}</span>
                     </div>
-                  ) : (
-                    <div className="bg-[#2a2a2a] rounded-2xl p-8 text-center">
-                      <Ticket className="w-16 h-16 text-gray-500 mx-auto mb-4" />
-                      <p className="text-gray-400">No used tickets</p>
+                    <div className="flex items-center space-x-2 text-sm text-gray-300">
+                      <MapPin className="w-4 h-4" />
+                      <span className="truncate">{ticket.location}</span>
                     </div>
-                  )}
+                    <div className="flex items-center space-x-2 text-sm text-gray-300">
+                      <Users className="w-4 h-4" />
+                      <span>Hosted by {ticket.host}</span>
+                    </div>
+                  </div>
 
-                  {/* Navigation Buttons */}
-                  {usedTickets.length > 1 && (
-                    <div className="flex justify-center space-x-4 mt-6">
-                      <button 
-                        onClick={prevUsedTicket}
-                        className="w-12 h-12 bg-[#FC1924] hover:bg-[#e01620] rounded-full flex items-center justify-center text-white transition-all duration-300 hover:scale-110"
-                      >
-                        <ChevronLeft className="w-6 h-6" />
-                      </button>
-                      <button 
-                        onClick={nextUsedTicket}
-                        className="w-12 h-12 bg-[#FC1924] hover:bg-[#e01620] rounded-full flex items-center justify-center text-white transition-all duration-300 hover:scale-110"
-                      >
-                        <ChevronRight className="w-6 h-6" />
-                      </button>
+                  <div className="flex items-center justify-between mb-4">
+                    <p className="text-white font-bold text-lg">₦{ticket.price.toLocaleString()}</p>
+                    <p className="text-gray-400 text-sm">Ticket #{ticket.id}</p>
+                  </div>
+
+                  {/* QR Code */}
+                  <div className="flex justify-center mb-4">
+                    <div className="bg-white p-2 rounded-lg">
+                      <img 
+                        src={ticket.qrCode} 
+                        alt="QR Code" 
+                        className="w-24 h-24"
+                      />
                     </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={() => handleDownloadTicket(ticket.id)}
+                      className="flex-1 bg-[#FC1924] hover:bg-[#e01620] text-white py-2 rounded-lg font-semibold transition-all duration-300 hover:scale-105 flex items-center justify-center space-x-1"
+                    >
+                      <Download className="w-4 h-4" />
+                      <span>Download</span>
+                    </button>
+                    
+                    <button
+                      onClick={() => handleShareTicket(ticket.id)}
+                      className="flex-1 bg-transparent border border-gray-600 text-white py-2 rounded-lg font-semibold transition-all duration-300 hover:bg-gray-800 flex items-center justify-center space-x-1"
+                    >
+                      <Share2 className="w-4 h-4" />
+                      <span>Share</span>
+                    </button>
+                  </div>
+
+                  {/* Transfer Button (only for active tickets) */}
+                  {ticket.status === 'Active' && ticket.transferable && (
+                    <button
+                      onClick={() => handleTransferTicket(ticket.id)}
+                      className="w-full mt-2 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-semibold transition-all duration-300 hover:scale-105 flex items-center justify-center space-x-1"
+                    >
+                      <Send className="w-4 h-4" />
+                      <span>Transfer Ticket</span>
+                    </button>
                   )}
                 </div>
-              </div>
+              ))}
+            </div>
+
+            {/* View All Tickets Button */}
+            <div className="flex justify-center mt-8">
+              <button 
+                onClick={() => navigate('/my-tickets')}
+                className="bg-[#FC1924] hover:bg-[#e01620] text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105"
+              >
+                View All Tickets
+              </button>
             </div>
           </div>
         </div>
