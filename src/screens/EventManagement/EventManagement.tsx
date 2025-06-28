@@ -19,15 +19,32 @@ import {
   UserPlus,
   Settings,
   BarChart3,
-  TrendingUp
+  TrendingUp,
+  Shield,
+  Lock,
+  Unlock,
+  UserCheck,
+  UserX,
+  Camera
 } from "lucide-react";
 import { Sidebar } from "../../components/ui/sidebar";
+
+interface Permission {
+  id: string;
+  name: string;
+  description: string;
+  enabled: boolean;
+}
 
 interface TeamMember {
   id: string;
   name: string;
   role: string;
+  email: string;
   avatar?: string;
+  permissions: Permission[];
+  status: 'active' | 'pending' | 'inactive';
+  joinedDate: string;
 }
 
 interface EventDetails {
@@ -51,6 +68,24 @@ interface EventDetails {
   teamMembers: TeamMember[];
 }
 
+const defaultPermissions: Permission[] = [
+  { id: 'scan_tickets', name: 'Scan Tickets', description: 'Can scan and validate event tickets', enabled: false },
+  { id: 'view_attendees', name: 'View Attendees', description: 'Can view attendee list and details', enabled: false },
+  { id: 'edit_event', name: 'Edit Event', description: 'Can modify event details and settings', enabled: false },
+  { id: 'manage_team', name: 'Manage Team', description: 'Can add/remove team members and assign roles', enabled: false },
+  { id: 'view_analytics', name: 'View Analytics', description: 'Can access event analytics and reports', enabled: false },
+  { id: 'promote_event', name: 'Promote Event', description: 'Can share and promote the event', enabled: false },
+  { id: 'cancel_event', name: 'Cancel Event', description: 'Can cancel or suspend the event', enabled: false }
+];
+
+const rolePermissions = {
+  'Event Owner': ['scan_tickets', 'view_attendees', 'edit_event', 'manage_team', 'view_analytics', 'promote_event', 'cancel_event'],
+  'Manager': ['scan_tickets', 'view_attendees', 'edit_event', 'view_analytics', 'promote_event'],
+  'Coordinator': ['scan_tickets', 'view_attendees', 'promote_event'],
+  'Staff': ['scan_tickets'],
+  'Security': ['scan_tickets', 'view_attendees']
+};
+
 export const EventManagement = (): JSX.Element => {
   const navigate = useNavigate();
   const { eventId } = useParams<{ eventId: string }>();
@@ -58,7 +93,9 @@ export const EventManagement = (): JSX.Element => {
   const [isEditing, setIsEditing] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [showAddMemberModal, setShowAddMemberModal] = useState(false);
-  const [newMember, setNewMember] = useState({ name: '', role: '' });
+  const [showPermissionsModal, setShowPermissionsModal] = useState(false);
+  const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
+  const [newMember, setNewMember] = useState({ name: '', email: '', role: '' });
 
   // Mock event data based on the image
   const [eventData, setEventData] = useState<EventDetails>({
@@ -80,37 +117,86 @@ export const EventManagement = (): JSX.Element => {
     ticketsSold: 450,
     revenue: 2500000,
     teamMembers: [
-      { id: '1', name: 'Solomon Odetunde', role: 'Event Owner' },
-      { id: '2', name: 'Aina Ayoola', role: 'Select Role' },
-      { id: '3', name: 'Adebayo', role: 'Select Role' },
-      { id: '4', name: 'Solomon Odetunde', role: 'Select Role' }
+      { 
+        id: '1', 
+        name: 'Solomon Odetunde', 
+        role: 'Event Owner',
+        email: 'solomon@example.com',
+        status: 'active',
+        joinedDate: '2025-01-01',
+        permissions: defaultPermissions.map(p => ({ 
+          ...p, 
+          enabled: rolePermissions['Event Owner'].includes(p.id) 
+        }))
+      },
+      { 
+        id: '2', 
+        name: 'Aina Ayoola', 
+        role: 'Manager',
+        email: 'aina@example.com',
+        status: 'active',
+        joinedDate: '2025-01-05',
+        permissions: defaultPermissions.map(p => ({ 
+          ...p, 
+          enabled: rolePermissions['Manager'].includes(p.id) 
+        }))
+      },
+      { 
+        id: '3', 
+        name: 'Adebayo Johnson', 
+        role: 'Coordinator',
+        email: 'adebayo@example.com',
+        status: 'pending',
+        joinedDate: '2025-01-10',
+        permissions: defaultPermissions.map(p => ({ 
+          ...p, 
+          enabled: rolePermissions['Coordinator'].includes(p.id) 
+        }))
+      },
+      { 
+        id: '4', 
+        name: 'Sarah Williams', 
+        role: 'Staff',
+        email: 'sarah@example.com',
+        status: 'active',
+        joinedDate: '2025-01-12',
+        permissions: defaultPermissions.map(p => ({ 
+          ...p, 
+          enabled: rolePermissions['Staff'].includes(p.id) 
+        }))
+      }
     ]
   });
 
   const handleSaveChanges = () => {
     setIsEditing(false);
-    // In a real app, this would save to the backend
     console.log('Saving changes:', eventData);
   };
 
   const handleCancelEvent = () => {
     setEventData(prev => ({ ...prev, status: 'Cancelled' }));
     setShowCancelModal(false);
-    // In a real app, this would update the backend
   };
 
   const handleAddTeamMember = () => {
-    if (newMember.name && newMember.role) {
+    if (newMember.name && newMember.email && newMember.role) {
       const newTeamMember: TeamMember = {
         id: Date.now().toString(),
         name: newMember.name,
-        role: newMember.role
+        email: newMember.email,
+        role: newMember.role,
+        status: 'pending',
+        joinedDate: new Date().toISOString().split('T')[0],
+        permissions: defaultPermissions.map(p => ({ 
+          ...p, 
+          enabled: rolePermissions[newMember.role as keyof typeof rolePermissions]?.includes(p.id) || false
+        }))
       };
       setEventData(prev => ({
         ...prev,
         teamMembers: [...prev.teamMembers, newTeamMember]
       }));
-      setNewMember({ name: '', role: '' });
+      setNewMember({ name: '', email: '', role: '' });
       setShowAddMemberModal(false);
     }
   };
@@ -122,17 +208,66 @@ export const EventManagement = (): JSX.Element => {
     }));
   };
 
+  const handleUpdateMemberRole = (memberId: string, newRole: string) => {
+    setEventData(prev => ({
+      ...prev,
+      teamMembers: prev.teamMembers.map(member => 
+        member.id === memberId 
+          ? { 
+              ...member, 
+              role: newRole,
+              permissions: defaultPermissions.map(p => ({ 
+                ...p, 
+                enabled: rolePermissions[newRole as keyof typeof rolePermissions]?.includes(p.id) || false
+              }))
+            } 
+          : member
+      )
+    }));
+  };
+
+  const handleUpdatePermissions = (memberId: string, permissions: Permission[]) => {
+    setEventData(prev => ({
+      ...prev,
+      teamMembers: prev.teamMembers.map(member => 
+        member.id === memberId ? { ...member, permissions } : member
+      )
+    }));
+  };
+
   const handleScanTickets = () => {
     navigate('/ticket-scanner');
   };
 
   const handlePromoteEvent = () => {
-    // In a real app, this would open promotion tools
     alert('Promotion tools coming soon!');
   };
 
   const handleViewAttendees = () => {
     navigate(`/event-dashboard/${eventId}`);
+  };
+
+  const openPermissionsModal = (member: TeamMember) => {
+    setSelectedMember(member);
+    setShowPermissionsModal(true);
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'active': return 'bg-green-500';
+      case 'pending': return 'bg-yellow-500';
+      case 'inactive': return 'bg-gray-500';
+      default: return 'bg-gray-500';
+    }
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'active': return <UserCheck className="w-4 h-4" />;
+      case 'pending': return <Clock className="w-4 h-4" />;
+      case 'inactive': return <UserX className="w-4 h-4" />;
+      default: return <Users className="w-4 h-4" />;
+    }
   };
 
   return (
@@ -182,7 +317,7 @@ export const EventManagement = (): JSX.Element => {
             </div>
             
             <div className="bg-black rounded-lg p-6 text-center">
-              <div className="text-green-400 text-3xl font-bold">5</div>
+              <div className="text-green-400 text-3xl font-bold">{eventData.teamMembers.length}</div>
               <div className="text-white text-sm mt-2">Team</div>
             </div>
             
@@ -376,55 +511,79 @@ export const EventManagement = (): JSX.Element => {
                 )}
               </div>
 
-              {/* Team & Roles Section */}
+              {/* Enhanced Team & Permissions Section */}
               <div className="bg-[#2a2a2a] rounded-xl p-6 mt-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold text-white">Team & Roles</h2>
+                  <h2 className="text-2xl font-bold text-white">Team & Permissions</h2>
                   <button 
                     onClick={() => setShowAddMemberModal(true)}
                     className="bg-[#FC1924] hover:bg-[#e01620] text-white px-4 py-2 rounded-lg font-semibold transition-all duration-300 hover:scale-105 flex items-center space-x-2"
                   >
                     <Plus className="w-4 h-4" />
-                    <span>Add A New Member</span>
+                    <span>Add Member</span>
                   </button>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-4">
                   {eventData.teamMembers.map((member) => (
-                    <div key={member.id} className="flex items-center justify-between bg-[#3a3a3a] rounded-lg p-3">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
-                          <span className="text-white text-sm font-bold">{member.name.charAt(0)}</span>
+                    <div key={member.id} className="bg-[#3a3a3a] rounded-lg p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-4">
+                          <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                            <span className="text-white text-lg font-bold">{member.name.charAt(0)}</span>
+                          </div>
+                          <div>
+                            <div className="flex items-center space-x-2">
+                              <span className="text-white font-semibold">{member.name}</span>
+                              <span className={`px-2 py-1 rounded-full text-xs font-medium text-white ${getStatusColor(member.status)}`}>
+                                {getStatusIcon(member.status)}
+                              </span>
+                            </div>
+                            <p className="text-gray-400 text-sm">{member.email}</p>
+                            <p className="text-gray-500 text-xs">Joined: {member.joinedDate}</p>
+                          </div>
                         </div>
-                        <span className="text-white">{member.name}</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <select 
-                          value={member.role}
-                          onChange={(e) => {
-                            setEventData(prev => ({
-                              ...prev,
-                              teamMembers: prev.teamMembers.map(m => 
-                                m.id === member.id ? { ...m, role: e.target.value } : m
-                              )
-                            }));
-                          }}
-                          className="bg-[#4a4a4a] text-white px-3 py-1 rounded text-sm border border-gray-600"
-                        >
-                          <option value="Event Owner">Event Owner</option>
-                          <option value="Manager">Manager</option>
-                          <option value="Coordinator">Coordinator</option>
-                          <option value="Staff">Staff</option>
-                          <option value="Select Role">Select Role</option>
-                        </select>
-                        {member.role !== 'Event Owner' && (
-                          <button 
-                            onClick={() => handleRemoveTeamMember(member.id)}
-                            className="text-red-400 hover:text-red-300 transition-colors duration-200"
+                        
+                        <div className="flex items-center space-x-3">
+                          <select 
+                            value={member.role}
+                            onChange={(e) => handleUpdateMemberRole(member.id, e.target.value)}
+                            className="bg-[#4a4a4a] text-white px-3 py-2 rounded border border-gray-600"
+                            disabled={member.role === 'Event Owner'}
                           >
-                            <X className="w-4 h-4" />
+                            <option value="Event Owner">Event Owner</option>
+                            <option value="Manager">Manager</option>
+                            <option value="Coordinator">Coordinator</option>
+                            <option value="Staff">Staff</option>
+                            <option value="Security">Security</option>
+                          </select>
+                          
+                          <button 
+                            onClick={() => openPermissionsModal(member)}
+                            className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded transition-all duration-300 flex items-center space-x-1"
+                          >
+                            <Shield className="w-4 h-4" />
+                            <span>Permissions</span>
                           </button>
-                        )}
+                          
+                          {member.role !== 'Event Owner' && (
+                            <button 
+                              onClick={() => handleRemoveTeamMember(member.id)}
+                              className="text-red-400 hover:text-red-300 transition-colors duration-200 p-2"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                      
+                      {/* Quick Permissions Overview */}
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {member.permissions.filter(p => p.enabled).map((permission) => (
+                          <span key={permission.id} className="bg-green-500/20 text-green-400 px-2 py-1 rounded text-xs">
+                            {permission.name}
+                          </span>
+                        ))}
                       </div>
                     </div>
                   ))}
@@ -455,8 +614,8 @@ export const EventManagement = (): JSX.Element => {
               onClick={handleScanTickets}
               className="bg-[#FC1924] hover:bg-[#e01620] text-white py-4 rounded-lg font-semibold transition-all duration-300 hover:scale-105 flex items-center justify-center space-x-2"
             >
-              <QrCode className="w-5 h-5" />
-              <span>Scan ticket (Barcode)</span>
+              <Camera className="w-5 h-5" />
+              <span>Scan Ticket QR Codes</span>
             </button>
             
             <button 
@@ -464,7 +623,7 @@ export const EventManagement = (): JSX.Element => {
               className="bg-[#FC1924] hover:bg-[#e01620] text-white py-4 rounded-lg font-semibold transition-all duration-300 hover:scale-105 flex items-center justify-center space-x-2"
             >
               <Share className="w-5 h-5" />
-              <span>Promot Event</span>
+              <span>Promote Event</span>
             </button>
           </div>
 
@@ -500,6 +659,17 @@ export const EventManagement = (): JSX.Element => {
               </div>
               
               <div>
+                <label className="block text-gray-300 text-sm font-medium mb-2">Email</label>
+                <input
+                  type="email"
+                  value={newMember.email}
+                  onChange={(e) => setNewMember(prev => ({ ...prev, email: e.target.value }))}
+                  placeholder="Enter email address"
+                  className="w-full bg-[#3a3a3a] border border-gray-600 text-white rounded-lg px-4 py-3"
+                />
+              </div>
+              
+              <div>
                 <label className="block text-gray-300 text-sm font-medium mb-2">Role</label>
                 <select
                   value={newMember.role}
@@ -510,6 +680,7 @@ export const EventManagement = (): JSX.Element => {
                   <option value="Manager">Manager</option>
                   <option value="Coordinator">Coordinator</option>
                   <option value="Staff">Staff</option>
+                  <option value="Security">Security</option>
                 </select>
               </div>
             </div>
@@ -523,10 +694,87 @@ export const EventManagement = (): JSX.Element => {
               </button>
               <button
                 onClick={handleAddTeamMember}
-                disabled={!newMember.name || !newMember.role}
+                disabled={!newMember.name || !newMember.email || !newMember.role}
                 className="flex-1 bg-[#FC1924] hover:bg-[#e01620] text-white py-2 rounded-lg font-semibold transition-all duration-300 hover:scale-105 disabled:bg-gray-600 disabled:cursor-not-allowed"
               >
                 Add Member
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Permissions Modal */}
+      {showPermissionsModal && selectedMember && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-[#2a2a2a] rounded-2xl p-8 max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-white">Manage Permissions</h2>
+              <button 
+                onClick={() => setShowPermissionsModal(false)}
+                className="text-gray-400 hover:text-white transition-colors duration-200"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            
+            <div className="mb-6">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                  <span className="text-white text-lg font-bold">{selectedMember.name.charAt(0)}</span>
+                </div>
+                <div>
+                  <h3 className="text-white font-semibold">{selectedMember.name}</h3>
+                  <p className="text-gray-400 text-sm">{selectedMember.role}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              {selectedMember.permissions.map((permission) => (
+                <div key={permission.id} className="bg-[#3a3a3a] rounded-lg p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-3">
+                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                          permission.enabled ? 'bg-green-500' : 'bg-gray-600'
+                        }`}>
+                          {permission.enabled ? <Unlock className="w-5 h-5 text-white" /> : <Lock className="w-5 h-5 text-white" />}
+                        </div>
+                        <div>
+                          <h4 className="text-white font-semibold">{permission.name}</h4>
+                          <p className="text-gray-400 text-sm">{permission.description}</p>
+                        </div>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => {
+                        const updatedPermissions = selectedMember.permissions.map(p =>
+                          p.id === permission.id ? { ...p, enabled: !p.enabled } : p
+                        );
+                        handleUpdatePermissions(selectedMember.id, updatedPermissions);
+                        setSelectedMember({ ...selectedMember, permissions: updatedPermissions });
+                      }}
+                      disabled={selectedMember.role === 'Event Owner'}
+                      className={`px-4 py-2 rounded-lg font-semibold transition-all duration-300 ${
+                        permission.enabled
+                          ? 'bg-red-600 hover:bg-red-700 text-white'
+                          : 'bg-green-600 hover:bg-green-700 text-white'
+                      } ${selectedMember.role === 'Event Owner' ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}`}
+                    >
+                      {permission.enabled ? 'Revoke' : 'Grant'}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex justify-end mt-6">
+              <button
+                onClick={() => setShowPermissionsModal(false)}
+                className="bg-[#FC1924] hover:bg-[#e01620] text-white px-6 py-2 rounded-lg font-semibold transition-all duration-300 hover:scale-105"
+              >
+                Done
               </button>
             </div>
           </div>
