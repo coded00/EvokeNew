@@ -1,31 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { 
   ArrowLeft, 
-  Edit, 
-  Users, 
-  QrCode, 
-  Share, 
+  Save, 
+  Upload, 
   Calendar, 
   MapPin, 
   Clock, 
-  Ticket,
-  Plus,
-  X,
-  Check,
+  Users, 
+  Plus, 
+  X, 
+  Edit, 
+  Shield, 
+  Lock, 
+  Unlock, 
+  UserCheck, 
+  UserX, 
   AlertTriangle,
-  Eye,
-  Download,
-  UserPlus,
-  Settings,
-  BarChart3,
-  TrendingUp,
-  Shield,
-  Lock,
-  Unlock,
-  UserCheck,
-  UserX,
-  Camera
+  Camera,
+  Trash2
 } from "lucide-react";
 import { Sidebar } from "../../components/ui/sidebar";
 
@@ -47,24 +40,27 @@ interface TeamMember {
   joinedDate: string;
 }
 
-interface EventDetails {
+interface EventData {
   id: string;
   name: string;
+  description: string;
+  category: string;
+  location: string;
   startDate: string;
   endDate: string;
   startTime: string;
   endTime: string;
+  vibe: string;
+  specialAppearances: string;
+  promoCode: string;
+  entryType: string;
+  ticketName: string;
   ticketType: string;
-  visibility: string;
-  numberOfTickets: number;
-  status: string;
-  ticketPrice: number;
   currency: string;
+  numberOfTickets: number;
+  ticketPrice: number;
   image: string;
-  location: string;
-  description: string;
-  ticketsSold: number;
-  revenue: number;
+  status: string;
   teamMembers: TeamMember[];
 }
 
@@ -86,35 +82,38 @@ const rolePermissions = {
   'Security': ['scan_tickets', 'view_attendees']
 };
 
-export const EventManagement = (): JSX.Element => {
+export const EventEdit = (): JSX.Element => {
   const navigate = useNavigate();
   const { eventId } = useParams<{ eventId: string }>();
-  const [activeTab, setActiveTab] = useState<'details' | 'team' | 'attendees' | 'promotion'>('details');
-  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [activeTab, setActiveTab] = useState<'details' | 'team'>('details');
+  const [isSaving, setIsSaving] = useState(false);
   const [showAddMemberModal, setShowAddMemberModal] = useState(false);
   const [showPermissionsModal, setShowPermissionsModal] = useState(false);
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
   const [newMember, setNewMember] = useState({ name: '', email: '', role: '' });
+  const [hasChanges, setHasChanges] = useState(false);
 
-  // Mock event data based on the image
-  const [eventData, setEventData] = useState<EventDetails>({
+  const [eventData, setEventData] = useState<EventData>({
     id: eventId || '1',
     name: "Afrobeats Night",
-    startDate: "25/June/2025",
-    endDate: "25/6/2025",
-    startTime: "4 PM",
-    endTime: "12 AM",
-    ticketType: "Regular",
-    visibility: "Public",
-    numberOfTickets: 1000,
-    status: "Live",
-    ticketPrice: 5000,
-    currency: "NGN",
-    image: "https://images.pexels.com/photos/1190298/pexels-photo-1190298.jpeg?auto=compress&cs=tinysrgb&w=600",
+    description: "Experience the best of Afrobeat music with live performances and amazing vibes. Join us for an unforgettable night of music, dancing, and community.",
+    category: "Music & Concerts",
     location: "Victoria Island, Lagos",
-    description: "Experience the best of Afrobeat music with live performances and amazing vibes",
-    ticketsSold: 450,
-    revenue: 2500000,
+    startDate: "2025-06-25",
+    endDate: "2025-06-25",
+    startTime: "16:00",
+    endTime: "00:00",
+    vibe: "High Energy",
+    specialAppearances: "DJ Spinall, Burna Boy",
+    promoCode: "AFROBEATS25",
+    entryType: "Paid",
+    ticketName: "Afrobeats Night Ticket",
+    ticketType: "Regular",
+    currency: "NGN",
+    numberOfTickets: 1000,
+    ticketPrice: 5000,
+    image: "https://images.pexels.com/photos/1190298/pexels-photo-1190298.jpeg?auto=compress&cs=tinysrgb&w=600",
+    status: "Active",
     teamMembers: [
       { 
         id: '1', 
@@ -151,29 +150,49 @@ export const EventManagement = (): JSX.Element => {
           ...p, 
           enabled: rolePermissions['Coordinator'].includes(p.id) 
         }))
-      },
-      { 
-        id: '4', 
-        name: 'Sarah Williams', 
-        role: 'Staff',
-        email: 'sarah@example.com',
-        status: 'active',
-        joinedDate: '2025-01-12',
-        permissions: defaultPermissions.map(p => ({ 
-          ...p, 
-          enabled: rolePermissions['Staff'].includes(p.id) 
-        }))
       }
     ]
   });
 
-  const handleEditEvent = () => {
-    navigate(`/event-edit/${eventId}`);
+  const categories = [
+    "Music & Concerts",
+    "Parties & Nightlife",
+    "Sports & Fitness",
+    "Food & Drink",
+    "Arts & Culture",
+    "Business & Networking",
+    "Community & Social",
+    "Education & Learning"
+  ];
+
+  const vibes = [
+    "Wild & Woke",
+    "Chill & Relaxed",
+    "High Energy",
+    "Intimate & Cozy",
+    "Professional",
+    "Creative & Artistic",
+    "Sporty & Active",
+    "Luxury & Exclusive"
+  ];
+
+  const entryTypes = ["Free", "Paid", "Invite-only"];
+  const ticketTypes = ["Regular", "VIP", "VVIP", "Early Bird", "Student"];
+  const currencies = ["NGN", "USD", "EUR", "GBP"];
+
+  const handleInputChange = (field: keyof EventData, value: string | number) => {
+    setEventData(prev => ({ ...prev, [field]: value }));
+    setHasChanges(true);
   };
 
-  const handleCancelEvent = () => {
-    setEventData(prev => ({ ...prev, status: 'Cancelled' }));
-    setShowCancelModal(false);
+  const handleSaveChanges = async () => {
+    setIsSaving(true);
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    setIsSaving(false);
+    setHasChanges(false);
+    // Show success message or redirect
+    alert('Event updated successfully!');
   };
 
   const handleAddTeamMember = () => {
@@ -196,6 +215,7 @@ export const EventManagement = (): JSX.Element => {
       }));
       setNewMember({ name: '', email: '', role: '' });
       setShowAddMemberModal(false);
+      setHasChanges(true);
     }
   };
 
@@ -204,6 +224,7 @@ export const EventManagement = (): JSX.Element => {
       ...prev,
       teamMembers: prev.teamMembers.filter(member => member.id !== memberId)
     }));
+    setHasChanges(true);
   };
 
   const handleUpdateMemberRole = (memberId: string, newRole: string) => {
@@ -222,6 +243,7 @@ export const EventManagement = (): JSX.Element => {
           : member
       )
     }));
+    setHasChanges(true);
   };
 
   const handleUpdatePermissions = (memberId: string, permissions: Permission[]) => {
@@ -231,18 +253,7 @@ export const EventManagement = (): JSX.Element => {
         member.id === memberId ? { ...member, permissions } : member
       )
     }));
-  };
-
-  const handleScanTickets = () => {
-    navigate('/ticket-scanner');
-  };
-
-  const handlePromoteEvent = () => {
-    alert('Promotion tools coming soon!');
-  };
-
-  const handleViewAttendees = () => {
-    navigate(`/event-dashboard/${eventId}`);
+    setHasChanges(true);
   };
 
   const openPermissionsModal = (member: TeamMember) => {
@@ -270,149 +281,316 @@ export const EventManagement = (): JSX.Element => {
 
   return (
     <div className="min-h-screen bg-[#1a1a1a] flex relative overflow-hidden font-['Space_Grotesk']">
-      <Sidebar currentPath="/event-management" />
+      <Sidebar currentPath="/event-edit" />
 
       {/* Main Content */}
       <div className="flex-1 ml-20 p-8">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           {/* Header */}
           <div className="flex items-center justify-between mb-8">
             <button 
-              onClick={() => navigate('/profile')}
+              onClick={() => navigate(`/event-management/${eventId}`)}
               className="flex items-center space-x-2 text-white/80 hover:text-white transition-colors duration-200"
             >
               <ArrowLeft className="w-5 h-5" />
-              <span>Back to Profile</span>
+              <span>Back to Event Management</span>
             </button>
             
             <div className="text-center">
-              <h1 className="text-3xl font-bold text-white">{eventData.name}</h1>
-              <div className="flex items-center justify-center space-x-4 mt-2">
-                <span className="text-purple-400 font-semibold">Countdown: 3d 5hr 45mins</span>
-                <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                  eventData.status === 'Live' ? 'bg-green-500 text-white' : 'bg-gray-500 text-white'
-                }`}>
-                  {eventData.status}
-                </span>
-              </div>
+              <h1 className="text-3xl font-bold text-white">Edit Event</h1>
+              <p className="text-gray-400">{eventData.name}</p>
             </div>
             
-            <div className="w-24"></div>
+            <button
+              onClick={handleSaveChanges}
+              disabled={!hasChanges || isSaving}
+              className="bg-[#FC1924] hover:bg-[#e01620] disabled:bg-gray-600 disabled:cursor-not-allowed text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105 flex items-center space-x-2"
+            >
+              <Save className="w-5 h-5" />
+              <span>{isSaving ? 'Saving...' : 'Save Changes'}</span>
+            </button>
           </div>
 
-          {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <div className="bg-black rounded-lg p-6 text-center">
-              <div className="text-green-400 text-3xl font-bold">{eventData.ticketsSold}</div>
-              <div className="text-gray-400 text-sm">/ {eventData.numberOfTickets}</div>
-              <div className="text-white text-sm mt-2">Tickets Sold</div>
-            </div>
-            
-            <div className="bg-black rounded-lg p-6 text-center">
-              <div className="text-green-400 text-3xl font-bold">2.5</div>
-              <div className="text-gray-400 text-sm">/ 5M</div>
-              <div className="text-white text-sm mt-2">Revenue</div>
-            </div>
-            
-            <div className="bg-black rounded-lg p-6 text-center">
-              <div className="text-green-400 text-3xl font-bold">{eventData.teamMembers.length}</div>
-              <div className="text-white text-sm mt-2">Team</div>
-            </div>
-            
-            <div className="bg-black rounded-lg p-6 text-center">
-              <div className="text-green-400 text-3xl font-bold">12</div>
-              <div className="text-white text-sm mt-2">Events listed</div>
-            </div>
+          {/* Tabs */}
+          <div className="flex space-x-1 mb-8 bg-[#2a2a2a] rounded-xl p-2">
+            <button 
+              onClick={() => setActiveTab('details')}
+              className={`flex-1 py-3 px-6 rounded-lg font-semibold transition-all duration-300 ${
+                activeTab === 'details' 
+                  ? 'bg-[#FC1924] text-white' 
+                  : 'text-gray-400 hover:text-white hover:bg-[#3a3a3a]'
+              }`}
+            >
+              Event Details
+            </button>
+            <button 
+              onClick={() => setActiveTab('team')}
+              className={`flex-1 py-3 px-6 rounded-lg font-semibold transition-all duration-300 ${
+                activeTab === 'team' 
+                  ? 'bg-[#FC1924] text-white' 
+                  : 'text-gray-400 hover:text-white hover:bg-[#3a3a3a]'
+              }`}
+            >
+              Team & Permissions
+            </button>
           </div>
 
-          {/* Main Content Area */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Left Side - Event Poster */}
-            <div className="lg:col-span-1">
+          {/* Event Details Tab */}
+          {activeTab === 'details' && (
+            <div className="space-y-8">
+              {/* Basic Information */}
               <div className="bg-[#2a2a2a] rounded-xl p-6">
-                <img 
-                  src={eventData.image} 
-                  alt={eventData.name}
-                  className="w-full h-96 object-cover rounded-lg mb-4"
-                />
-              </div>
-            </div>
+                <h2 className="text-2xl font-bold text-white mb-6">Basic Information</h2>
+                
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div className="space-y-6">
+                    <div>
+                      <label className="block text-white text-sm font-medium mb-2">Event Name</label>
+                      <input
+                        type="text"
+                        value={eventData.name}
+                        onChange={(e) => handleInputChange('name', e.target.value)}
+                        className="w-full bg-[#3a3a3a] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#FC1924] transition-all duration-200"
+                        placeholder="Enter event name"
+                      />
+                    </div>
 
-            {/* Right Side - Event Details */}
-            <div className="lg:col-span-2">
-              <div className="bg-[#2a2a2a] rounded-xl p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold text-white">Event Details</h2>
-                  <button 
-                    onClick={handleEditEvent}
-                    className="bg-[#FC1924] hover:bg-[#e01620] text-white px-4 py-2 rounded-lg font-semibold transition-all duration-300 hover:scale-105 flex items-center space-x-2"
-                  >
-                    <Edit className="w-4 h-4" />
-                    <span>Edit</span>
-                  </button>
-                </div>
+                    <div>
+                      <label className="block text-white text-sm font-medium mb-2">Category</label>
+                      <select
+                        value={eventData.category}
+                        onChange={(e) => handleInputChange('category', e.target.value)}
+                        className="w-full bg-[#3a3a3a] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#FC1924] transition-all duration-200"
+                      >
+                        {categories.map(category => (
+                          <option key={category} value={category}>{category}</option>
+                        ))}
+                      </select>
+                    </div>
 
-                <div className="grid grid-cols-2 gap-6">
-                  <div className="space-y-4">
                     <div>
-                      <label className="block text-gray-400 text-sm mb-1">Start Date:</label>
-                      <div className="text-white">{eventData.startDate}</div>
+                      <label className="block text-white text-sm font-medium mb-2">Location</label>
+                      <input
+                        type="text"
+                        value={eventData.location}
+                        onChange={(e) => handleInputChange('location', e.target.value)}
+                        className="w-full bg-[#3a3a3a] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#FC1924] transition-all duration-200"
+                        placeholder="Enter event location"
+                      />
                     </div>
-                    
+
                     <div>
-                      <label className="block text-gray-400 text-sm mb-1">Start Time:</label>
-                      <div className="text-white">{eventData.startTime}</div>
-                    </div>
-                    
-                    <div>
-                      <label className="block text-gray-400 text-sm mb-1">Ticket Type:</label>
-                      <div className="text-white">{eventData.ticketType}</div>
-                    </div>
-                    
-                    <div>
-                      <label className="block text-gray-400 text-sm mb-1">Status:</label>
-                      <div className="text-white">{eventData.status}</div>
-                    </div>
-                    
-                    <div>
-                      <label className="block text-gray-400 text-sm mb-1">Ticket Price:</label>
-                      <div className="text-white">₦{eventData.ticketPrice}</div>
+                      <label className="block text-white text-sm font-medium mb-2">Vibe</label>
+                      <select
+                        value={eventData.vibe}
+                        onChange={(e) => handleInputChange('vibe', e.target.value)}
+                        className="w-full bg-[#3a3a3a] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#FC1924] transition-all duration-200"
+                      >
+                        {vibes.map(vibe => (
+                          <option key={vibe} value={vibe}>{vibe}</option>
+                        ))}
+                      </select>
                     </div>
                   </div>
 
-                  <div className="space-y-4">
+                  <div className="space-y-6">
                     <div>
-                      <label className="block text-gray-400 text-sm mb-1">End Date:</label>
-                      <div className="text-white">{eventData.endDate}</div>
+                      <label className="block text-white text-sm font-medium mb-2">Description</label>
+                      <textarea
+                        value={eventData.description}
+                        onChange={(e) => handleInputChange('description', e.target.value)}
+                        rows={4}
+                        className="w-full bg-[#3a3a3a] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#FC1924] transition-all duration-200 resize-none"
+                        placeholder="Describe your event"
+                      />
                     </div>
-                    
+
                     <div>
-                      <label className="block text-gray-400 text-sm mb-1">End Time:</label>
-                      <div className="text-white">{eventData.endTime}</div>
+                      <label className="block text-white text-sm font-medium mb-2">Special Appearances</label>
+                      <input
+                        type="text"
+                        value={eventData.specialAppearances}
+                        onChange={(e) => handleInputChange('specialAppearances', e.target.value)}
+                        className="w-full bg-[#3a3a3a] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#FC1924] transition-all duration-200"
+                        placeholder="Featured guests or performers"
+                      />
                     </div>
-                    
+
                     <div>
-                      <label className="block text-gray-400 text-sm mb-1">Visibility:</label>
-                      <div className="text-white">{eventData.visibility}</div>
-                    </div>
-                    
-                    <div>
-                      <label className="block text-gray-400 text-sm mb-1">Number of Tickets:</label>
-                      <div className="text-white">{eventData.numberOfTickets}</div>
-                    </div>
-                    
-                    <div>
-                      <label className="block text-gray-400 text-sm mb-1">Currency:</label>
-                      <div className="text-white">{eventData.currency}</div>
+                      <label className="block text-white text-sm font-medium mb-2">Promo Code</label>
+                      <input
+                        type="text"
+                        value={eventData.promoCode}
+                        onChange={(e) => handleInputChange('promoCode', e.target.value)}
+                        className="w-full bg-[#3a3a3a] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#FC1924] transition-all duration-200"
+                        placeholder="Discount code"
+                      />
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Enhanced Team & Permissions Section */}
-              <div className="bg-[#2a2a2a] rounded-xl p-6 mt-6">
+              {/* Date & Time */}
+              <div className="bg-[#2a2a2a] rounded-xl p-6">
+                <h2 className="text-2xl font-bold text-white mb-6">Date & Time</h2>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  <div>
+                    <label className="block text-white text-sm font-medium mb-2">Start Date</label>
+                    <input
+                      type="date"
+                      value={eventData.startDate}
+                      onChange={(e) => handleInputChange('startDate', e.target.value)}
+                      className="w-full bg-[#3a3a3a] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#FC1924] transition-all duration-200"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-white text-sm font-medium mb-2">End Date</label>
+                    <input
+                      type="date"
+                      value={eventData.endDate}
+                      onChange={(e) => handleInputChange('endDate', e.target.value)}
+                      className="w-full bg-[#3a3a3a] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#FC1924] transition-all duration-200"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-white text-sm font-medium mb-2">Start Time</label>
+                    <input
+                      type="time"
+                      value={eventData.startTime}
+                      onChange={(e) => handleInputChange('startTime', e.target.value)}
+                      className="w-full bg-[#3a3a3a] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#FC1924] transition-all duration-200"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-white text-sm font-medium mb-2">End Time</label>
+                    <input
+                      type="time"
+                      value={eventData.endTime}
+                      onChange={(e) => handleInputChange('endTime', e.target.value)}
+                      className="w-full bg-[#3a3a3a] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#FC1924] transition-all duration-200"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Ticketing */}
+              <div className="bg-[#2a2a2a] rounded-xl p-6">
+                <h2 className="text-2xl font-bold text-white mb-6">Ticketing</h2>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div>
+                    <label className="block text-white text-sm font-medium mb-2">Entry Type</label>
+                    <select
+                      value={eventData.entryType}
+                      onChange={(e) => handleInputChange('entryType', e.target.value)}
+                      className="w-full bg-[#3a3a3a] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#FC1924] transition-all duration-200"
+                    >
+                      {entryTypes.map(type => (
+                        <option key={type} value={type}>{type}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-white text-sm font-medium mb-2">Ticket Name</label>
+                    <input
+                      type="text"
+                      value={eventData.ticketName}
+                      onChange={(e) => handleInputChange('ticketName', e.target.value)}
+                      className="w-full bg-[#3a3a3a] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#FC1924] transition-all duration-200"
+                      placeholder="Enter ticket name"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-white text-sm font-medium mb-2">Ticket Type</label>
+                    <select
+                      value={eventData.ticketType}
+                      onChange={(e) => handleInputChange('ticketType', e.target.value)}
+                      className="w-full bg-[#3a3a3a] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#FC1924] transition-all duration-200"
+                    >
+                      {ticketTypes.map(type => (
+                        <option key={type} value={type}>{type}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-white text-sm font-medium mb-2">Currency</label>
+                    <select
+                      value={eventData.currency}
+                      onChange={(e) => handleInputChange('currency', e.target.value)}
+                      className="w-full bg-[#3a3a3a] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#FC1924] transition-all duration-200"
+                    >
+                      {currencies.map(currency => (
+                        <option key={currency} value={currency}>{currency}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-white text-sm font-medium mb-2">Ticket Price</label>
+                    <input
+                      type="number"
+                      value={eventData.ticketPrice}
+                      onChange={(e) => handleInputChange('ticketPrice', parseInt(e.target.value))}
+                      className="w-full bg-[#3a3a3a] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#FC1924] transition-all duration-200"
+                      placeholder="0"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-white text-sm font-medium mb-2">Number of Tickets</label>
+                    <input
+                      type="number"
+                      value={eventData.numberOfTickets}
+                      onChange={(e) => handleInputChange('numberOfTickets', parseInt(e.target.value))}
+                      className="w-full bg-[#3a3a3a] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#FC1924] transition-all duration-200"
+                      placeholder="0"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Event Poster */}
+              <div className="bg-[#2a2a2a] rounded-xl p-6">
+                <h2 className="text-2xl font-bold text-white mb-6">Event Poster</h2>
+                
+                <div className="flex items-center space-x-6">
+                  <div className="w-48 h-64 bg-gray-700 rounded-lg overflow-hidden">
+                    <img 
+                      src={eventData.image} 
+                      alt="Event poster"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  
+                  <div className="flex-1">
+                    <div className="border-2 border-dashed border-gray-600 rounded-lg p-8 text-center hover:border-[#FC1924] transition-colors duration-200">
+                      <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                      <p className="text-gray-400 mb-2">Upload New Poster</p>
+                      <p className="text-gray-500 text-sm mb-4">Recommended size: 1080x1920px</p>
+                      <button className="bg-[#FC1924] hover:bg-[#e01620] text-white px-6 py-2 rounded-lg font-semibold transition-all duration-300 hover:scale-105">
+                        Choose File
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Team & Permissions Tab */}
+          {activeTab === 'team' && (
+            <div className="space-y-8">
+              {/* Team Management */}
+              <div className="bg-[#2a2a2a] rounded-xl p-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold text-white">Team & Permissions</h2>
+                  <h2 className="text-2xl font-bold text-white">Team Members</h2>
                   <button 
                     onClick={() => setShowAddMemberModal(true)}
                     className="bg-[#FC1924] hover:bg-[#e01620] text-white px-4 py-2 rounded-lg font-semibold transition-all duration-300 hover:scale-105 flex items-center space-x-2"
@@ -424,7 +602,7 @@ export const EventManagement = (): JSX.Element => {
 
                 <div className="space-y-4">
                   {eventData.teamMembers.map((member) => (
-                    <div key={member.id} className="bg-[#3a3a3a] rounded-lg p-4">
+                    <div key={member.id} className="bg-[#3a3a3a] rounded-lg p-6">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-4">
                           <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
@@ -469,14 +647,14 @@ export const EventManagement = (): JSX.Element => {
                               onClick={() => handleRemoveTeamMember(member.id)}
                               className="text-red-400 hover:text-red-300 transition-colors duration-200 p-2"
                             >
-                              <X className="w-4 h-4" />
+                              <Trash2 className="w-4 h-4" />
                             </button>
                           )}
                         </div>
                       </div>
                       
                       {/* Quick Permissions Overview */}
-                      <div className="mt-3 flex flex-wrap gap-2">
+                      <div className="mt-4 flex flex-wrap gap-2">
                         {member.permissions.filter(p => p.enabled).map((permission) => (
                           <span key={permission.id} className="bg-green-500/20 text-green-400 px-2 py-1 rounded text-xs">
                             {permission.name}
@@ -488,53 +666,7 @@ export const EventManagement = (): JSX.Element => {
                 </div>
               </div>
             </div>
-          </div>
-
-          {/* Attendees Section */}
-          <div className="bg-[#2a2a2a] rounded-xl p-6 mt-8">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-2xl font-bold text-white">Attendees:</h2>
-              <div className="flex items-center space-x-4">
-                <span className="text-white text-lg font-semibold">{eventData.ticketsSold}/{eventData.numberOfTickets}</span>
-                <button 
-                  onClick={handleViewAttendees}
-                  className="bg-[#FC1924] hover:bg-[#e01620] text-white px-4 py-2 rounded-lg font-semibold transition-all duration-300 hover:scale-105"
-                >
-                  View
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
-            <button 
-              onClick={handleScanTickets}
-              className="bg-[#FC1924] hover:bg-[#e01620] text-white py-4 rounded-lg font-semibold transition-all duration-300 hover:scale-105 flex items-center justify-center space-x-2"
-            >
-              <Camera className="w-5 h-5" />
-              <span>Scan Ticket QR Codes</span>
-            </button>
-            
-            <button 
-              onClick={handlePromoteEvent}
-              className="bg-[#FC1924] hover:bg-[#e01620] text-white py-4 rounded-lg font-semibold transition-all duration-300 hover:scale-105 flex items-center justify-center space-x-2"
-            >
-              <Share className="w-5 h-5" />
-              <span>Promote Event</span>
-            </button>
-          </div>
-
-          {/* Cancel Event Button */}
-          <div className="mt-6 flex justify-center">
-            <button 
-              onClick={() => setShowCancelModal(true)}
-              className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105 flex items-center space-x-2"
-            >
-              <AlertTriangle className="w-5 h-5" />
-              <span>Cancel Event</span>
-            </button>
-          </div>
+          )}
         </div>
       </div>
 
@@ -674,36 +806,6 @@ export const EventManagement = (): JSX.Element => {
               >
                 Done
               </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Cancel Event Modal */}
-      {showCancelModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-[#2a2a2a] rounded-2xl p-8 max-w-md w-full mx-4">
-            <div className="text-center">
-              <AlertTriangle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-              <h2 className="text-2xl font-bold text-white mb-4">Cancel Event</h2>
-              <p className="text-gray-300 mb-6">
-                Are you sure you want to cancel this event? This action cannot be undone and all attendees will be notified.
-              </p>
-              
-              <div className="flex space-x-3">
-                <button
-                  onClick={() => setShowCancelModal(false)}
-                  className="flex-1 bg-transparent border border-gray-600 text-white py-2 rounded-lg font-semibold transition-all duration-300 hover:bg-gray-800"
-                >
-                  Keep Event
-                </button>
-                <button
-                  onClick={handleCancelEvent}
-                  className="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg font-semibold transition-all duration-300 hover:scale-105"
-                >
-                  Cancel Event
-                </button>
-              </div>
             </div>
           </div>
         </div>
