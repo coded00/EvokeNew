@@ -174,7 +174,7 @@ export const Home = (): JSX.Element => {
   };
 
   const handleBuyTicket = (event: any) => {
-    navigate(`/event-detail/${event.id}`);
+    navigate(`/event/${event.id}`);
   };
 
   const handleBackToHome = () => {
