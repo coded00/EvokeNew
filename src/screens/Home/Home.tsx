@@ -163,6 +163,9 @@ export const Home = (): JSX.Element => {
       navigate('/profile');
     } else if (cardType === 'calendar') {
       navigate('/calendar');
+    } else if (cardType === 'find-vibe') {
+      // Show coming soon message for Find a Vibe
+      alert('Find a Vibe feature coming soon! Connect with like-minded people and join existing vibes in your area.');
     }
   };
 
@@ -373,12 +376,18 @@ export const Home = (): JSX.Element => {
                 </div>
               </div>
 
-              <div className="relative overflow-hidden rounded-2xl cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl bg-gradient-to-br from-purple-100 to-pink-200 border-2 border-black group">
+              <div 
+                className="relative overflow-hidden rounded-2xl cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl bg-gradient-to-br from-purple-100 to-pink-200 border-2 border-black group"
+                onClick={() => handleCardClick('find-vibe')}
+              >
                 <div className="h-64 p-6 flex flex-col justify-between relative">
                   <div className="relative z-10">
                     <span className="text-purple-800 text-sm font-medium uppercase tracking-wider">SOCIAL</span>
                     <h3 className="text-purple-900 text-2xl font-bold mt-2 mb-1">FIND A VIBE</h3>
                     <p className="text-purple-700 text-sm">Join existing vibes</p>
+                    <div className="mt-3 inline-flex items-center space-x-2 bg-yellow-500/20 text-yellow-700 px-3 py-1 rounded-full text-xs font-medium">
+                      <span>Coming Soon</span>
+                    </div>
                   </div>
                   <div className="absolute bottom-4 right-4 w-16 h-16 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                     <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
