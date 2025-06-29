@@ -54,10 +54,10 @@ export const Profile = (): JSX.Element | null => {
 
   // Mock event management data
   const managementStats = [
-    { label: "Events Listed", value: "12", color: "from-blue-500 to-cyan-500" },
-    { label: "Tickets Sold", value: "2,940", color: "from-green-500 to-emerald-500" },
-    { label: "Revenue", value: "₦24.5m", color: "from-purple-500 to-pink-500" },
-    { label: "Active Events", value: "3", color: "from-orange-500 to-red-500" }
+    { label: "Events Listed", value: "12", color: "from-gray-600 to-gray-700" },
+    { label: "Tickets Sold", value: "2,940", color: "from-gray-600 to-gray-700" },
+    { label: "Revenue", value: "₦24.5m", color: "from-gray-600 to-gray-700" },
+    { label: "Active Events", value: "3", color: "from-gray-600 to-gray-700" }
   ];
 
   const managedEvents = [
@@ -275,7 +275,7 @@ export const Profile = (): JSX.Element | null => {
                     </div>
                     <div className="flex space-x-2 mt-3">
                       {userData.badges.map((badge, index) => (
-                        <span key={index} className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                        <span key={index} className="bg-[#3a3a3a] text-gray-300 px-3 py-1 rounded-full text-sm font-medium border border-gray-600">
                           {badge}
                         </span>
                       ))}
@@ -291,40 +291,40 @@ export const Profile = (): JSX.Element | null => {
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              <div className="bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl p-6 text-white animate-slide-up">
+              <div className="bg-[#2a2a2a] rounded-xl p-6 text-white animate-slide-up">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-blue-100 text-sm">Events Attended</p>
+                    <p className="text-gray-400 text-sm">Events Attended</p>
                     <p className="text-3xl font-bold">{userData.stats.eventsAttended}</p>
                   </div>
-                  <Calendar className="w-8 h-8 text-blue-200" />
+                  <Calendar className="w-8 h-8 text-gray-500" />
                 </div>
               </div>
-              <div className="bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl p-6 text-white animate-slide-up" style={{ animationDelay: '0.1s' }}>
+              <div className="bg-[#2a2a2a] rounded-xl p-6 text-white animate-slide-up" style={{ animationDelay: '0.1s' }}>
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-green-100 text-sm">Events Hosted</p>
+                    <p className="text-gray-400 text-sm">Events Hosted</p>
                     <p className="text-3xl font-bold">{userData.stats.eventsHosted}</p>
                   </div>
-                  <Users className="w-8 h-8 text-green-200" />
+                  <Users className="w-8 h-8 text-gray-500" />
                 </div>
               </div>
-              <div className="bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl p-6 text-white animate-slide-up" style={{ animationDelay: '0.2s' }}>
+              <div className="bg-[#2a2a2a] rounded-xl p-6 text-white animate-slide-up" style={{ animationDelay: '0.2s' }}>
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-purple-100 text-sm">Tickets Purchased</p>
+                    <p className="text-gray-400 text-sm">Tickets Purchased</p>
                     <p className="text-3xl font-bold">{userData.stats.ticketsPurchased}</p>
                   </div>
-                  <Ticket className="w-8 h-8 text-purple-200" />
+                  <Ticket className="w-8 h-8 text-gray-500" />
                 </div>
               </div>
-              <div className="bg-gradient-to-br from-orange-500 to-red-500 rounded-xl p-6 text-white animate-slide-up" style={{ animationDelay: '0.3s' }}>
+              <div className="bg-[#2a2a2a] rounded-xl p-6 text-white animate-slide-up" style={{ animationDelay: '0.3s' }}>
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-orange-100 text-sm">Revenue Generated</p>
+                    <p className="text-gray-400 text-sm">Revenue Generated</p>
                     <p className="text-3xl font-bold">₦{(userData.stats.revenueGenerated / 1000000).toFixed(1)}M</p>
                   </div>
-                  <DollarSign className="w-8 h-8 text-orange-200" />
+                  <DollarSign className="w-8 h-8 text-gray-500" />
                 </div>
               </div>
             </div>
@@ -745,10 +745,10 @@ export const Profile = (): JSX.Element | null => {
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
               {managementStats.map((stat, index) => (
-                <div key={index} className={`bg-gradient-to-br ${stat.color} rounded-xl p-6 text-white animate-slide-up cursor-pointer hover:scale-105 transition-transform duration-300`} style={{ animationDelay: `${index * 0.1}s` }}>
+                <div key={index} className={`bg-[#2a2a2a] rounded-xl p-6 text-white animate-slide-up cursor-pointer hover:scale-105 transition-transform duration-300`} style={{ animationDelay: `${index * 0.1}s` }}>
                   <div className="text-center">
                     <p className="text-3xl font-bold mb-2">{stat.value}</p>
-                    <p className="text-sm opacity-90">{stat.label}</p>
+                    <p className="text-sm text-gray-400">{stat.label}</p>
                   </div>
                 </div>
               ))}
