@@ -10,6 +10,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPath }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const handleLogoClick = () => {
+    navigate('/home');
+  };
+
   const navigationItems = [
     { icon: MessageCircle, path: '/messages', label: 'Messages' },
     { icon: Gamepad2, path: '/games', label: 'Games' },
@@ -21,69 +25,72 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPath }) => {
     return location.pathname === path || currentPath === path;
   };
 
-  const handleNavigation = (path: string) => {
-    navigate(path);
-  };
-
   return (
-    <div className="fixed left-0 top-0 h-full w-20 bg-white border-r border-gray-200 flex flex-col items-center py-6 z-40 shadow-sm">
+    <div className="fixed left-0 top-0 h-full w-20 bg-white border-r border-gray-200 shadow-lg z-50 flex flex-col">
       {/* Logo */}
-      <div className="mb-8">
-        <div className="w-12 h-12 flex items-center justify-center">
+      <div className="flex items-center justify-center py-6">
+        <button 
+          onClick={handleLogoClick}
+          className="w-12 h-12 hover:scale-110 transition-transform duration-300 cursor-pointer"
+          title="Go to Home"
+        >
           <img 
             src="/src/assets/icons/Evoke - Icon 1 (1) copy.png" 
-            alt="EVOKE" 
+            alt="EVOKE Logo" 
             className="w-full h-full object-contain"
           />
-        </div>
+        </button>
       </div>
 
-      {/* Navigation Items */}
-      <div className="flex flex-col space-y-4 flex-1">
+      {/* Main Navigation */}
+      <nav className="flex-1 flex flex-col items-center space-y-6 py-4">
         {navigationItems.map((item) => {
           const Icon = item.icon;
           const active = isActive(item.path);
           
           return (
-            <button
-              key={item.path}
-              onClick={() => handleNavigation(item.path)}
-              className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 group relative ${
-                active 
-                  ? 'bg-[#FC1924] text-white shadow-lg' 
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-800'
-              }`}
-              title={item.label}
-            >
-              <Icon className="w-6 h-6" />
+            <div key={item.path} className="relative group">
+              <button
+                onClick={() => navigate(item.path)}
+                className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 ${
+                  active 
+                    ? 'bg-[#FC1924] text-white shadow-lg' 
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-800'
+                }`}
+                title={item.label}
+              >
+                <Icon className="w-6 h-6" />
+              </button>
               
               {/* Tooltip */}
-              <div className="absolute left-16 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
+              <div className="absolute left-16 top-1/2 -translate-y-1/2 bg-gray-800 text-white px-2 py-1 rounded text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
                 {item.label}
               </div>
-            </button>
+            </div>
           );
         })}
-      </div>
+      </nav>
 
       {/* Support Section */}
-      <div className="mt-auto">
-        <button
-          onClick={() => handleNavigation('/support')}
-          className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 group relative ${
-            isActive('/support')
-              ? 'bg-[#FC1924] text-white shadow-lg' 
-              : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-800'
-          }`}
-          title="Support"
-        >
-          <HelpCircle className="w-6 h-6" />
+      <div className="pb-6 flex justify-center">
+        <div className="relative group">
+          <button
+            onClick={() => navigate('/support')}
+            className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 ${
+              isActive('/support')
+                ? 'bg-[#FC1924] text-white shadow-lg' 
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-800'
+            }`}
+            title="Support"
+          >
+            <HelpCircle className="w-6 h-6" />
+          </button>
           
           {/* Tooltip */}
-          <div className="absolute left-16 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
+          <div className="absolute left-16 top-1/2 -translate-y-1/2 bg-gray-800 text-white px-2 py-1 rounded text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
             Support
           </div>
-        </button>
+        </div>
       </div>
     </div>
   );
