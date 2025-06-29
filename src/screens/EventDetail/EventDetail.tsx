@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Calendar, MapPin, Clock, Users, Share2, Heart, Star, MessageCircle, Ticket, TrendingUp } from "lucide-react";
+import { ArrowLeft, Calendar, MapPin, Clock, Users, Share2, Heart, Star, MessageCircle, Ticket, Edit, TrendingUp } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent } from "../../components/ui/card";
 
@@ -107,6 +107,10 @@ export const EventDetail = (): JSX.Element => {
     navigate(`/ticket-purchase/${eventId}`);
   };
 
+  const handleEditEvent = () => {
+    navigate(`/event-edit/${eventId}`);
+  };
+
   const handlePromoteEvent = () => {
     // Future promotional features will be implemented here
     alert('Promote Event feature coming soon! This will include social sharing, boosting, and marketing tools.');
@@ -191,6 +195,12 @@ export const EventDetail = (): JSX.Element => {
 
         {/* Action Buttons */}
         <div className="absolute top-6 right-6 flex space-x-3">
+          <button 
+            onClick={handleEditEvent}
+            className="p-3 rounded-full bg-black/20 backdrop-blur-sm text-white hover:bg-blue-500/80 transition-all duration-300"
+          >
+            <Edit className="w-5 h-5" />
+          </button>
           <button 
             onClick={handleLike}
             className={`p-3 rounded-full backdrop-blur-sm transition-all duration-300 ${

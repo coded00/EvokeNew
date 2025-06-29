@@ -154,26 +154,6 @@
   opacity: 0;
 }
 
-/* Logo Animation */
-.animate-logo-spin {
-  animation: logo-spin 30s ease-in-out infinite;
-}
-
-@keyframes logo-spin {
-  0%, 100% {
-    transform: rotate(0deg) scale(1);
-  }
-  25% {
-    transform: rotate(90deg) scale(1.05);
-  }
-  50% {
-    transform: rotate(180deg) scale(1);
-  }
-  75% {
-    transform: rotate(270deg) scale(1.05);
-  }
-}
-
 /* Sidebar Logo Animations */
 .animate-pulse-subtle {
   animation: pulse-subtle 3s ease-in-out infinite;
