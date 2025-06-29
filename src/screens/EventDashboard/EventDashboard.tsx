@@ -140,11 +140,11 @@ export const EventDashboard = (): JSX.Element => {
         <div className="flex justify-between items-start mb-8">
           <div className="flex items-center space-x-4">
             <button 
-              onClick={() => navigate('/home')}
+              onClick={() => navigate(`/event-management/${eventId}`)}
               className="flex items-center space-x-2 text-white/80 hover:text-white transition-colors duration-200"
             >
               <ArrowLeft className="w-5 h-5" />
-              <span>Back to Home</span>
+              <span>Back to Event Management</span>
             </button>
             
             <div className="flex items-center space-x-2">
@@ -161,6 +161,13 @@ export const EventDashboard = (): JSX.Element => {
             <button className="flex items-center space-x-2 bg-[#2a2a2a] hover:bg-[#3a3a3a] text-white px-4 py-2 rounded-lg transition-all duration-300">
               <Download className="w-4 h-4" />
               <span>Export</span>
+            </button>
+            <button 
+              onClick={() => navigate(`/event-edit/${eventId}`)}
+              className="flex items-center space-x-2 bg-[#FC1924] hover:bg-[#e01620] text-white px-4 py-2 rounded-lg transition-all duration-300"
+            >
+              <Edit className="w-4 h-4" />
+              <span>Edit</span>
             </button>
             <button className="flex items-center space-x-2 bg-[#FC1924] hover:bg-[#e01620] text-white px-4 py-2 rounded-lg transition-all duration-300">
               <Share className="w-4 h-4" />
@@ -191,12 +198,6 @@ export const EventDashboard = (): JSX.Element => {
                   <span>{eventData.location}</span>
                 </div>
               </div>
-            </div>
-            <div className="flex items-center space-x-2">
-              <button className="flex items-center space-x-2 bg-[#3a3a3a] hover:bg-[#4a4a4a] text-white px-4 py-2 rounded-lg transition-all duration-300">
-                <Edit className="w-4 h-4" />
-                <span>Edit</span>
-              </button>
             </div>
           </div>
         </div>

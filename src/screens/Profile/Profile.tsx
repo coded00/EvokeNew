@@ -188,7 +188,7 @@ export const Profile = (): JSX.Element | null => {
   };
 
   const handleEventView = (eventId: number) => {
-    navigate(`/event-dashboard/${eventId}`);
+    navigate(`/event-management/${eventId}`);
   };
 
   const nextTicket = () => {
