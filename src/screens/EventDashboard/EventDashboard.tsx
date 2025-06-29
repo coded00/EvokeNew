@@ -21,14 +21,7 @@ import {
   BarChart3,
   Settings,
   Eye,
-  EyeOff,
-  Activity,
-  Target,
-  Zap,
-  Award,
-  Star,
-  Globe,
-  Layers
+  EyeOff
 } from "lucide-react";
 import { Sidebar } from "../../components/ui/sidebar";
 
@@ -138,7 +131,7 @@ export const EventDashboard = (): JSX.Element => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 flex relative overflow-hidden font-['Space_Grotesk']">
+    <div className="min-h-screen bg-[#1a1a1a] flex relative overflow-hidden font-['Space_Grotesk']">
       <Sidebar currentPath="/event-dashboard" />
 
       {/* Main Content */}
@@ -146,167 +139,119 @@ export const EventDashboard = (): JSX.Element => {
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="flex justify-between items-start mb-8">
-            <div className="flex items-center space-x-6">
+            <div className="flex items-center space-x-4">
               <button 
                 onClick={() => navigate(`/event-management/${eventId}`)}
-                className="flex items-center space-x-3 text-white/80 hover:text-white transition-all duration-300 group"
+                className="flex items-center space-x-2 text-white/80 hover:text-white transition-colors duration-200"
               >
-                <div className="w-12 h-12 bg-white/10 hover:bg-white/20 rounded-2xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 backdrop-blur-sm border border-white/10">
-                  <ArrowLeft className="w-5 h-5" />
-                </div>
-                <span className="font-semibold text-lg">Back to Management</span>
+                <ArrowLeft className="w-5 h-5" />
+                <span>Back to Management</span>
               </button>
               
-              <div className="flex items-center space-x-3">
-                <div className={`w-3 h-3 rounded-full ${isLive ? 'bg-emerald-400 animate-pulse shadow-lg shadow-emerald-400/50' : 'bg-gray-500'}`}></div>
-                <span className="text-sm font-medium text-emerald-400">{isLive ? 'Live Event' : 'Offline'}</span>
+              <div className="flex items-center space-x-2">
+                <div className={`w-3 h-3 rounded-full ${isLive ? 'bg-green-500 animate-pulse' : 'bg-gray-500'}`}></div>
+                <span className="text-sm text-gray-400">{isLive ? 'Live' : 'Offline'}</span>
               </div>
             </div>
 
-            <div className="flex items-center space-x-3">
-              <button className="flex items-center space-x-2 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white px-5 py-3 rounded-2xl font-medium transition-all duration-300 hover:scale-105 shadow-lg shadow-violet-500/25">
+            <div className="flex items-center space-x-4">
+              <button className="flex items-center space-x-2 bg-[#2a2a2a] hover:bg-[#3a3a3a] text-white px-4 py-2 rounded-lg transition-all duration-300">
                 <QrCode className="w-4 h-4" />
                 <span>Generate QR</span>
               </button>
-              <button className="flex items-center space-x-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white px-5 py-3 rounded-2xl font-medium transition-all duration-300 hover:scale-105 shadow-lg shadow-emerald-500/25">
+              <button className="flex items-center space-x-2 bg-[#2a2a2a] hover:bg-[#3a3a3a] text-white px-4 py-2 rounded-lg transition-all duration-300">
                 <Download className="w-4 h-4" />
                 <span>Export</span>
               </button>
               <button 
                 onClick={() => navigate(`/event-edit/${eventId}`)}
-                className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white px-5 py-3 rounded-2xl font-medium transition-all duration-300 hover:scale-105 shadow-lg shadow-blue-500/25"
+                className="flex items-center space-x-2 bg-[#2a2a2a] hover:bg-[#3a3a3a] text-white px-4 py-2 rounded-lg transition-all duration-300"
               >
                 <Edit className="w-4 h-4" />
                 <span>Edit</span>
               </button>
-              <button className="flex items-center space-x-2 bg-gradient-to-r from-[#FC1924] to-red-600 hover:from-[#e01620] hover:to-red-700 text-white px-5 py-3 rounded-2xl font-medium transition-all duration-300 hover:scale-105 shadow-lg shadow-red-500/25">
+              <button className="flex items-center space-x-2 bg-[#FC1924] hover:bg-[#e01620] text-white px-4 py-2 rounded-lg transition-all duration-300">
                 <Share className="w-4 h-4" />
                 <span>Share</span>
               </button>
             </div>
           </div>
 
-          {/* Event Hero Section */}
-          <div className="relative bg-gradient-to-r from-slate-800/50 via-gray-800/50 to-slate-800/50 rounded-3xl p-8 mb-8 backdrop-blur-sm border border-white/10 overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-r from-[#FC1924]/5 via-purple-600/5 to-blue-600/5"></div>
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#FC1924]/20 to-purple-600/20 rounded-full blur-3xl"></div>
-            <div className="relative z-10 flex items-start justify-between">
-              <div className="flex items-center space-x-6">
-                <div className="w-28 h-28 rounded-3xl overflow-hidden shadow-2xl ring-4 ring-white/20 backdrop-blur-sm">
-                  <img src={eventData.image} alt={eventData.name} className="w-full h-full object-cover" />
-                </div>
-                <div>
-                  <h1 className="text-5xl font-bold text-white mb-4 bg-gradient-to-r from-white via-gray-100 to-gray-300 bg-clip-text text-transparent">
-                    {eventData.name}
-                  </h1>
-                  <div className="flex items-center space-x-8 text-gray-300">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-[#FC1924]/20 rounded-xl flex items-center justify-center">
-                        <Calendar className="w-5 h-5 text-[#FC1924]" />
-                      </div>
-                      <span className="font-medium text-lg">{eventData.date}</span>
-                    </div>
-                    <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-purple-600/20 rounded-xl flex items-center justify-center">
-                        <Clock className="w-5 h-5 text-purple-400" />
-                      </div>
-                      <span className="font-medium text-lg">{eventData.time}</span>
-                    </div>
-                    <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-blue-600/20 rounded-xl flex items-center justify-center">
-                        <MapPin className="w-5 h-5 text-blue-400" />
-                      </div>
-                      <span className="font-medium text-lg">{eventData.location}</span>
-                    </div>
-                  </div>
-                </div>
+          {/* Event Info */}
+          <div className="bg-[#2a2a2a] rounded-2xl p-6 mb-8">
+            <div className="flex items-start space-x-6">
+              <div className="w-24 h-24 rounded-xl overflow-hidden">
+                <img src={eventData.image} alt={eventData.name} className="w-full h-full object-cover" />
               </div>
-              <div className="text-right">
-                <div className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-8 py-4 rounded-3xl shadow-lg shadow-emerald-500/25">
-                  <div className="text-3xl font-bold">Live</div>
-                  <div className="text-sm opacity-90 font-medium">Event Status</div>
+              <div className="flex-1">
+                <h1 className="text-3xl font-bold text-white mb-2">{eventData.name}</h1>
+                <div className="flex items-center space-x-6 text-gray-400">
+                  <div className="flex items-center space-x-2">
+                    <Calendar className="w-4 h-4" />
+                    <span>{eventData.date}</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Clock className="w-4 h-4" />
+                    <span>{eventData.time}</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <MapPin className="w-4 h-4" />
+                    <span>{eventData.location}</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Enhanced Stats Cards */}
+          {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <div className="relative bg-gradient-to-br from-blue-500/10 to-blue-600/10 backdrop-blur-sm border border-blue-500/20 rounded-3xl p-6 text-white overflow-hidden group hover:scale-105 transition-all duration-300">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/10 rounded-full -translate-y-12 translate-x-12"></div>
-              <div className="absolute bottom-0 left-0 w-16 h-16 bg-blue-400/10 rounded-full translate-y-8 -translate-x-8"></div>
-              <div className="relative z-10">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="w-14 h-14 bg-blue-500/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                    <Users className="w-7 h-7 text-blue-400" />
-                  </div>
-                  <div className="flex items-center space-x-1 text-emerald-400">
-                    <TrendingUp className="w-4 h-4" />
-                    <span className="text-sm font-bold">+12%</span>
-                  </div>
+            <div className="bg-[#2a2a2a] rounded-xl p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center">
+                  <Users className="w-6 h-6 text-blue-500" />
                 </div>
-                <h3 className="text-4xl font-bold mb-2 text-blue-400">{stats.totalAttendees}</h3>
-                <p className="text-blue-200 text-sm font-medium">Total Attendees</p>
+                <span className="text-green-500 text-sm font-semibold">+12%</span>
               </div>
+              <h3 className="text-2xl font-bold text-white mb-1">{stats.totalAttendees}</h3>
+              <p className="text-gray-400 text-sm">Total Attendees</p>
             </div>
 
-            <div className="relative bg-gradient-to-br from-emerald-500/10 to-emerald-600/10 backdrop-blur-sm border border-emerald-500/20 rounded-3xl p-6 text-white overflow-hidden group hover:scale-105 transition-all duration-300">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 rounded-full -translate-y-12 translate-x-12"></div>
-              <div className="absolute bottom-0 left-0 w-16 h-16 bg-emerald-400/10 rounded-full translate-y-8 -translate-x-8"></div>
-              <div className="relative z-10">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="w-14 h-14 bg-emerald-500/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                    <CheckCircle className="w-7 h-7 text-emerald-400" />
-                  </div>
-                  <div className="flex items-center space-x-1 text-emerald-400">
-                    <Target className="w-4 h-4" />
-                    <span className="text-sm font-bold">{stats.checkInRate}%</span>
-                  </div>
+            <div className="bg-[#2a2a2a] rounded-xl p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center">
+                  <CheckCircle className="w-6 h-6 text-green-500" />
                 </div>
-                <h3 className="text-4xl font-bold mb-2 text-emerald-400">{stats.checkedIn}</h3>
-                <p className="text-emerald-200 text-sm font-medium">Checked In</p>
+                <span className="text-green-500 text-sm font-semibold">{stats.checkInRate}%</span>
               </div>
+              <h3 className="text-2xl font-bold text-white mb-1">{stats.checkedIn}</h3>
+              <p className="text-gray-400 text-sm">Checked In</p>
             </div>
 
-            <div className="relative bg-gradient-to-br from-purple-500/10 to-purple-600/10 backdrop-blur-sm border border-purple-500/20 rounded-3xl p-6 text-white overflow-hidden group hover:scale-105 transition-all duration-300">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-purple-500/10 rounded-full -translate-y-12 translate-x-12"></div>
-              <div className="absolute bottom-0 left-0 w-16 h-16 bg-purple-400/10 rounded-full translate-y-8 -translate-x-8"></div>
-              <div className="relative z-10">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="w-14 h-14 bg-purple-500/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                    <DollarSign className="w-7 h-7 text-purple-400" />
-                  </div>
-                  <div className="flex items-center space-x-1 text-emerald-400">
-                    <Zap className="w-4 h-4" />
-                    <span className="text-sm font-bold">+8%</span>
-                  </div>
+            <div className="bg-[#2a2a2a] rounded-xl p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center">
+                  <DollarSign className="w-6 h-6 text-purple-500" />
                 </div>
-                <h3 className="text-4xl font-bold mb-2 text-purple-400">{formatCurrency(stats.totalRevenue)}</h3>
-                <p className="text-purple-200 text-sm font-medium">Total Revenue</p>
+                <span className="text-green-500 text-sm font-semibold">+8%</span>
               </div>
+              <h3 className="text-2xl font-bold text-white mb-1">{formatCurrency(stats.totalRevenue)}</h3>
+              <p className="text-gray-400 text-sm">Total Revenue</p>
             </div>
 
-            <div className="relative bg-gradient-to-br from-orange-500/10 to-orange-600/10 backdrop-blur-sm border border-orange-500/20 rounded-3xl p-6 text-white overflow-hidden group hover:scale-105 transition-all duration-300">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-orange-500/10 rounded-full -translate-y-12 translate-x-12"></div>
-              <div className="absolute bottom-0 left-0 w-16 h-16 bg-orange-400/10 rounded-full translate-y-8 -translate-x-8"></div>
-              <div className="relative z-10">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="w-14 h-14 bg-orange-500/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                    <Ticket className="w-7 h-7 text-orange-400" />
-                  </div>
-                  <div className="flex items-center space-x-1 text-emerald-400">
-                    <Award className="w-4 h-4" />
-                    <span className="text-sm font-bold">68%</span>
-                  </div>
+            <div className="bg-[#2a2a2a] rounded-xl p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 bg-orange-500/20 rounded-xl flex items-center justify-center">
+                  <Ticket className="w-6 h-6 text-orange-500" />
                 </div>
-                <h3 className="text-4xl font-bold mb-2 text-orange-400">{stats.ticketsSold}/{stats.totalCapacity}</h3>
-                <p className="text-orange-200 text-sm font-medium">Tickets Sold</p>
+                <span className="text-green-500 text-sm font-semibold">68%</span>
               </div>
+              <h3 className="text-2xl font-bold text-white mb-1">{stats.ticketsSold}/{stats.totalCapacity}</h3>
+              <p className="text-gray-400 text-sm">Tickets Sold</p>
             </div>
           </div>
 
-          {/* Enhanced Tabs */}
-          <div className="flex space-x-2 mb-8 bg-slate-800/50 backdrop-blur-sm border border-white/10 rounded-3xl p-2">
+          {/* Tabs */}
+          <div className="flex space-x-1 mb-8">
             {[
               { id: 'overview', label: 'Overview', icon: BarChart3 },
               { id: 'attendees', label: 'Attendees', icon: Users },
@@ -319,13 +264,13 @@ export const EventDashboard = (): JSX.Element => {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center space-x-2 px-6 py-4 rounded-2xl transition-all duration-300 font-medium ${
+                  className={`flex items-center space-x-2 px-6 py-3 rounded-lg transition-all duration-300 ${
                     activeTab === tab.id
-                      ? 'bg-gradient-to-r from-[#FC1924] to-red-600 text-white shadow-lg shadow-red-500/25 scale-105'
-                      : 'text-gray-400 hover:text-white hover:bg-white/10'
+                      ? 'bg-[#FC1924] text-white'
+                      : 'bg-[#2a2a2a] text-gray-400 hover:text-white hover:bg-[#3a3a3a]'
                   }`}
                 >
-                  <Icon className="w-5 h-5" />
+                  <Icon className="w-4 h-4" />
                   <span>{tab.label}</span>
                 </button>
               );
@@ -337,18 +282,13 @@ export const EventDashboard = (): JSX.Element => {
             {/* Overview Tab */}
             {activeTab === 'overview' && (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div className="bg-slate-800/50 backdrop-blur-sm border border-white/10 rounded-3xl p-8">
-                  <h3 className="text-2xl font-bold text-white mb-6 flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-[#FC1924]/20 rounded-xl flex items-center justify-center">
-                      <Activity className="w-5 h-5 text-[#FC1924]" />
-                    </div>
-                    <span>Real-time Activity</span>
-                  </h3>
+                <div className="bg-[#2a2a2a] rounded-xl p-6">
+                  <h3 className="text-xl font-bold text-white mb-4">Real-time Activity</h3>
                   <div className="space-y-4">
-                    <div className="flex items-center justify-between p-5 bg-slate-700/50 backdrop-blur-sm border border-white/10 rounded-2xl">
-                      <div className="flex items-center space-x-4">
-                        <div className="w-12 h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center">
-                          <CheckCircle className="w-6 h-6 text-emerald-400" />
+                    <div className="flex items-center justify-between p-4 bg-[#3a3a3a] rounded-lg">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 bg-green-500/20 rounded-lg flex items-center justify-center">
+                          <CheckCircle className="w-5 h-5 text-green-500" />
                         </div>
                         <div>
                           <p className="text-white font-semibold">New Check-in</p>
@@ -357,10 +297,10 @@ export const EventDashboard = (): JSX.Element => {
                       </div>
                       <span className="text-gray-500 text-sm">2 min ago</span>
                     </div>
-                    <div className="flex items-center justify-between p-5 bg-slate-700/50 backdrop-blur-sm border border-white/10 rounded-2xl">
-                      <div className="flex items-center space-x-4">
-                        <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center">
-                          <Ticket className="w-6 h-6 text-blue-400" />
+                    <div className="flex items-center justify-between p-4 bg-[#3a3a3a] rounded-lg">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                          <Ticket className="w-5 h-5 text-blue-500" />
                         </div>
                         <div>
                           <p className="text-white font-semibold">Ticket Purchased</p>
@@ -372,30 +312,25 @@ export const EventDashboard = (): JSX.Element => {
                   </div>
                 </div>
 
-                <div className="bg-slate-800/50 backdrop-blur-sm border border-white/10 rounded-3xl p-8">
-                  <h3 className="text-2xl font-bold text-white mb-6 flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-purple-600/20 rounded-xl flex items-center justify-center">
-                      <Target className="w-5 h-5 text-purple-400" />
-                    </div>
-                    <span>Performance Metrics</span>
-                  </h3>
-                  <div className="space-y-6">
-                    <div className="space-y-3">
+                <div className="bg-[#2a2a2a] rounded-xl p-6">
+                  <h3 className="text-xl font-bold text-white mb-4">Performance Metrics</h3>
+                  <div className="space-y-4">
+                    <div className="space-y-2">
                       <div className="flex items-center justify-between">
-                        <span className="text-gray-300 font-medium">Conversion Rate</span>
-                        <span className="text-emerald-400 font-bold text-lg">12.5%</span>
+                        <span className="text-gray-300">Conversion Rate</span>
+                        <span className="text-green-500 font-semibold">12.5%</span>
                       </div>
-                      <div className="w-full bg-slate-700 rounded-full h-3">
-                        <div className="bg-gradient-to-r from-emerald-500 to-teal-500 h-3 rounded-full shadow-lg shadow-emerald-500/25" style={{ width: '12.5%' }}></div>
+                      <div className="w-full bg-gray-700 rounded-full h-2">
+                        <div className="bg-green-500 h-2 rounded-full transition-all duration-300" style={{ width: '12.5%' }}></div>
                       </div>
                     </div>
-                    <div className="space-y-3">
+                    <div className="space-y-2">
                       <div className="flex items-center justify-between">
-                        <span className="text-gray-300 font-medium">Attendance Rate</span>
-                        <span className="text-blue-400 font-bold text-lg">84%</span>
+                        <span className="text-gray-300">Attendance Rate</span>
+                        <span className="text-blue-500 font-semibold">84%</span>
                       </div>
-                      <div className="w-full bg-slate-700 rounded-full h-3">
-                        <div className="bg-gradient-to-r from-blue-500 to-cyan-500 h-3 rounded-full shadow-lg shadow-blue-500/25" style={{ width: '84%' }}></div>
+                      <div className="w-full bg-gray-700 rounded-full h-2">
+                        <div className="bg-blue-500 h-2 rounded-full transition-all duration-300" style={{ width: '84%' }}></div>
                       </div>
                     </div>
                   </div>
@@ -405,29 +340,24 @@ export const EventDashboard = (): JSX.Element => {
 
             {/* Attendees Tab */}
             {activeTab === 'attendees' && (
-              <div className="bg-slate-800/50 backdrop-blur-sm border border-white/10 rounded-3xl p-8">
-                <div className="flex justify-between items-center mb-8">
-                  <h2 className="text-3xl font-bold text-white flex items-center space-x-3">
-                    <div className="w-12 h-12 bg-[#FC1924]/20 rounded-2xl flex items-center justify-center">
-                      <Users className="w-6 h-6 text-[#FC1924]" />
-                    </div>
-                    <span>Event Attendees</span>
-                  </h2>
+              <div className="bg-[#2a2a2a] rounded-xl p-6">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-2xl font-bold text-white">Attendees</h2>
                   <div className="flex items-center space-x-4">
                     <div className="relative">
-                      <Search className="w-5 h-5 absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                      <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                       <input
                         type="text"
                         placeholder="Search attendees..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="bg-slate-700/50 text-white pl-12 pr-4 py-3 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#FC1924] border border-white/10 backdrop-blur-sm"
+                        className="bg-[#3a3a3a] text-white pl-10 pr-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FC1924]"
                       />
                     </div>
                     <select
                       value={filterStatus}
                       onChange={(e) => setFilterStatus(e.target.value)}
-                      className="bg-slate-700/50 text-white px-4 py-3 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#FC1924] border border-white/10 backdrop-blur-sm"
+                      className="bg-[#3a3a3a] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FC1924]"
                     >
                       <option value="all">All Status</option>
                       <option value="checked-in">Checked In</option>
@@ -440,45 +370,38 @@ export const EventDashboard = (): JSX.Element => {
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className="border-b border-white/10">
-                        <th className="text-left py-4 px-6 text-gray-400 font-semibold">Attendee</th>
-                        <th className="text-left py-4 px-6 text-gray-400 font-semibold">Ticket Type</th>
-                        <th className="text-left py-4 px-6 text-gray-400 font-semibold">Amount</th>
-                        <th className="text-left py-4 px-6 text-gray-400 font-semibold">Status</th>
-                        <th className="text-left py-4 px-6 text-gray-400 font-semibold">Check-in Time</th>
-                        <th className="text-left py-4 px-6 text-gray-400 font-semibold">Actions</th>
+                      <tr className="border-b border-gray-700">
+                        <th className="text-left py-3 px-4 text-gray-400 font-medium">Name</th>
+                        <th className="text-left py-3 px-4 text-gray-400 font-medium">Email</th>
+                        <th className="text-left py-3 px-4 text-gray-400 font-medium">Ticket Type</th>
+                        <th className="text-left py-3 px-4 text-gray-400 font-medium">Amount</th>
+                        <th className="text-left py-3 px-4 text-gray-400 font-medium">Status</th>
+                        <th className="text-left py-3 px-4 text-gray-400 font-medium">Check-in Time</th>
+                        <th className="text-left py-3 px-4 text-gray-400 font-medium">Actions</th>
                       </tr>
                     </thead>
                     <tbody>
                       {filteredAttendees.map((attendee) => (
-                        <tr key={attendee.id} className="border-b border-white/5 hover:bg-white/5 transition-colors duration-200">
-                          <td className="py-4 px-6">
-                            <div>
-                              <p className="text-white font-semibold">{attendee.name}</p>
-                              <p className="text-gray-400 text-sm">{attendee.email}</p>
-                            </div>
-                          </td>
-                          <td className="py-4 px-6">
-                            <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-full text-sm font-medium">
-                              {attendee.ticketType}
-                            </span>
-                          </td>
-                          <td className="py-4 px-6 text-white font-bold">{formatCurrency(attendee.amount)}</td>
-                          <td className="py-4 px-6">
-                            <span className={`inline-flex items-center space-x-2 px-4 py-2 rounded-full text-xs font-medium ${getStatusColor(attendee.checkInStatus)}`}>
+                        <tr key={attendee.id} className="border-b border-gray-800 hover:bg-[#3a3a3a] transition-colors duration-200">
+                          <td className="py-3 px-4 text-white">{attendee.name}</td>
+                          <td className="py-3 px-4 text-gray-400">{attendee.email}</td>
+                          <td className="py-3 px-4 text-gray-400">{attendee.ticketType}</td>
+                          <td className="py-3 px-4 text-white">{formatCurrency(attendee.amount)}</td>
+                          <td className="py-3 px-4">
+                            <span className={`inline-flex items-center space-x-1 px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(attendee.checkInStatus)}`}>
                               {getStatusIcon(attendee.checkInStatus)}
                               <span>{attendee.checkInStatus.replace('-', ' ')}</span>
                             </span>
                           </td>
-                          <td className="py-4 px-6 text-gray-400">
+                          <td className="py-3 px-4 text-gray-400">
                             {attendee.checkInTime || '-'}
                           </td>
-                          <td className="py-4 px-6">
+                          <td className="py-3 px-4">
                             <div className="flex items-center space-x-2">
-                              <button className="text-blue-400 hover:text-blue-300 transition-colors duration-200 p-2 hover:bg-blue-500/10 rounded-xl">
+                              <button className="text-blue-500 hover:text-blue-400 transition-colors duration-200">
                                 <Eye className="w-4 h-4" />
                               </button>
-                              <button className="text-emerald-400 hover:text-emerald-300 transition-colors duration-200 p-2 hover:bg-emerald-500/10 rounded-xl">
+                              <button className="text-green-500 hover:text-green-400 transition-colors duration-200">
                                 <CheckCircle className="w-4 h-4" />
                               </button>
                             </div>
@@ -493,65 +416,56 @@ export const EventDashboard = (): JSX.Element => {
 
             {/* Tickets Tab */}
             {activeTab === 'tickets' && (
-              <div className="space-y-8">
+              <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {ticketTypes.map((ticket, index) => (
-                    <div key={ticket.name} className="bg-slate-800/50 backdrop-blur-sm border border-white/10 rounded-3xl p-8 hover:scale-105 transition-all duration-300">
-                      <div className="flex justify-between items-start mb-6">
-                        <h3 className="text-2xl font-bold text-white">{ticket.name}</h3>
-                        <span className="text-3xl font-bold text-emerald-400">{formatCurrency(ticket.price)}</span>
+                  {ticketTypes.map((ticket) => (
+                    <div key={ticket.name} className="bg-[#2a2a2a] rounded-xl p-6">
+                      <div className="flex justify-between items-start mb-4">
+                        <h3 className="text-xl font-bold text-white">{ticket.name}</h3>
+                        <span className="text-2xl font-bold text-green-500">{formatCurrency(ticket.price)}</span>
                       </div>
-                      <div className="space-y-4">
+                      <div className="space-y-3">
                         <div className="flex justify-between text-sm">
-                          <span className="text-gray-400 font-medium">Sold</span>
-                          <span className="text-white font-bold">{ticket.sold}/{ticket.total}</span>
+                          <span className="text-gray-400">Sold</span>
+                          <span className="text-white">{ticket.sold}/{ticket.total}</span>
                         </div>
-                        <div className="w-full bg-slate-700 rounded-full h-4">
+                        <div className="w-full bg-gray-700 rounded-full h-2">
                           <div 
-                            className={`h-4 rounded-full transition-all duration-500 ${
-                              index === 0 ? 'bg-gradient-to-r from-blue-500 to-cyan-500 shadow-lg shadow-blue-500/25' :
-                              index === 1 ? 'bg-gradient-to-r from-purple-500 to-pink-500 shadow-lg shadow-purple-500/25' :
-                              'bg-gradient-to-r from-emerald-500 to-teal-500 shadow-lg shadow-emerald-500/25'
-                            }`}
+                            className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-300"
                             style={{ width: `${(ticket.sold / ticket.total) * 100}%` }}
                           ></div>
                         </div>
                         <div className="flex justify-between text-sm">
-                          <span className="text-gray-400 font-medium">Revenue</span>
-                          <span className="text-emerald-400 font-bold">{formatCurrency(ticket.revenue)}</span>
+                          <span className="text-gray-400">Revenue</span>
+                          <span className="text-green-500 font-semibold">{formatCurrency(ticket.revenue)}</span>
                         </div>
                       </div>
                     </div>
                   ))}
                 </div>
 
-                <div className="bg-slate-800/50 backdrop-blur-sm border border-white/10 rounded-3xl p-8">
-                  <h3 className="text-2xl font-bold text-white mb-6 flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-[#FC1924]/20 rounded-xl flex items-center justify-center">
-                      <QrCode className="w-5 h-5 text-[#FC1924]" />
-                    </div>
-                    <span>QR Code Management</span>
-                  </h3>
+                <div className="bg-[#2a2a2a] rounded-xl p-6">
+                  <h3 className="text-xl font-bold text-white mb-4">QR Code Generator</h3>
                   <div className="flex items-center space-x-4">
                     <button 
                       onClick={() => setShowQRCode(!showQRCode)}
-                      className="flex items-center space-x-2 bg-gradient-to-r from-[#FC1924] to-red-600 hover:from-[#e01620] hover:to-red-700 text-white px-6 py-3 rounded-2xl font-medium transition-all duration-300 hover:scale-105 shadow-lg shadow-red-500/25"
+                      className="flex items-center space-x-2 bg-[#FC1924] hover:bg-[#e01620] text-white px-4 py-2 rounded-lg transition-all duration-300"
                     >
                       <QrCode className="w-4 h-4" />
                       <span>{showQRCode ? 'Hide' : 'Show'} QR Code</span>
                     </button>
-                    <button className="flex items-center space-x-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white px-6 py-3 rounded-2xl font-medium transition-all duration-300 hover:scale-105 shadow-lg shadow-emerald-500/25">
+                    <button className="flex items-center space-x-2 bg-[#3a3a3a] hover:bg-[#4a4a4a] text-white px-4 py-2 rounded-lg transition-all duration-300">
                       <Download className="w-4 h-4" />
                       <span>Download All</span>
                     </button>
                   </div>
                   
                   {showQRCode && (
-                    <div className="mt-8 p-8 bg-white rounded-3xl inline-block shadow-2xl">
-                      <div className="w-48 h-48 bg-gray-100 rounded-2xl flex items-center justify-center">
+                    <div className="mt-6 p-6 bg-white rounded-xl inline-block">
+                      <div className="w-48 h-48 bg-gray-100 rounded-lg flex items-center justify-center">
                         <QrCode className="w-32 h-32 text-gray-400" />
                       </div>
-                      <p className="text-center text-gray-600 mt-4 text-sm font-semibold">Event QR Code</p>
+                      <p className="text-center text-gray-600 mt-2 text-sm">Event QR Code</p>
                     </div>
                   )}
                 </div>
@@ -560,41 +474,27 @@ export const EventDashboard = (): JSX.Element => {
 
             {/* Analytics Tab */}
             {activeTab === 'analytics' && (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div className="bg-slate-800/50 backdrop-blur-sm border border-white/10 rounded-3xl p-8">
-                  <h3 className="text-2xl font-bold text-white mb-6 flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-blue-600/20 rounded-xl flex items-center justify-center">
-                      <BarChart3 className="w-5 h-5 text-blue-400" />
-                    </div>
-                    <span>Ticket Sales Over Time</span>
-                  </h3>
-                  <div className="h-64 bg-slate-700/50 rounded-2xl flex items-center justify-center border border-white/10">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="bg-[#2a2a2a] rounded-xl p-6">
+                  <h3 className="text-xl font-bold text-white mb-4">Ticket Sales Over Time</h3>
+                  <div className="h-64 bg-[#3a3a3a] rounded-lg flex items-center justify-center">
                     <div className="text-center text-gray-400">
                       <BarChart3 className="w-16 h-16 mx-auto mb-4" />
-                      <p className="font-medium">Chart visualization would go here</p>
+                      <p>Chart visualization would go here</p>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-slate-800/50 backdrop-blur-sm border border-white/10 rounded-3xl p-8">
-                  <h3 className="text-2xl font-bold text-white mb-6 flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-emerald-600/20 rounded-xl flex items-center justify-center">
-                      <DollarSign className="w-5 h-5 text-emerald-400" />
-                    </div>
-                    <span>Revenue Breakdown</span>
-                  </h3>
+                <div className="bg-[#2a2a2a] rounded-xl p-6">
+                  <h3 className="text-xl font-bold text-white mb-4">Revenue Breakdown</h3>
                   <div className="space-y-4">
-                    {ticketTypes.map((ticket, index) => (
-                      <div key={ticket.name} className="flex items-center justify-between p-5 bg-slate-700/50 rounded-2xl border border-white/10">
-                        <div className="flex items-center space-x-4">
-                          <div className={`w-4 h-4 rounded ${
-                            index === 0 ? 'bg-blue-500' : 
-                            index === 1 ? 'bg-purple-500' : 
-                            'bg-emerald-500'
-                          }`}></div>
-                          <span className="text-white font-semibold">{ticket.name}</span>
+                    {ticketTypes.map((ticket) => (
+                      <div key={ticket.name} className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-4 h-4 bg-blue-500 rounded"></div>
+                          <span className="text-white">{ticket.name}</span>
                         </div>
-                        <span className="text-emerald-400 font-bold">{formatCurrency(ticket.revenue)}</span>
+                        <span className="text-green-500 font-semibold">{formatCurrency(ticket.revenue)}</span>
                       </div>
                     ))}
                   </div>
@@ -604,17 +504,12 @@ export const EventDashboard = (): JSX.Element => {
 
             {/* Settings Tab */}
             {activeTab === 'settings' && (
-              <div className="bg-slate-800/50 backdrop-blur-sm border border-white/10 rounded-3xl p-8">
-                <h3 className="text-2xl font-bold text-white mb-8 flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-gray-600/20 rounded-xl flex items-center justify-center">
-                    <Settings className="w-5 h-5 text-gray-400" />
-                  </div>
-                  <span>Event Settings</span>
-                </h3>
-                <div className="space-y-8">
+              <div className="bg-[#2a2a2a] rounded-xl p-6">
+                <h3 className="text-xl font-bold text-white mb-6">Event Settings</h3>
+                <div className="space-y-6">
                   <div>
-                    <label className="block text-white text-sm font-semibold mb-3">Event Status</label>
-                    <select className="w-full bg-slate-700/50 text-white px-4 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#FC1924] border border-white/10 backdrop-blur-sm">
+                    <label className="block text-white text-sm font-medium mb-2">Event Status</label>
+                    <select className="w-full bg-[#3a3a3a] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FC1924]">
                       <option value="active">Active</option>
                       <option value="paused">Paused</option>
                       <option value="cancelled">Cancelled</option>
@@ -622,24 +517,24 @@ export const EventDashboard = (): JSX.Element => {
                   </div>
                   
                   <div>
-                    <label className="block text-white text-sm font-semibold mb-4">Notifications</label>
-                    <div className="space-y-4">
-                      <label className="flex items-center space-x-3">
-                        <input type="checkbox" className="rounded w-5 h-5" />
-                        <span className="text-gray-300 font-medium">Email notifications for new sales</span>
+                    <label className="block text-white text-sm font-medium mb-2">Notifications</label>
+                    <div className="space-y-2">
+                      <label className="flex items-center space-x-2">
+                        <input type="checkbox" className="rounded" />
+                        <span className="text-gray-300">Email notifications for new sales</span>
                       </label>
-                      <label className="flex items-center space-x-3">
-                        <input type="checkbox" className="rounded w-5 h-5" />
-                        <span className="text-gray-300 font-medium">Push notifications for check-ins</span>
+                      <label className="flex items-center space-x-2">
+                        <input type="checkbox" className="rounded" />
+                        <span className="text-gray-300">Push notifications for check-ins</span>
                       </label>
                     </div>
                   </div>
 
                   <div className="flex space-x-4">
-                    <button className="bg-gradient-to-r from-[#FC1924] to-red-600 hover:from-[#e01620] hover:to-red-700 text-white px-8 py-4 rounded-2xl font-semibold transition-all duration-300 hover:scale-105 shadow-lg shadow-red-500/25">
+                    <button className="bg-[#FC1924] hover:bg-[#e01620] text-white px-6 py-2 rounded-lg transition-all duration-300">
                       Save Changes
                     </button>
-                    <button className="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white px-8 py-4 rounded-2xl font-semibold transition-all duration-300 hover:scale-105 shadow-lg">
+                    <button className="bg-[#3a3a3a] hover:bg-[#4a4a4a] text-white px-6 py-2 rounded-lg transition-all duration-300">
                       Cancel
                     </button>
                   </div>
