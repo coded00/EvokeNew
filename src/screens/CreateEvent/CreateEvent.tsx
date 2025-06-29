@@ -152,7 +152,7 @@ export const CreateEvent = (): JSX.Element | null => {
             
             <div className="space-y-4">
               <button 
-                onClick={() => navigate('/home')}
+                onClick={() => navigate(`/event-dashboard/1`)}
                 className="w-full bg-[#FC1924] hover:bg-[#e01620] text-white py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105"
               >
                 Event Management

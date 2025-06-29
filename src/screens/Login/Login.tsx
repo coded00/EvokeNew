@@ -93,8 +93,27 @@ export const Login = (): JSX.Element => {
   return (
     <div className="bg-[#111111] flex flex-row justify-center w-full h-screen overflow-hidden">
       <div className="bg-[#111111] w-full h-full relative flex">
-        {/* Left Side - Form */}
-        <div className="flex-1 flex items-center justify-center p-8">
+        {/* Left Side - Image */}
+        <div className="w-1/2 relative overflow-hidden">
+          <div 
+            className="w-full h-full bg-cover bg-center"
+            style={{ 
+              backgroundImage: `url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjgwMCIgdmlld0JveD0iMCAwIDYwMCA4MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iODAwIiBmaWxsPSIjRkMxOTI0Ii8+CjxjaXJjbGUgY3g9IjE1MCIgY3k9IjIwMCIgcj0iNDAiIGZpbGw9IiMyMzIzNDUiLz4KPGNpcmNsZSBjeD0iNDUwIiBjeT0iMzAwIiByPSI1MCIgZmlsbD0iIzIzMjM0NSIvPgo8Y2lyY2xlIGN4PSIzMDAiIGN5PSI1MDAiIHI9IjYwIiBmaWxsPSIjMjMyMzQ1Ii8+CjxjaXJjbGUgY3g9IjEwMCIgY3k9IjYwMCIgcj0iMzUiIGZpbGw9IiMyMzIzNDUiLz4KPGNpcmNsZSBjeD0iNTAwIiBjeT0iNjUwIiByPSI0NSIgZmlsbD0iIzIzMjM0NSIvPgo8cG9seWdvbiBwb2ludHM9IjIwMCwxMDAgMjUwLDUwIDMwMCwxMDAgMjUwLDE1MCIgZmlsbD0iIzIzMjM0NSIvPgo8cG9seWdvbiBwb2ludHM9IjQwMCw0MDAgNDUwLDM1MCA1MDAsNDAwIDQ1MCw0NTAiIGZpbGw9IiMyMzIzNDUiLz4KPHBvbHlnb24gcG9pbnRzPSIxMDAsNDAwIDE1MCwzNTAgMjAwLDQwMCAxNTAsNDUwIiBmaWxsPSIjMjMyMzQ1Ii8+Cjwvc3ZnPgo=)` 
+            }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-[#FC1924]/90 to-[#FC1924]/70"></div>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="text-center text-white animate-fade-in">
+                <div className="text-8xl mb-6 animate-bounce">🎉</div>
+                <h2 className="text-4xl font-bold mb-4">Welcome Back!</h2>
+                <p className="text-xl opacity-90 max-w-md">Ready to discover amazing events and connect with your community</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Side - Form */}
+        <div className="w-1/2 flex items-center justify-center p-8">
           <Card className="bg-transparent border-none shadow-none">
             <CardContent className="p-0 w-[404px]">
               <div className="mb-14">
@@ -212,26 +231,7 @@ export const Login = (): JSX.Element => {
             </CardContent>
           </Card>
         </div>
-
-        {/* Right Side - Image */}
-        <div className="flex-1 relative overflow-hidden">
-          <div 
-            className="w-full h-full bg-cover bg-center"
-            style={{ 
-              backgroundImage: `url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjgwMCIgdmlld0JveD0iMCAwIDYwMCA4MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iODAwIiBmaWxsPSIjRkMxOTI0Ii8+CjxjaXJjbGUgY3g9IjE1MCIgY3k9IjIwMCIgcj0iNDAiIGZpbGw9IiMyMzIzNDUiLz4KPGNpcmNsZSBjeD0iNDUwIiBjeT0iMzAwIiByPSI1MCIgZmlsbD0iIzIzMjM0NSIvPgo8Y2lyY2xlIGN4PSIzMDAiIGN5PSI1MDAiIHI9IjYwIiBmaWxsPSIjMjMyMzQ1Ii8+CjxjaXJjbGUgY3g9IjEwMCIgY3k9IjYwMCIgcj0iMzUiIGZpbGw9IiMyMzIzNDUiLz4KPGNpcmNsZSBjeD0iNTAwIiBjeT0iNjUwIiByPSI0NSIgZmlsbD0iIzIzMjM0NSIvPgo8cG9seWdvbiBwb2ludHM9IjIwMCwxMDAgMjUwLDUwIDMwMCwxMDAgMjUwLDE1MCIgZmlsbD0iIzIzMjM0NSIvPgo8cG9seWdvbiBwb2ludHM9IjQwMCw0MDAgNDUwLDM1MCA1MDAsNDAwIDQ1MCw0NTAiIGZpbGw9IiMyMzIzNDUiLz4KPHBvbHlnb24gcG9pbnRzPSIxMDAsNDAwIDE1MCwzNTAgMjAwLDQwMCAxNTAsNDUwIiBmaWxsPSIjMjMyMzQ1Ii8+Cjwvc3ZnPgo=)` 
-            }}
-          >
-            <div className="absolute inset-0 bg-gradient-to-br from-[#FC1924]/90 to-[#FC1924]/70"></div>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center text-white animate-fade-in">
-                <div className="text-8xl mb-6 animate-bounce">🎉</div>
-                <h2 className="text-4xl font-bold mb-4">Welcome Back!</h2>
-                <p className="text-xl opacity-90 max-w-md">Ready to discover amazing events and connect with your community</p>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );
-}; 
+};

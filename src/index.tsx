@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import SEO from './components/SEO';
@@ -40,7 +40,9 @@ ReactDOM.createRoot(document.getElementById('app')!).render(
         <Router>
           <Suspense fallback={<RouteLoading />}>
             <Routes>
-              <Route path="/" element={<Home />} />
+              <Route path="/" element={<Navigate to="/login" replace />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<SignUp />} />
               <Route path="/home" element={<Home />} />
               <Route path="/create-vibe" element={<CreateVibe />} />
               <Route path="/create-event" element={<CreateEvent />} />
@@ -49,8 +51,6 @@ ReactDOM.createRoot(document.getElementById('app')!).render(
               <Route path="/ticket-success" element={<TicketSuccess />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/my-tickets" element={<MyTickets />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<SignUp />} />
               <Route path="/ticket-scanner" element={<TicketScanner />} />
               <Route path="/support" element={<Support />} />
               <Route path="/discovery" element={<Discovery />} />
