@@ -1,6 +1,6 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { MessageCircle, Gamepad2, Globe, User, HelpCircle } from 'lucide-react';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { MessageCircle, Gamepad2, Globe, User, HelpCircle } from "lucide-react";
 
 interface SidebarProps {
   currentPath: string;
@@ -9,73 +9,92 @@ interface SidebarProps {
 export const Sidebar: React.FC<SidebarProps> = ({ currentPath }) => {
   const navigate = useNavigate();
 
-  const menuItems = [
-    { icon: MessageCircle, path: '/messages', label: 'Messages' },
-    { icon: Gamepad2, path: '/games', label: 'Games' },
-    { icon: Globe, path: '/discovery', label: 'Discovery' },
-    { icon: User, path: '/profile', label: 'Profile' }
-  ];
+  const handleLogoClick = () => {
+    navigate('/home');
+  };
 
   const handleNavigation = (path: string) => {
     navigate(path);
   };
 
+  const isActive = (path: string) => {
+    return currentPath === path;
+  };
+
   return (
-    <div className="fixed left-0 top-0 h-full w-20 bg-white border-r border-gray-200 flex flex-col items-center py-6 z-40">
+    <div className="fixed left-0 top-0 h-full w-20 bg-white shadow-lg z-40 flex flex-col items-center py-6">
       {/* Logo */}
       <div className="mb-8">
-        <img 
-          src="/src/assets/icons/Evoke - Icon 1 (1).png" 
-          alt="EVOKE Logo" 
-          className="w-14 h-14 object-contain drop-shadow-sm"
-        />
+        <button 
+          onClick={handleLogoClick}
+          className="w-14 h-14 flex items-center justify-center transition-all duration-300 hover:scale-105"
+        >
+          <img 
+            src="/src/assets/icons/Evoke - Icon 1 (1).png" 
+            alt="EVOKE Logo" 
+            className="w-full h-full object-contain drop-shadow-md"
+          />
+        </button>
       </div>
 
       {/* Navigation Icons */}
-      <div className="flex flex-col space-y-6 flex-1">
-        {menuItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = currentPath === item.path;
-          
-          return (
-            <button
-              key={item.path}
-              onClick={() => handleNavigation(item.path)}
-              className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 group relative ${
-                isActive 
-                  ? 'bg-[#FC1924] text-white shadow-lg' 
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-800'
-              }`}
-              title={item.label}
-            >
-              <Icon className="w-6 h-6" />
-              
-              {/* Tooltip */}
-              <div className="absolute left-16 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-50">
-                {item.label}
-              </div>
-            </button>
-          );
-        })}
+      <div className="flex flex-col space-y-6">
+        <button
+          onClick={() => handleNavigation('/messages')}
+          className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 ${
+            isActive('/messages') 
+              ? 'bg-[#FC1924] text-white shadow-lg' 
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+          }`}
+        >
+          <MessageCircle className="w-6 h-6" />
+        </button>
+
+        <button
+          onClick={() => handleNavigation('/games')}
+          className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 ${
+            isActive('/games') 
+              ? 'bg-[#FC1924] text-white shadow-lg' 
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+          }`}
+        >
+          <Gamepad2 className="w-6 h-6" />
+        </button>
+
+        <button
+          onClick={() => handleNavigation('/discovery')}
+          className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 ${
+            isActive('/discovery') 
+              ? 'bg-[#FC1924] text-white shadow-lg' 
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+          }`}
+        >
+          <Globe className="w-6 h-6" />
+        </button>
+
+        <button
+          onClick={() => handleNavigation('/profile')}
+          className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 ${
+            isActive('/profile') 
+              ? 'bg-[#FC1924] text-white shadow-lg' 
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+          }`}
+        >
+          <User className="w-6 h-6" />
+        </button>
       </div>
 
       {/* Support Icon at Bottom */}
       <div className="mt-auto mb-8">
         <button
           onClick={() => handleNavigation('/support')}
-          className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 group relative ${
-            currentPath === '/support'
+          className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 ${
+            isActive('/support') 
               ? 'bg-[#FC1924] text-white shadow-lg' 
-              : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-800'
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
           }`}
-          title="Support"
         >
           <HelpCircle className="w-6 h-6" />
-          
-          {/* Tooltip */}
-          <div className="absolute left-16 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-50">
-            Support
-          </div>
         </button>
       </div>
     </div>

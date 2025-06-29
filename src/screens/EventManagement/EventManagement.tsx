@@ -508,21 +508,29 @@ export const EventManagement = (): JSX.Element => {
           </div>
 
           {/* Action Buttons */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
             <button 
               onClick={handleScanTickets}
               className="bg-[#FC1924] hover:bg-[#e01620] text-white py-4 rounded-lg font-semibold transition-all duration-300 hover:scale-105 flex items-center justify-center space-x-2"
             >
               <Scan className="w-5 h-5" />
-              <span>Scan Ticket QR Codes</span>
+              <span>Scan QR Codes</span>
             </button>
             
             <button 
               onClick={handlePromoteEvent}
               className="bg-[#FC1924] hover:bg-[#e01620] text-white py-4 rounded-lg font-semibold transition-all duration-300 hover:scale-105 flex items-center justify-center space-x-2"
             >
-              <Share className="w-5 h-5" />
+              <TrendingUp className="w-5 h-5" />
               <span>Promote Event</span>
+            </button>
+
+            <button 
+              onClick={() => navigate(`/event-dashboard/${eventId}`)}
+              className="bg-[#FC1924] hover:bg-[#e01620] text-white py-4 rounded-lg font-semibold transition-all duration-300 hover:scale-105 flex items-center justify-center space-x-2"
+            >
+              <BarChart3 className="w-5 h-5" />
+              <span>View Analytics</span>
             </button>
           </div>
 
