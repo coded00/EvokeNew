@@ -1,110 +1,86 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import { MessageCircle, Gamepad2, Globe, User, HelpCircle } from "lucide-react";
+import React from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { 
+  Home, 
+  Calendar, 
+  Search, 
+  Plus, 
+  MessageCircle, 
+  Gamepad2, 
+  Globe, 
+  User, 
+  HelpCircle,
+  Ticket
+} from 'lucide-react';
 
 interface SidebarProps {
-  currentPath: string;
+  currentPath?: string;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ currentPath }) => {
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const getIconClass = (path: string) => {
-    const isActive = currentPath === path;
-    return `w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg ${
-      isActive 
-        ? getActiveClass(path)
-        : 'bg-gray-100 hover:bg-gray-200'
-    }`;
+  const menuItems = [
+    { icon: Home, path: '/home', label: 'Home' },
+    { icon: Calendar, path: '/calendar', label: 'Calendar' },
+    { icon: Search, path: '/discovery', label: 'Discovery' },
+    { icon: Plus, path: '/create-vibe', label: 'Create' },
+    { icon: MessageCircle, path: '/messages', label: 'Messages' },
+    { icon: Gamepad2, path: '/games', label: 'Games' },
+    { icon: Ticket, path: '/my-tickets', label: 'My Tickets' },
+    { icon: User, path: '/profile', label: 'Profile' },
+    { icon: HelpCircle, path: '/support', label: 'Support' }
+  ];
+
+  const isActive = (path: string) => {
+    return location.pathname === path || currentPath === path;
   };
 
-  const getActiveClass = (path: string) => {
-    switch (path) {
-      case '/messages': return 'bg-pink-100';
-      case '/games': return 'bg-purple-100';
-      case '/discovery': return 'bg-blue-100';
-      case '/profile': return 'bg-orange-100';
-      case '/support': return 'bg-yellow-100';
-      case '/calendar': return 'bg-green-100';
-      default: return 'bg-gray-100';
-    }
-  };
-
-  const getIconColor = (path: string) => {
-    const isActive = currentPath === path;
-    if (isActive) {
-      switch (path) {
-        case '/messages': return 'text-pink-600';
-        case '/games': return 'text-purple-600';
-        case '/discovery': return 'text-blue-600';
-        case '/profile': return 'text-orange-600';
-        case '/support': return 'text-yellow-600';
-        case '/calendar': return 'text-green-600';
-        default: return 'text-gray-600';
-      }
-    }
-    return 'text-gray-600 group-hover:text-gray-800';
+  const handleNavigation = (path: string) => {
+    navigate(path);
   };
 
   return (
-    <div className="fixed left-0 top-0 h-full w-20 bg-white flex flex-col items-center py-6 space-y-8 z-10 shadow-lg">
-      {/* EVOKE Logo with subtle animation */}
-      <div 
-        className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center transform hover:scale-110 transition-all duration-300 cursor-pointer animate-pulse-subtle"
-        onClick={() => navigate('/home')}
-      >
-        <div className="w-8 h-8 bg-white rounded-lg animate-float"></div>
-      </div>
-
-      <div className="flex flex-col space-y-6">
-        <div 
-          className="relative group cursor-pointer"
-          onClick={() => navigate('/messages')}
-        >
-          <div className={getIconClass('/messages')}>
-            <MessageCircle className={`w-6 h-6 ${getIconColor('/messages')}`} />
-          </div>
-          <div className="absolute -top-1 -right-1 w-5 h-5 bg-[#FC1924] rounded-full flex items-center justify-center animate-pulse">
-            <span className="text-xs text-white font-bold">2</span>
-          </div>
-        </div>
-
-        <div 
-          className="group cursor-pointer"
-          onClick={() => navigate('/games')}
-        >
-          <div className={getIconClass('/games')}>
-            <Gamepad2 className={`w-6 h-6 ${getIconColor('/games')}`} />
-          </div>
-        </div>
-
-        <div 
-          className="group cursor-pointer"
-          onClick={() => navigate('/discovery')}
-        >
-          <div className={getIconClass('/discovery')}>
-            <Globe className={`w-6 h-6 ${getIconColor('/discovery')}`} />
-          </div>
-        </div>
-
-        <div 
-          className="group cursor-pointer"
-          onClick={() => navigate('/profile')}
-        >
-          <div className={getIconClass('/profile')}>
-            <User className={`w-6 h-6 ${getIconColor('/profile')}`} />
-          </div>
-        </div>
-
-        <div 
-          className="group cursor-pointer"
-          onClick={() => navigate('/support')}
-        >
-          <div className={getIconClass('/support')}>
-            <HelpCircle className={`w-6 h-6 ${getIconColor('/support')}`} />
-          </div>
+    <div className="fixed left-0 top-0 h-full w-20 bg-[#2a2a2a] flex flex-col items-center py-6 z-40">
+      {/* Logo */}
+      <div className="mb-8 flex items-center justify-center">
+        <div className="w-12 h-12 flex items-center justify-center animate-logo-spin">
+          <img 
+            src="/src/assets/icons/Evoke - Icon 1 (1) copy.png" 
+            alt="EVOKE" 
+            className="w-10 h-10 object-contain filter brightness-0 invert"
+          />
         </div>
       </div>
+
+      {/* Navigation Items */}
+      <nav className="flex-1 flex flex-col space-y-4">
+        {menuItems.map((item) => {
+          const Icon = item.icon;
+          const active = isActive(item.path);
+          
+          return (
+            <button
+              key={item.path}
+              onClick={() => handleNavigation(item.path)}
+              className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 group relative ${
+                active 
+                  ? 'bg-[#FC1924] text-white shadow-lg' 
+                  : 'text-gray-400 hover:text-white hover:bg-[#3a3a3a]'
+              }`}
+              title={item.label}
+            >
+              <Icon className="w-6 h-6" />
+              
+              {/* Tooltip */}
+              <div className="absolute left-16 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
+                {item.label}
+              </div>
+            </button>
+          );
+        })}
+      </nav>
     </div>
   );
 };
