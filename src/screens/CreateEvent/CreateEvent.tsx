@@ -18,10 +18,14 @@ interface EventData {
   specialAppearances: string;
   promoCode: string;
   entryType: string;
-  ticketName: string;
-  ticketType: string;
   currency: string;
-  numberOfTickets: string;
+  ticketTypes: Array<{
+    name: string;
+    type: string;
+    price: number;
+    description: string;
+    quantity: number;
+  }>;
   teamMembers: Array<{ name: string; responsibility: string }>;
 }
 
@@ -45,10 +49,8 @@ export const CreateEvent = (): JSX.Element | null => {
     specialAppearances: "",
     promoCode: "",
     entryType: "",
-    ticketName: "",
-    ticketType: "",
     currency: "NGN",
-    numberOfTickets: "",
+    ticketTypes: [],
     teamMembers: []
   });
 
@@ -60,7 +62,7 @@ export const CreateEvent = (): JSX.Element | null => {
     navigate('/home');
   };
 
-  const handleInputChange = (field: keyof EventData, value: string) => {
+  const handleInputChange = (field: keyof EventData, value: string | number) => {
     setEventData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -88,6 +90,35 @@ export const CreateEvent = (): JSX.Element | null => {
     setEventData(prev => ({
       ...prev,
       teamMembers: prev.teamMembers.filter((_, i) => i !== index)
+    }));
+  };
+
+  const addTicketType = () => {
+    setEventData(prev => ({
+      ...prev,
+      ticketTypes: [...prev.ticketTypes, {
+        name: "",
+        type: "",
+        price: 0,
+        description: "",
+        quantity: 0
+      }]
+    }));
+  };
+
+  const updateTicketType = (index: number, field: keyof EventData['ticketTypes'][0], value: string | number) => {
+    setEventData(prev => ({
+      ...prev,
+      ticketTypes: prev.ticketTypes.map((ticket, i) => 
+        i === index ? { ...ticket, [field]: value } : ticket
+      )
+    }));
+  };
+
+  const removeTicketType = (index: number) => {
+    setEventData(prev => ({
+      ...prev,
+      ticketTypes: prev.ticketTypes.filter((_, i) => i !== index)
     }));
   };
 
@@ -482,30 +513,103 @@ export const CreateEvent = (): JSX.Element | null => {
               </div>
 
               <div>
-                <label className="block text-white text-sm font-medium mb-2">Name ticket</label>
-                <input
-                  type="text"
-                  value={eventData.ticketName}
-                  onChange={(e) => handleInputChange('ticketName', e.target.value)}
-                  className="w-full bg-[#2a2a2a] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#FC1924] transition-all duration-200"
-                  placeholder="Enter ticket name"
-                />
-              </div>
-
-              <div>
-                <label className="block text-white text-sm font-medium mb-2">Ticket type (S)</label>
-                <div className="relative">
-                  <select
-                    value={eventData.ticketType}
-                    onChange={(e) => handleInputChange('ticketType', e.target.value)}
-                    className="w-full bg-[#2a2a2a] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#FC1924] transition-all duration-200 appearance-none"
-                  >
-                    <option value="">Select ticket type</option>
-                    {ticketTypes.map(type => (
-                      <option key={type} value={type}>{type}</option>
-                    ))}
-                  </select>
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 bg-[#FC1924] rounded"></div>
+                <h3 className="text-xl font-bold text-white mb-4">Ticket Types</h3>
+                <p className="text-gray-400 text-sm mb-4">Add different ticket types with pricing</p>
+                
+                <div className="space-y-4">
+                  {eventData.ticketTypes.map((ticket, index) => (
+                    <div key={index} className="bg-[#3a3a3a] rounded-lg p-4 border border-gray-600">
+                      <div className="flex justify-between items-center mb-3">
+                        <h4 className="text-lg font-semibold text-white">Ticket Type {index + 1}</h4>
+                        <button 
+                          onClick={() => removeTicketType(index)}
+                          className="text-red-400 hover:text-red-300 transition-colors"
+                        >
+                          <X className="w-5 h-5" />
+                        </button>
+                      </div>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-white text-sm font-medium mb-2">Ticket Name</label>
+                          <input
+                            type="text"
+                            value={ticket.name}
+                            onChange={(e) => updateTicketType(index, 'name', e.target.value)}
+                            className="w-full bg-[#2a2a2a] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#FC1924] transition-all duration-200"
+                            placeholder="e.g., Early Bird, VIP"
+                          />
+                        </div>
+                        
+                        <div>
+                          <label className="block text-white text-sm font-medium mb-2">Ticket Type</label>
+                          <select
+                            value={ticket.type}
+                            onChange={(e) => updateTicketType(index, 'type', e.target.value)}
+                            className="w-full bg-[#2a2a2a] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#FC1924] transition-all duration-200 appearance-none"
+                          >
+                            <option value="">Select type</option>
+                            {ticketTypes.map(type => (
+                              <option key={type} value={type}>{type}</option>
+                            ))}
+                          </select>
+                        </div>
+                        
+                        <div>
+                          <label className="block text-white text-sm font-medium mb-2">Price ({eventData.currency})</label>
+                          <input
+                            type="number"
+                            value={ticket.price}
+                            onChange={(e) => updateTicketType(index, 'price', parseFloat(e.target.value) || 0)}
+                            className="w-full bg-[#2a2a2a] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#FC1924] transition-all duration-200"
+                            placeholder="0"
+                            min="0"
+                          />
+                        </div>
+                        
+                        <div>
+                          <label className="block text-white text-sm font-medium mb-2">Quantity</label>
+                          <input
+                            type="number"
+                            value={ticket.quantity}
+                            onChange={(e) => updateTicketType(index, 'quantity', parseInt(e.target.value) || 0)}
+                            className="w-full bg-[#2a2a2a] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#FC1924] transition-all duration-200"
+                            placeholder="0"
+                            min="0"
+                          />
+                        </div>
+                      </div>
+                      
+                      <div className="mt-4">
+                        <label className="block text-white text-sm font-medium mb-2">Description</label>
+                        <textarea
+                          value={ticket.description}
+                          onChange={(e) => updateTicketType(index, 'description', e.target.value)}
+                          className="w-full bg-[#2a2a2a] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#FC1924] transition-all duration-200"
+                          placeholder="Describe what's included with this ticket type"
+                          rows={2}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                  
+                  {eventData.ticketTypes.length === 0 && (
+                    <button 
+                      onClick={addTicketType}
+                      className="w-full bg-[#3a3a3a] hover:bg-[#4a4a4a] text-white py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105 border-2 border-dashed border-gray-600"
+                    >
+                      + Add Ticket Type
+                    </button>
+                  )}
+                  
+                  {eventData.ticketTypes.length > 0 && (
+                    <button 
+                      onClick={addTicketType}
+                      className="w-full bg-[#FC1924] hover:bg-[#e01620] text-white py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105"
+                    >
+                      + Add Another Ticket Type
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -526,13 +630,13 @@ export const CreateEvent = (): JSX.Element | null => {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-white text-sm font-medium mb-2">Number of tickets</label>
+                  <label className="block text-white text-sm font-medium mb-2">Total Tickets</label>
                   <input
                     type="number"
-                    value={eventData.numberOfTickets}
-                    onChange={(e) => handleInputChange('numberOfTickets', e.target.value)}
-                    className="w-full bg-[#2a2a2a] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#FC1924] transition-all duration-200"
+                    value={eventData.ticketTypes.reduce((sum, ticket) => sum + ticket.quantity, 0)}
+                    className="w-full bg-[#2a2a2a] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none transition-all duration-200"
                     placeholder="0"
+                    disabled
                   />
                 </div>
               </div>
@@ -670,20 +774,16 @@ export const CreateEvent = (): JSX.Element | null => {
                       <p className="text-white text-sm">{eventData.specialAppearances || "None"}</p>
                     </div>
                     <div>
-                      <span className="text-gray-400 text-sm">Ticket Type</span>
-                      <p className="text-white text-sm">{eventData.ticketType || "Not set"}</p>
-                    </div>
-                    <div>
-                      <span className="text-gray-400 text-sm">Ticket Name</span>
-                      <p className="text-white text-sm">{eventData.ticketName || "Not set"}</p>
+                      <span className="text-gray-400 text-sm">Entry Type</span>
+                      <p className="text-white text-sm">{eventData.entryType || "Not set"}</p>
                     </div>
                     <div>
                       <span className="text-gray-400 text-sm">Currency</span>
                       <p className="text-white text-sm">{eventData.currency}</p>
                     </div>
                     <div>
-                      <span className="text-gray-400 text-sm">Number of Ticket</span>
-                      <p className="text-white text-sm">{eventData.numberOfTickets || "0"}</p>
+                      <span className="text-gray-400 text-sm">Total Tickets</span>
+                      <p className="text-white text-sm">{eventData.ticketTypes.reduce((sum, ticket) => sum + ticket.quantity, 0)}</p>
                     </div>
                   </div>
                 </div>
@@ -708,6 +808,32 @@ export const CreateEvent = (): JSX.Element | null => {
                   )}
                 </div>
               </div>
+
+              {/* Ticket Types Summary */}
+              {eventData.ticketTypes.length > 0 && (
+                <div className="bg-[#2a2a2a] rounded-lg p-4">
+                  <span className="text-gray-400 text-sm">Ticket Types</span>
+                  <div className="mt-3 space-y-3">
+                    {eventData.ticketTypes.map((ticket, index) => (
+                      <div key={index} className="bg-[#3a3a3a] rounded-lg p-3">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <p className="text-white font-semibold">{ticket.name || `Ticket ${index + 1}`}</p>
+                            <p className="text-gray-400 text-sm">{ticket.type}</p>
+                            {ticket.description && (
+                              <p className="text-gray-400 text-xs mt-1">{ticket.description}</p>
+                            )}
+                          </div>
+                          <div className="text-right">
+                            <p className="text-[#FC1924] font-bold">{eventData.currency} {ticket.price.toLocaleString()}</p>
+                            <p className="text-gray-400 text-sm">{ticket.quantity} tickets</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Event Poster Preview */}
               <div className="bg-[#2a2a2a] rounded-lg p-4 flex justify-center">
