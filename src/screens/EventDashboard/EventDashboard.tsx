@@ -157,9 +157,12 @@ export const EventDashboard = (): JSX.Element => {
             </div>
 
             <div className="flex items-center space-x-4">
-              <button className="flex items-center space-x-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-all duration-300">
+              <button 
+                onClick={() => navigate('/ticket-scanner')}
+                className="flex items-center space-x-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-all duration-300"
+              >
                 <QrCode className="w-4 h-4" />
-                <span>Generate QR</span>
+                <span>Scan QR</span>
               </button>
               <button className="flex items-center space-x-2 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg transition-all duration-300">
                 <Download className="w-4 h-4" />
