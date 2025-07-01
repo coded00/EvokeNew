@@ -186,7 +186,7 @@ export const CreateEvent = (): JSX.Element | null => {
                 onClick={() => navigate(`/event-dashboard/1`)}
                 className="w-full bg-[#FC1924] hover:bg-[#e01620] text-white py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105"
               >
-                Event Management
+                Event Dashboard
               </button>
               <button 
                 onClick={handleBackToHome}
@@ -221,8 +221,8 @@ export const CreateEvent = (): JSX.Element | null => {
           >
             <div className="absolute inset-0 bg-gradient-to-r from-[#FC1924]/90 to-[#FC1924]/70"></div>
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center text-white">
-                <div className="text-6xl mb-4">🎉</div>
+              <div className="text-center text-white animate-fade-in">
+                <div className="text-8xl mb-6 animate-bounce">🎉</div>
                 <h3 className="text-3xl font-bold mb-2">Create Amazing Events</h3>
                 <p className="text-lg opacity-90">Bring people together for unforgettable experiences</p>
               </div>
@@ -231,7 +231,7 @@ export const CreateEvent = (): JSX.Element | null => {
         </div>
 
         {/* Right Side - Form */}
-        <div className="flex-1 ml-[calc(50%+80px)] p-8 flex items-center">
+        <div className="flex-1 ml-[calc(50%+80px)] p-8 flex items-center justify-center">
           <div className="w-full max-w-lg animate-slide-in-right">
             <button 
               onClick={handleBackToCreateVibe}
@@ -241,7 +241,7 @@ export const CreateEvent = (): JSX.Element | null => {
               <span>Back</span>
             </button>
 
-            <h2 className="text-3xl font-bold text-white mb-8">Create Event</h2>
+            <h2 className="text-3xl font-bold text-white mb-8 text-center">Create Event</h2>
 
             <div className="space-y-6">
               <div>
@@ -301,7 +301,7 @@ export const CreateEvent = (): JSX.Element | null => {
                 onClick={nextStep}
                 className="bg-[#FC1924] hover:bg-[#e01620] text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105"
               >
-                Next &gt;
+                Next >
               </button>
             </div>
           </div>
@@ -326,7 +326,7 @@ export const CreateEvent = (): JSX.Element | null => {
           >
             <div className="absolute inset-0 bg-gradient-to-r from-[#FC1924]/90 to-[#FC1924]/70"></div>
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center text-white">
+              <div className="text-center text-white animate-fade-in">
                 <div className="text-6xl mb-4">📍</div>
                 <h3 className="text-3xl font-bold mb-2">Set the Details</h3>
                 <p className="text-lg opacity-90">When and where will your event happen?</p>
@@ -336,9 +336,9 @@ export const CreateEvent = (): JSX.Element | null => {
         </div>
 
         {/* Right Side - Form */}
-        <div className="flex-1 ml-[calc(50%+80px)] p-8 flex items-center">
+        <div className="flex-1 ml-[calc(50%+80px)] p-8 flex items-center justify-center">
           <div className="w-full max-w-lg animate-slide-in-right">
-            <h2 className="text-3xl font-bold text-white mb-8">Create Details</h2>
+            <h2 className="text-3xl font-bold text-white mb-8 text-center">Create Details</h2>
 
             <div className="space-y-6">
               <div>
@@ -455,7 +455,7 @@ export const CreateEvent = (): JSX.Element | null => {
                 onClick={nextStep}
                 className="bg-[#FC1924] hover:bg-[#e01620] text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105"
               >
-                Next &gt;
+                Next >
               </button>
             </div>
           </div>
@@ -480,7 +480,7 @@ export const CreateEvent = (): JSX.Element | null => {
           >
             <div className="absolute inset-0 bg-gradient-to-r from-[#FC1924]/90 to-[#FC1924]/70"></div>
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center text-white">
+              <div className="text-center text-white animate-fade-in">
                 <div className="text-6xl mb-4">🎫</div>
                 <h3 className="text-3xl font-bold mb-2">Set Up Ticketing</h3>
                 <p className="text-lg opacity-90">Configure pricing and manage your team</p>
@@ -490,9 +490,9 @@ export const CreateEvent = (): JSX.Element | null => {
         </div>
 
         {/* Right Side - Form */}
-        <div className="flex-1 ml-[calc(50%+80px)] p-8 flex items-center">
+        <div className="flex-1 ml-[calc(50%+80px)] p-8 flex items-center justify-center">
           <div className="w-full max-w-lg animate-slide-in-right">
-            <h2 className="text-3xl font-bold text-white mb-8">Ticketing</h2>
+            <h2 className="text-3xl font-bold text-white mb-8 text-center">Ticketing</h2>
 
             <div className="space-y-6">
               <div>
@@ -701,7 +701,7 @@ export const CreateEvent = (): JSX.Element | null => {
                 onClick={nextStep}
                 className="bg-[#FC1924] hover:bg-[#e01620] text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105"
               >
-                Next &gt;
+                Next >
               </button>
             </div>
           </div>
@@ -726,7 +726,7 @@ export const CreateEvent = (): JSX.Element | null => {
           >
             <div className="absolute inset-0 bg-gradient-to-r from-[#FC1924]/90 to-[#FC1924]/70"></div>
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center text-white">
+              <div className="text-center text-white animate-fade-in">
                 <div className="text-6xl mb-4">📋</div>
                 <h3 className="text-3xl font-bold mb-2">Review & Publish</h3>
                 <p className="text-lg opacity-90">Everything looks good? Let's make it live!</p>
@@ -736,9 +736,9 @@ export const CreateEvent = (): JSX.Element | null => {
         </div>
 
         {/* Right Side - Summary */}
-        <div className="flex-1 ml-[calc(50%+80px)] p-8 flex items-center">
+        <div className="flex-1 ml-[calc(50%+80px)] p-8 flex items-center justify-center">
           <div className="w-full max-w-lg animate-slide-in-right">
-            <h2 className="text-3xl font-bold text-white mb-8">Event Summary</h2>
+            <h2 className="text-3xl font-bold text-white mb-8 text-center">Event Summary</h2>
 
             <div className="space-y-6">
               <div className="grid grid-cols-2 gap-4">

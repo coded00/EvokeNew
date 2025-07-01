@@ -188,7 +188,11 @@ export const Profile = (): JSX.Element | null => {
   };
 
   const handleEventView = (eventId: number) => {
-    navigate(`/event-management/${eventId}`);
+    navigate(`/event-dashboard/${eventId}`);
+  };
+
+  const handleEventEdit = (eventId: number) => {
+    navigate(`/event-edit/${eventId}`);
   };
 
   const nextTicket = () => {
@@ -822,7 +826,10 @@ export const Profile = (): JSX.Element | null => {
                         >
                           View
                         </button>
-                        <button className="bg-[#4a4a4a] hover:bg-[#5a5a5a] text-white p-2 rounded-lg transition-all duration-300 hover:scale-105">
+                        <button 
+                          onClick={() => handleEventEdit(event.id)}
+                          className="bg-[#4a4a4a] hover:bg-[#5a5a5a] text-white p-2 rounded-lg transition-all duration-300 hover:scale-105"
+                        >
                           <Edit className="w-4 h-4" />
                         </button>
                         <button className="bg-[#4a4a4a] hover:bg-[#5a5a5a] text-white p-2 rounded-lg transition-all duration-300 hover:scale-105">
