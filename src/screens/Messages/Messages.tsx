@@ -30,7 +30,7 @@ export const Messages = (): JSX.Element => {
           </div>
           
           <h1 className="text-6xl font-bold text-white mb-4 animate-pulse">
-            Messages
+            Vibe Community
           </h1>
           
           <div className="text-2xl text-pink-400 font-semibold mb-8 animate-fade-in-delay">
