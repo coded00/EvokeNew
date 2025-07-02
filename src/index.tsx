@@ -26,6 +26,7 @@ const EventDashboard = React.lazy(() => import('./screens/EventDashboard').then(
 const EventManagement = React.lazy(() => import('./screens/EventManagement').then(module => ({ default: module.EventManagement })));
 const EventEdit = React.lazy(() => import('./screens/EventEdit').then(module => ({ default: module.EventEdit })));
 const Calendar = React.lazy(() => import('./screens/Calendar').then(module => ({ default: module.Calendar })));
+const QRTest = React.lazy(() => import('./screens/QRTest').then(module => ({ default: module.QRTest })));
 
 // Enhanced Loading component with glitch effect
 const RouteLoading = () => (
@@ -60,6 +61,7 @@ ReactDOM.createRoot(document.getElementById('app')!).render(
               <Route path="/event-management/:eventId" element={<EventManagement />} />
               <Route path="/event-edit/:eventId" element={<EventEdit />} />
               <Route path="/calendar" element={<Calendar />} />
+              <Route path="/qr-test" element={<QRTest />} />
             </Routes>
           </Suspense>
         </Router>
