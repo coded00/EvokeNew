@@ -43,33 +43,6 @@ export const QRTest = (): JSX.Element => {
 
   const { generateBulkQRCodes, isLoading, error } = useQRCode();
 
-  // Auto-select event if eventId is provided and make it event-specific
-  useEffect(() => {
-    if (eventId && !selectedEvent) {
-      // Find the event in mock data or set a default
-      const event = mockEvents.find(e => e.id === eventId);
-      if (event) {
-        setSelectedEvent(eventId);
-      } else {
-        // If event not found in mock data, create a default event for this ID
-        const defaultEvent: EventData = {
-          id: eventId,
-          name: "Event " + eventId,
-          date: new Date().toISOString(),
-          location: "Event Location",
-          ticketTypes: [
-            { name: "Regular", type: "Regular", price: 1000, description: "General admission", quantity: 100 },
-            { name: "VIP", type: "VIP", price: 2500, description: "VIP access with perks", quantity: 50 },
-            { name: "VVIP", type: "VVIP", price: 5000, description: "Premium experience", quantity: 25 }
-          ]
-        };
-        // Add to mock events temporarily
-        mockEvents.push(defaultEvent);
-        setSelectedEvent(eventId);
-      }
-    }
-  }, [eventId, selectedEvent]);
-
   // Mock events data - in real app this would come from API/database
   const mockEvents: EventData[] = [
     {
@@ -107,6 +80,22 @@ export const QRTest = (): JSX.Element => {
     }
   ];
 
+  // Fix type for selectedEventData
+  const selectedEventId = eventId || selectedEvent;
+  const selectedEventData: EventData | undefined = mockEvents.find(e => e.id === selectedEventId) || (
+    selectedEventId ? {
+      id: selectedEventId,
+      name: `Event ${selectedEventId}`,
+      date: new Date().toISOString(),
+      location: "Victoria Island, Lagos",
+      ticketTypes: [
+        { name: "Regular", type: "Regular", price: 5000, description: "General admission", quantity: 100 },
+        { name: "VIP", type: "VIP", price: 10000, description: "VIP access with perks", quantity: 50 },
+        { name: "VVIP", type: "VVIP", price: 15000, description: "Premium experience", quantity: 25 }
+      ]
+    } : undefined
+  );
+
   const addRandomTicket = () => {
     // If eventId is provided, use that event's data
     if (eventId && selectedEventData) {
@@ -140,37 +129,30 @@ export const QRTest = (): JSX.Element => {
   };
 
   const generateTicketsForEvent = () => {
-    if (!selectedEvent || !selectedTicketType || !attendeeName || quantity <= 0) {
+    if (!selectedEventData || !selectedTicketType || !attendeeName || quantity <= 0) {
       alert('Please fill in all fields');
       return;
     }
-
-    const event = mockEvents.find(e => e.id === selectedEvent);
-    const ticketType = event?.ticketTypes.find(t => t.name === selectedTicketType);
-    
-    if (!event || !ticketType) {
-      alert('Invalid event or ticket type');
+    const ticketType = selectedEventData.ticketTypes.find(t => t.name === selectedTicketType);
+    if (!ticketType) {
+      alert('Invalid ticket type');
       return;
     }
 
     const newTickets: TicketData[] = [];
-    
     for (let i = 0; i < quantity; i++) {
       const ticket = QRCodeService.createTicketData(
-        event.id,
+        selectedEventData.id,
         `USER-${Math.random().toString(36).substring(2, 8)}`,
         ticketType.type,
-        event.name,
+        selectedEventData.name,
         `${attendeeName} ${i + 1 > 1 ? `(${i + 1})` : ''}`,
         ticketType.price,
         'NGN'
       );
       newTickets.push(ticket);
     }
-
     setTickets([...tickets, ...newTickets]);
-    
-    // Reset form
     setSelectedTicketType('');
     setAttendeeName('');
     setQuantity(1);
@@ -199,8 +181,6 @@ export const QRTest = (): JSX.Element => {
       console.error('Bulk download failed:', err);
     }
   };
-
-  const selectedEventData = mockEvents.find(e => e.id === selectedEvent);
 
   return (
     <div className="min-h-screen bg-[#1a1a1a] p-8 font-['Space_Grotesk']">
@@ -277,98 +257,89 @@ export const QRTest = (): JSX.Element => {
       <div className="bg-[#2a2a2a] rounded-xl p-6 mb-8">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-bold text-white">Generate Event Tickets</h2>
-          <button
-            onClick={() => setShowEventForm(!showEventForm)}
-            className="flex items-center space-x-2 bg-[#FC1924] hover:bg-[#e01620] text-white px-3 py-2 rounded-lg transition-all duration-300"
-          >
-            <Settings className="w-4 h-4" />
-            <span>{showEventForm ? 'Hide' : 'Show'} Form</span>
-          </button>
         </div>
 
-        {showEventForm && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {!eventId && (
-              <div>
-                <label className="block text-white text-sm font-medium mb-2">Select Event</label>
-                <select
-                  value={selectedEvent}
-                  onChange={(e) => {
-                    setSelectedEvent(e.target.value);
-                    setSelectedTicketType('');
-                  }}
-                  className="w-full bg-[#3a3a3a] border border-gray-600 rounded-lg px-3 py-2 text-white"
-                >
-                  <option value="">Choose an event</option>
-                  {mockEvents.map(event => (
-                    <option key={event.id} value={event.id}>
-                      {event.name} - {new Date(event.date).toLocaleDateString()}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
-            
-            {eventId && selectedEventData && (
-              <div>
-                <label className="block text-white text-sm font-medium mb-2">Event</label>
-                <div className="w-full bg-[#3a3a3a] border border-gray-600 rounded-lg px-3 py-2 text-white">
-                  <span className="text-white">{selectedEventData.name}</span>
-                </div>
-              </div>
-            )}
-
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {!eventId && (
             <div>
-              <label className="block text-white text-sm font-medium mb-2">Ticket Type</label>
+              <label className="block text-white text-sm font-medium mb-2">Select Event</label>
               <select
-                value={selectedTicketType}
-                onChange={(e) => setSelectedTicketType(e.target.value)}
-                disabled={!selectedEvent}
-                className="w-full bg-[#3a3a3a] border border-gray-600 rounded-lg px-3 py-2 text-white disabled:opacity-50"
+                value={selectedEvent}
+                onChange={(e) => {
+                  setSelectedEvent(e.target.value);
+                  setSelectedTicketType('');
+                }}
+                className="w-full bg-[#3a3a3a] border border-gray-600 rounded-lg px-3 py-2 text-white"
               >
-                <option value="">Select ticket type</option>
-                {selectedEventData?.ticketTypes.map(ticketType => (
-                  <option key={ticketType.name} value={ticketType.name}>
-                    {ticketType.name} - ₦{ticketType.price.toLocaleString()}
+                <option value="">Choose an event</option>
+                {mockEvents.map(event => (
+                  <option key={event.id} value={event.id}>
+                    {event.name} - {new Date(event.date).toLocaleDateString()}
                   </option>
                 ))}
               </select>
             </div>
-
+          )}
+          
+          {eventId && selectedEventData && (
             <div>
-              <label className="block text-white text-sm font-medium mb-2">Attendee Name</label>
-              <input
-                type="text"
-                value={attendeeName}
-                onChange={(e) => setAttendeeName(e.target.value)}
-                placeholder="Enter attendee name"
-                className="w-full bg-[#3a3a3a] border border-gray-600 rounded-lg px-3 py-2 text-white"
-              />
+              <label className="block text-white text-sm font-medium mb-2">Event</label>
+              <div className="w-full bg-[#3a3a3a] border border-gray-600 rounded-lg px-3 py-2 text-white">
+                <span className="text-white">{selectedEventData.name}</span>
+              </div>
             </div>
+          )}
 
-            <div>
-              <label className="block text-white text-sm font-medium mb-2">Quantity</label>
-              <input
-                type="number"
-                value={quantity}
-                onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
-                min="1"
-                max="10"
-                className="w-full bg-[#3a3a3a] border border-gray-600 rounded-lg px-3 py-2 text-white"
-              />
-            </div>
-
-            <div className="flex items-end">
-              <button
-                onClick={generateTicketsForEvent}
-                disabled={!selectedEvent || !selectedTicketType || !attendeeName || quantity <= 0}
-                className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg transition-all duration-300"
-              >
-                Generate Tickets
-              </button>
-            </div>
+          <div>
+            <label className="block text-white text-sm font-medium mb-2">Ticket Type</label>
+            <select
+              value={selectedTicketType}
+              onChange={(e) => setSelectedTicketType(e.target.value)}
+              disabled={!selectedEvent && !eventId}
+              className="w-full bg-[#3a3a3a] border border-gray-600 rounded-lg px-3 py-2 text-white disabled:opacity-50"
+            >
+              <option value="">Select ticket type</option>
+              {selectedEventData?.ticketTypes?.map(ticketType => (
+                <option key={ticketType.name} value={ticketType.name}>
+                  {ticketType.name} - ₦{ticketType.price.toLocaleString()}
+                </option>
+              ))}
+            </select>
           </div>
-        )}
+
+          <div>
+            <label className="block text-white text-sm font-medium mb-2">Attendee Name</label>
+            <input
+              type="text"
+              value={attendeeName}
+              onChange={(e) => setAttendeeName(e.target.value)}
+              placeholder="Enter attendee name"
+              className="w-full bg-[#3a3a3a] border border-gray-600 rounded-lg px-3 py-2 text-white"
+            />
+          </div>
+
+          <div>
+            <label className="block text-white text-sm font-medium mb-2">Quantity</label>
+            <input
+              type="number"
+              value={quantity}
+              onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
+              min="1"
+              max="10"
+              className="w-full bg-[#3a3a3a] border border-gray-600 rounded-lg px-3 py-2 text-white"
+            />
+          </div>
+
+          <div className="flex items-end">
+            <button
+              onClick={generateTicketsForEvent}
+              disabled={(!selectedEvent && !eventId) || !selectedTicketType || !attendeeName || quantity <= 0}
+              className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg transition-all duration-300"
+            >
+              Generate Tickets
+            </button>
+          </div>
+        </div>
 
         {/* Quick Actions */}
         <div className="flex space-x-4 mt-4">
