@@ -43,12 +43,28 @@ export const QRTest = (): JSX.Element => {
 
   const { generateBulkQRCodes, isLoading, error } = useQRCode();
 
-  // Auto-select event if eventId is provided
+  // Auto-select event if eventId is provided and make it event-specific
   useEffect(() => {
     if (eventId && !selectedEvent) {
       // Find the event in mock data or set a default
       const event = mockEvents.find(e => e.id === eventId);
       if (event) {
+        setSelectedEvent(eventId);
+      } else {
+        // If event not found in mock data, create a default event for this ID
+        const defaultEvent: EventData = {
+          id: eventId,
+          name: "Event " + eventId,
+          date: new Date().toISOString(),
+          location: "Event Location",
+          ticketTypes: [
+            { name: "Regular", type: "Regular", price: 1000, description: "General admission", quantity: 100 },
+            { name: "VIP", type: "VIP", price: 2500, description: "VIP access with perks", quantity: 50 },
+            { name: "VVIP", type: "VVIP", price: 5000, description: "Premium experience", quantity: 25 }
+          ]
+        };
+        // Add to mock events temporarily
+        mockEvents.push(defaultEvent);
         setSelectedEvent(eventId);
       }
     }
@@ -92,16 +108,35 @@ export const QRTest = (): JSX.Element => {
   ];
 
   const addRandomTicket = () => {
-    const newTicket = QRCodeService.createTicketData(
-      `EVT-${Date.now()}`,
-      `USER-${Math.random().toString(36).substring(2, 8)}`,
-      ['Regular', 'VIP', 'VVIP'][Math.floor(Math.random() * 3)],
-      ['Wet & Rave', 'Summer Festival', 'Tech Conference'][Math.floor(Math.random() * 3)],
-      ['John Doe', 'Jane Smith', 'Bob Johnson'][Math.floor(Math.random() * 3)],
-      Math.floor(Math.random() * 5000) + 1000,
-      'NGN'
-    );
-    setTickets([...tickets, newTicket]);
+    // If eventId is provided, use that event's data
+    if (eventId && selectedEventData) {
+      const randomTicketType = selectedEventData.ticketTypes[Math.floor(Math.random() * selectedEventData.ticketTypes.length)];
+      const randomNames = ['John Doe', 'Jane Smith', 'Bob Johnson', 'Alice Brown', 'Charlie Wilson'];
+      const randomName = randomNames[Math.floor(Math.random() * randomNames.length)];
+      
+      const newTicket = QRCodeService.createTicketData(
+        selectedEventData.id,
+        `USER-${Math.random().toString(36).substring(2, 8)}`,
+        randomTicketType.type,
+        selectedEventData.name,
+        randomName,
+        randomTicketType.price,
+        'NGN'
+      );
+      setTickets([...tickets, newTicket]);
+    } else {
+      // Fallback to original random generation
+      const newTicket = QRCodeService.createTicketData(
+        `EVT-${Date.now()}`,
+        `USER-${Math.random().toString(36).substring(2, 8)}`,
+        ['Regular', 'VIP', 'VVIP'][Math.floor(Math.random() * 3)],
+        ['Wet & Rave', 'Summer Festival', 'Tech Conference'][Math.floor(Math.random() * 3)],
+        ['John Doe', 'Jane Smith', 'Bob Johnson'][Math.floor(Math.random() * 3)],
+        Math.floor(Math.random() * 5000) + 1000,
+        'NGN'
+      );
+      setTickets([...tickets, newTicket]);
+    }
   };
 
   const generateTicketsForEvent = () => {
@@ -172,16 +207,20 @@ export const QRTest = (): JSX.Element => {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <button 
-          onClick={() => navigate('/home')}
+          onClick={() => eventId ? navigate(`/event-management/${eventId}`) : navigate('/home')}
           className="flex items-center space-x-2 text-white/80 hover:text-white transition-colors duration-200"
         >
           <ArrowLeft className="w-5 h-5" />
-          <span>Back to Home</span>
+          <span>{eventId ? 'Back to Event Management' : 'Back to Home'}</span>
         </button>
         
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-white">QR Code Generator</h1>
-          <p className="text-gray-400">Generate QR codes for tickets and events</p>
+          <h1 className="text-3xl font-bold text-white">
+            {eventId && selectedEventData ? `QR Code Generator - ${selectedEventData.name}` : 'QR Code Generator'}
+          </h1>
+          <p className="text-gray-400">
+            {eventId ? `Generate QR codes for ${selectedEventData?.name || 'this event'}` : 'Generate QR codes for tickets and events'}
+          </p>
         </div>
         
         <div className="w-24"></div>
@@ -248,25 +287,36 @@ export const QRTest = (): JSX.Element => {
         </div>
 
         {showEventForm && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-            <div>
-              <label className="block text-white text-sm font-medium mb-2">Select Event</label>
-              <select
-                value={selectedEvent}
-                onChange={(e) => {
-                  setSelectedEvent(e.target.value);
-                  setSelectedTicketType('');
-                }}
-                className="w-full bg-[#3a3a3a] border border-gray-600 rounded-lg px-3 py-2 text-white"
-              >
-                <option value="">Choose an event</option>
-                {mockEvents.map(event => (
-                  <option key={event.id} value={event.id}>
-                    {event.name} - {new Date(event.date).toLocaleDateString()}
-                  </option>
-                ))}
-              </select>
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {!eventId && (
+              <div>
+                <label className="block text-white text-sm font-medium mb-2">Select Event</label>
+                <select
+                  value={selectedEvent}
+                  onChange={(e) => {
+                    setSelectedEvent(e.target.value);
+                    setSelectedTicketType('');
+                  }}
+                  className="w-full bg-[#3a3a3a] border border-gray-600 rounded-lg px-3 py-2 text-white"
+                >
+                  <option value="">Choose an event</option>
+                  {mockEvents.map(event => (
+                    <option key={event.id} value={event.id}>
+                      {event.name} - {new Date(event.date).toLocaleDateString()}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+            
+            {eventId && selectedEventData && (
+              <div>
+                <label className="block text-white text-sm font-medium mb-2">Event</label>
+                <div className="w-full bg-[#3a3a3a] border border-gray-600 rounded-lg px-3 py-2 text-white">
+                  <span className="text-white">{selectedEventData.name}</span>
+                </div>
+              </div>
+            )}
 
             <div>
               <label className="block text-white text-sm font-medium mb-2">Ticket Type</label>
@@ -384,7 +434,12 @@ export const QRTest = (): JSX.Element => {
 
       {tickets.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-gray-400 text-lg">No tickets generated yet. Use the form above to create tickets for events.</p>
+          <p className="text-gray-400 text-lg">
+            {eventId 
+              ? `No tickets generated yet for ${selectedEventData?.name || 'this event'}. Use the form above to create tickets.`
+              : 'No tickets generated yet. Use the form above to create tickets for events.'
+            }
+          </p>
         </div>
       )}
     </div>
