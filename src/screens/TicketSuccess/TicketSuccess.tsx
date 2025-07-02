@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Download, Share2, QrCode, Calendar, MapPin, Clock, Users, Check } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent } from "../../components/ui/card";
+import QRCodeDisplay from "../../components/ui/qr-code-display";
+import QRCodeService, { TicketData } from "../../lib/qrCodeService";
 
 interface Ticket {
   id: string;
@@ -12,36 +14,59 @@ interface Ticket {
   time: string;
   location: string;
   host: string;
-  qrCode: string;
   price: number;
+  ticketData?: TicketData;
 }
 
 export const TicketSuccess = (): JSX.Element => {
   const navigate = useNavigate();
-  const [tickets] = useState<Ticket[]>([
-    {
-      id: "TKT-001",
-      type: "VIP",
-      eventName: "Wet & Rave",
-      date: "12th Of June 2025",
-      time: "12 noon - Till mama calls",
-      location: "252b Ikoroduc cresent Dolphin estate Ikoyi",
-      host: "Freezy Kee",
-      qrCode: "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=TKT-001",
-      price: 1000
-    },
-    {
-      id: "TKT-002",
-      type: "VIP",
-      eventName: "Wet & Rave",
-      date: "12th Of June 2025",
-      time: "12 noon - Till mama calls",
-      location: "252b Ikoroduc cresent Dolphin estate Ikoyi",
-      host: "Freezy Kee",
-      qrCode: "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=TKT-002",
-      price: 1000
-    }
-  ]);
+  const [tickets, setTickets] = useState<Ticket[]>([]);
+
+  // Initialize tickets with proper QR code data
+  useEffect(() => {
+    const initializeTickets = () => {
+      const mockTickets: Ticket[] = [
+        {
+          id: "TKT-001",
+          type: "VIP",
+          eventName: "Wet & Rave",
+          date: "12th Of June 2025",
+          time: "12 noon - Till mama calls",
+          location: "252b Ikoroduc cresent Dolphin estate Ikoyi",
+          host: "Freezy Kee",
+          price: 1000
+        },
+        {
+          id: "TKT-002",
+          type: "VIP",
+          eventName: "Wet & Rave",
+          date: "12th Of June 2025",
+          time: "12 noon - Till mama calls",
+          location: "252b Ikoroduc cresent Dolphin estate Ikoyi",
+          host: "Freezy Kee",
+          price: 1000
+        }
+      ];
+
+      // Generate proper ticket data for each ticket
+      const ticketsWithData = mockTickets.map(ticket => ({
+        ...ticket,
+        ticketData: QRCodeService.createTicketData(
+          "EVT-123", // eventId
+          "USER-456", // userId
+          ticket.type,
+          ticket.eventName,
+          "John Doe", // attendeeName - in real app this would come from user data
+          ticket.price,
+          "NGN" // currency
+        )
+      }));
+
+      setTickets(ticketsWithData);
+    };
+
+    initializeTickets();
+  }, []);
 
   const handleDownloadTicket = (ticketId: string) => {
     // In a real app, this would generate and download a PDF
@@ -173,13 +198,22 @@ export const TicketSuccess = (): JSX.Element => {
 
                 {/* Right Side - QR Code */}
                 <div className="flex flex-col items-center justify-center space-y-4">
-                  <div className="bg-white p-4 rounded-lg">
-                    <img 
-                      src={ticket.qrCode} 
-                      alt="QR Code" 
-                      className="w-32 h-32"
+                  {ticket.ticketData && (
+                    <QRCodeDisplay
+                      ticketData={ticket.ticketData}
+                      options={{
+                        width: 128,
+                        height: 128,
+                        color: {
+                          dark: '#000000',
+                          light: '#FFFFFF'
+                        }
+                      }}
+                      showDownload={false}
+                      showRefresh={false}
+                      className="bg-white p-2 rounded-lg"
                     />
-                  </div>
+                  )}
                   <div className="text-center">
                     <p className="text-white font-semibold">Scan for Entry</p>
                     <p className="text-gray-400 text-sm">Show this QR code at the event</p>
@@ -200,10 +234,10 @@ export const TicketSuccess = (): JSX.Element => {
           Back to Home
         </Button>
         <Button
-          onClick={() => navigate('/calendar')}
+          onClick={() => navigate('/my-tickets')}
           className="flex-1 bg-transparent border border-gray-600 text-white py-3 rounded-lg font-semibold transition-all duration-300 hover:bg-gray-800"
         >
-          View Calendar
+          View My Tickets
         </Button>
       </div>
 

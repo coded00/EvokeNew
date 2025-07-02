@@ -1,17 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Camera, Flashlight, CheckCircle, XCircle, AlertTriangle } from "lucide-react";
+import QRCodeService, { TicketData } from "../../lib/qrCodeService";
 
 interface ScanResult {
-  type: 'success' | 'error' | 'invalid';
+  type: 'success' | 'error' | 'invalid' | 'expired';
   message: string;
-  ticketData?: {
-    id: string;
-    eventName: string;
-    attendeeName: string;
-    ticketType: string;
-    purchaseDate: string;
-  };
+  ticketData?: TicketData;
 }
 
 export const TicketScanner = (): JSX.Element => {
@@ -25,6 +20,58 @@ export const TicketScanner = (): JSX.Element => {
     navigate('/profile');
   };
 
+  const validateTicket = (qrData: string): ScanResult => {
+    try {
+      // Validate the QR code data using our service
+      const validation = QRCodeService.validateTicketData(qrData);
+      
+      if (!validation.isValid) {
+        return {
+          type: 'invalid',
+          message: validation.error || 'Invalid ticket format'
+        };
+      }
+
+      const ticketData = validation.ticketData!;
+
+      // Check if ticket is expired (optional - you can remove this if not needed)
+      const eventDate = "2025-06-12T12:00:00Z"; // In real app, this would come from event data
+      if (QRCodeService.isTicketExpired(ticketData, eventDate)) {
+        return {
+          type: 'expired',
+          message: 'This ticket has expired for this event',
+          ticketData
+        };
+      }
+
+      // Check if ticket has already been used (in real app, this would check against a database)
+      const usedTickets = JSON.parse(localStorage.getItem('usedTickets') || '[]');
+      if (usedTickets.includes(ticketData.ticketId)) {
+        return {
+          type: 'invalid',
+          message: 'This ticket has already been used',
+          ticketData
+        };
+      }
+
+      // Mark ticket as used (in real app, this would update the database)
+      usedTickets.push(ticketData.ticketId);
+      localStorage.setItem('usedTickets', JSON.stringify(usedTickets));
+
+      return {
+        type: 'success',
+        message: 'Ticket validated successfully!',
+        ticketData
+      };
+
+    } catch (error) {
+      return {
+        type: 'error',
+        message: 'Unable to read QR code. Please ensure the code is clear and try again.'
+      };
+    }
+  };
+
   const handleScan = () => {
     setIsScanning(true);
     setScanResult(null);
@@ -33,28 +80,46 @@ export const TicketScanner = (): JSX.Element => {
     setTimeout(() => {
       setIsScanning(false);
       
-      // Simulate different scan results
+      // Simulate different scan results with our validation system
       const randomResult = Math.random();
       let result: ScanResult;
       
-      if (randomResult < 0.7) {
-        // Successful scan
+      if (randomResult < 0.6) {
+        // Successful scan - generate valid ticket data
+        const validTicketData = QRCodeService.createTicketData(
+          "EVT-123",
+          "USER-456",
+          "VIP",
+          "Wet & Rave",
+          "John Doe",
+          1000,
+          "NGN"
+        );
+        
         result = {
           type: 'success',
           message: 'Ticket validated successfully!',
-          ticketData: {
-            id: 'TKT-' + Math.random().toString(36).substr(2, 6).toUpperCase(),
-            eventName: 'Wet & Rave',
-            attendeeName: 'John Doe',
-            ticketType: 'VIP',
-            purchaseDate: '2025-01-15'
-          }
+          ticketData: validTicketData
         };
+      } else if (randomResult < 0.8) {
+        // Invalid ticket - try to validate invalid data
+        result = validateTicket("invalid-qr-data");
       } else if (randomResult < 0.9) {
-        // Invalid ticket
+        // Expired ticket
+        const expiredTicketData = QRCodeService.createTicketData(
+          "EVT-123",
+          "USER-789",
+          "Regular",
+          "Past Event",
+          "Jane Smith",
+          500,
+          "NGN"
+        );
+        
         result = {
-          type: 'invalid',
-          message: 'Invalid ticket - This ticket has already been used or is not valid for this event.'
+          type: 'expired',
+          message: 'This ticket has expired for this event',
+          ticketData: expiredTicketData
         };
       } else {
         // Scan error
@@ -89,6 +154,8 @@ export const TicketScanner = (): JSX.Element => {
         return <CheckCircle className="w-8 h-8 text-green-500" />;
       case 'invalid':
         return <AlertTriangle className="w-8 h-8 text-yellow-500" />;
+      case 'expired':
+        return <XCircle className="w-8 h-8 text-orange-500" />;
       case 'error':
         return <XCircle className="w-8 h-8 text-red-500" />;
       default:
@@ -102,6 +169,8 @@ export const TicketScanner = (): JSX.Element => {
         return 'bg-green-500';
       case 'invalid':
         return 'bg-yellow-500';
+      case 'expired':
+        return 'bg-orange-500';
       case 'error':
         return 'bg-red-500';
       default:
@@ -121,7 +190,8 @@ export const TicketScanner = (): JSX.Element => {
               {scanResult.ticketData && (
                 <div className="text-sm mt-1 opacity-90">
                   <p>{scanResult.ticketData.attendeeName} - {scanResult.ticketData.ticketType}</p>
-                  <p>Ticket: {scanResult.ticketData.id}</p>
+                  <p>Ticket: {scanResult.ticketData.ticketId}</p>
+                  <p>Event: {scanResult.ticketData.eventName}</p>
                 </div>
               )}
             </div>
@@ -222,7 +292,7 @@ export const TicketScanner = (): JSX.Element => {
                   <p className="text-white text-sm">{scan.message}</p>
                   {scan.ticketData && (
                     <p className="text-gray-400 text-xs">
-                      {scan.ticketData.attendeeName} - {scan.ticketData.id}
+                      {scan.ticketData.attendeeName} - {scan.ticketData.ticketId}
                     </p>
                   )}
                 </div>
