@@ -301,7 +301,7 @@ export const CreateEvent = (): JSX.Element | null => {
                 onClick={nextStep}
                 className="bg-[#FC1924] hover:bg-[#e01620] text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105"
               >
-                Next >
+                Next {'>'}
               </button>
             </div>
           </div>
@@ -455,7 +455,7 @@ export const CreateEvent = (): JSX.Element | null => {
                 onClick={nextStep}
                 className="bg-[#FC1924] hover:bg-[#e01620] text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105"
               >
-                Next >
+                Next {'>'}
               </button>
             </div>
           </div>
@@ -701,7 +701,7 @@ export const CreateEvent = (): JSX.Element | null => {
                 onClick={nextStep}
                 className="bg-[#FC1924] hover:bg-[#e01620] text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105"
               >
-                Next >
+                Next {'>'}
               </button>
             </div>
           </div>
