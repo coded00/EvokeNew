@@ -90,7 +90,7 @@ const rolePermissions = {
 export const EventManagement = (): JSX.Element => {
   const navigate = useNavigate();
   const { eventId } = useParams<{ eventId: string }>();
-  const [activeTab, setActiveTab] = useState<'details' | 'team' | 'attendees' | 'promotion'>('details');
+  const [activeTab, setActiveTab] = useState<'overview' | 'team' | 'attendees' | 'promotion'>('overview');
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [showAddMemberModal, setShowAddMemberModal] = useState(false);
   const [showPermissionsModal, setShowPermissionsModal] = useState(false);
@@ -100,7 +100,7 @@ export const EventManagement = (): JSX.Element => {
   // Mock event data based on the image
   const [eventData, setEventData] = useState<EventDetails>({
     id: eventId || '1',
-    name: "Afrobeats Night",
+    name: "Afrobeat Night",
     startDate: "25/June/2025",
     endDate: "25/6/2025",
     startTime: "4 PM",
@@ -303,24 +303,24 @@ export const EventManagement = (): JSX.Element => {
 
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <div className="bg-black rounded-lg p-6 text-center">
+            <div className="bg-black rounded-lg p-6 text-center border border-black">
               <div className="text-green-400 text-3xl font-bold">{eventData.ticketsSold}</div>
               <div className="text-gray-400 text-sm">/ {eventData.numberOfTickets}</div>
               <div className="text-white text-sm mt-2">Tickets Sold</div>
             </div>
             
-            <div className="bg-black rounded-lg p-6 text-center">
+            <div className="bg-black rounded-lg p-6 text-center border border-black">
               <div className="text-green-400 text-3xl font-bold">2.5</div>
               <div className="text-gray-400 text-sm">/ 5M</div>
               <div className="text-white text-sm mt-2">Revenue</div>
             </div>
             
-            <div className="bg-black rounded-lg p-6 text-center">
+            <div className="bg-black rounded-lg p-6 text-center border border-black">
               <div className="text-green-400 text-3xl font-bold">{eventData.teamMembers.length}</div>
               <div className="text-white text-sm mt-2">Team</div>
             </div>
             
-            <div className="bg-black rounded-lg p-6 text-center">
+            <div className="bg-black rounded-lg p-6 text-center border border-black">
               <div className="text-green-400 text-3xl font-bold">12</div>
               <div className="text-white text-sm mt-2">Events listed</div>
             </div>
@@ -330,7 +330,7 @@ export const EventManagement = (): JSX.Element => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Left Side - Event Poster */}
             <div className="lg:col-span-1">
-              <div className="bg-[#2a2a2a] rounded-xl p-6">
+              <div className="bg-[#2a2a2a] rounded-xl p-6 border border-black">
                 <img 
                   src={eventData.image} 
                   alt={eventData.name}
@@ -341,7 +341,7 @@ export const EventManagement = (): JSX.Element => {
 
             {/* Right Side - Event Details */}
             <div className="lg:col-span-2">
-              <div className="bg-[#2a2a2a] rounded-xl p-6">
+              <div className="bg-[#2a2a2a] rounded-xl p-6 border border-black">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-bold text-white">Event Details</h2>
                   <button 
@@ -411,7 +411,7 @@ export const EventManagement = (): JSX.Element => {
               </div>
 
               {/* Enhanced Team & Permissions Section */}
-              <div className="bg-[#2a2a2a] rounded-xl p-6 mt-6">
+              <div className="bg-[#2a2a2a] rounded-xl p-6 mt-6 border border-black">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-bold text-white">Team & Permissions</h2>
                   <button 
@@ -425,7 +425,7 @@ export const EventManagement = (): JSX.Element => {
 
                 <div className="space-y-4">
                   {eventData.teamMembers.map((member) => (
-                    <div key={member.id} className="bg-[#3a3a3a] rounded-lg p-4">
+                    <div key={member.id} className="bg-[#3a3a3a] rounded-lg p-4 border border-black">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-4">
                           <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
@@ -492,7 +492,7 @@ export const EventManagement = (): JSX.Element => {
           </div>
 
           {/* Attendees Section */}
-          <div className="bg-[#2a2a2a] rounded-xl p-6 mt-8">
+          <div className="bg-[#2a2a2a] rounded-xl p-6 mt-8 border border-black">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-2xl font-bold text-white">Attendees:</h2>
               <div className="flex items-center space-x-4">

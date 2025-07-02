@@ -130,6 +130,10 @@ export const EventDashboard = (): JSX.Element => {
     }).format(amount);
   };
 
+  const handleBackToEventManagement = () => {
+    navigate('/profile', { state: { activeTab: 'management' } });
+  };
+
   return (
     <div className="min-h-screen bg-[#0f1419] flex relative overflow-hidden font-['Space_Grotesk']">
       <Sidebar currentPath="/event-dashboard" />
@@ -141,11 +145,11 @@ export const EventDashboard = (): JSX.Element => {
           <div className="flex justify-between items-center mb-8">
             <div className="flex items-center space-x-4">
               <button 
-                onClick={() => navigate(`/event-management/${eventId}`)}
+                onClick={handleBackToEventManagement}
                 className="flex items-center space-x-2 text-white/80 hover:text-white transition-colors duration-200"
               >
                 <ArrowLeft className="w-5 h-5" />
-                <span>Back to Management</span>
+                <span>Back to Event Management</span>
               </button>
               
               <div className="flex items-center space-x-2">
@@ -183,7 +187,7 @@ export const EventDashboard = (): JSX.Element => {
           </div>
 
           {/* Event Header */}
-          <div className="bg-[#1e2328] rounded-2xl p-6 mb-8 border border-gray-700">
+          <div className="bg-[#1e2328] rounded-2xl p-6 mb-8 border border-black">
             <div className="flex items-start space-x-6">
               <div className="w-20 h-20 rounded-xl overflow-hidden">
                 <img src={eventData.image} alt={eventData.name} className="w-full h-full object-cover" />
@@ -210,7 +214,7 @@ export const EventDashboard = (): JSX.Element => {
 
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <div className="bg-[#1e2328] rounded-xl p-6 border border-gray-700">
+            <div className="bg-[#1e2328] rounded-xl p-6 border border-black">
               <div className="flex items-center justify-between mb-4">
                 <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center">
                   <Users className="w-6 h-6 text-blue-400" />
@@ -221,7 +225,7 @@ export const EventDashboard = (): JSX.Element => {
               <p className="text-gray-400 text-sm">Total Attendees</p>
             </div>
 
-            <div className="bg-[#1e2328] rounded-xl p-6 border border-gray-700">
+            <div className="bg-[#1e2328] rounded-xl p-6 border border-black">
               <div className="flex items-center justify-between mb-4">
                 <div className="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center">
                   <CheckCircle className="w-6 h-6 text-green-400" />
@@ -232,7 +236,7 @@ export const EventDashboard = (): JSX.Element => {
               <p className="text-gray-400 text-sm">Checked In</p>
             </div>
 
-            <div className="bg-[#1e2328] rounded-xl p-6 border border-gray-700">
+            <div className="bg-[#1e2328] rounded-xl p-6 border border-black">
               <div className="flex items-center justify-between mb-4">
                 <div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center">
                   <DollarSign className="w-6 h-6 text-purple-400" />
@@ -243,7 +247,7 @@ export const EventDashboard = (): JSX.Element => {
               <p className="text-gray-400 text-sm">Total Revenue</p>
             </div>
 
-            <div className="bg-[#1e2328] rounded-xl p-6 border border-gray-700">
+            <div className="bg-[#1e2328] rounded-xl p-6 border border-black">
               <div className="flex items-center justify-between mb-4">
                 <div className="w-12 h-12 bg-orange-500/20 rounded-xl flex items-center justify-center">
                   <Ticket className="w-6 h-6 text-orange-400" />
@@ -287,7 +291,7 @@ export const EventDashboard = (): JSX.Element => {
             {/* Overview Tab */}
             {activeTab === 'overview' && (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div className="bg-[#1e2328] rounded-xl p-6 border border-gray-700">
+                <div className="bg-[#1e2328] rounded-xl p-6 border border-black">
                   <div className="flex items-center space-x-2 mb-4">
                     <div className="w-6 h-6 bg-red-500 rounded flex items-center justify-center">
                       <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
@@ -322,7 +326,7 @@ export const EventDashboard = (): JSX.Element => {
                   </div>
                 </div>
 
-                <div className="bg-[#1e2328] rounded-xl p-6 border border-gray-700">
+                <div className="bg-[#1e2328] rounded-xl p-6 border border-black">
                   <div className="flex items-center space-x-2 mb-4">
                     <div className="w-6 h-6 bg-purple-500 rounded"></div>
                     <h3 className="text-xl font-bold text-white">Performance Metrics</h3>
@@ -353,7 +357,7 @@ export const EventDashboard = (): JSX.Element => {
 
             {/* Attendees Tab */}
             {activeTab === 'attendees' && (
-              <div className="bg-[#1e2328] rounded-xl p-6 border border-gray-700">
+              <div className="bg-[#1e2328] rounded-xl p-6 border border-black">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-2xl font-bold text-white">Attendees</h2>
                   <div className="flex items-center space-x-4">
@@ -432,7 +436,7 @@ export const EventDashboard = (): JSX.Element => {
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {ticketTypes.map((ticket) => (
-                    <div key={ticket.name} className="bg-[#1e2328] rounded-xl p-6 border border-gray-700">
+                    <div key={ticket.name} className="bg-[#1e2328] rounded-xl p-6 border border-black">
                       <div className="flex justify-between items-start mb-4">
                         <h3 className="text-xl font-bold text-white">{ticket.name}</h3>
                         <span className="text-2xl font-bold text-green-400">{formatCurrency(ticket.price)}</span>
@@ -457,7 +461,7 @@ export const EventDashboard = (): JSX.Element => {
                   ))}
                 </div>
 
-                <div className="bg-[#1e2328] rounded-xl p-6 border border-gray-700">
+                <div className="bg-[#1e2328] rounded-xl p-6 border border-black">
                   <h3 className="text-xl font-bold text-white mb-4">QR Code Generator</h3>
                   <div className="flex items-center space-x-4">
                     <button 
@@ -488,7 +492,7 @@ export const EventDashboard = (): JSX.Element => {
             {/* Analytics Tab */}
             {activeTab === 'analytics' && (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="bg-[#1e2328] rounded-xl p-6 border border-gray-700">
+                <div className="bg-[#1e2328] rounded-xl p-6 border border-black">
                   <h3 className="text-xl font-bold text-white mb-4">Ticket Sales Over Time</h3>
                   <div className="h-64 bg-[#2a2f36] rounded-lg flex items-center justify-center border border-gray-600">
                     <div className="text-center text-gray-400">
@@ -498,7 +502,7 @@ export const EventDashboard = (): JSX.Element => {
                   </div>
                 </div>
 
-                <div className="bg-[#1e2328] rounded-xl p-6 border border-gray-700">
+                <div className="bg-[#1e2328] rounded-xl p-6 border border-black">
                   <h3 className="text-xl font-bold text-white mb-4">Revenue Breakdown</h3>
                   <div className="space-y-4">
                     {ticketTypes.map((ticket) => (
@@ -517,7 +521,7 @@ export const EventDashboard = (): JSX.Element => {
 
             {/* Settings Tab */}
             {activeTab === 'settings' && (
-              <div className="bg-[#1e2328] rounded-xl p-6 border border-gray-700">
+              <div className="bg-[#1e2328] rounded-xl p-6 border border-black">
                 <h3 className="text-xl font-bold text-white mb-6">Event Settings</h3>
                 <div className="space-y-6">
                   <div>

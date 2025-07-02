@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { 
   ArrowLeft, 
   Calendar, 
@@ -32,10 +32,18 @@ import { Sidebar } from "../../components/ui/sidebar";
 
 export const Profile = (): JSX.Element | null => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState<'overview' | 'tickets' | 'events' | 'management'>('overview');
   const [currentTicketIndex, setCurrentTicketIndex] = useState(0);
   const [currentUsedTicketIndex, setCurrentUsedTicketIndex] = useState(0);
   const [activeTicketFilter, setActiveTicketFilter] = useState<'all' | 'active' | 'used' | 'transferred'>('all');
+
+  // Check if we should navigate to management tab
+  useEffect(() => {
+    if (location.state?.activeTab === 'management') {
+      setActiveTab('management');
+    }
+  }, [location.state]);
 
   // Mock user data
   const userData = {
@@ -183,6 +191,23 @@ export const Profile = (): JSX.Element | null => {
     }
   ];
 
+  const likedEvents = [
+    {
+      id: 4,
+      name: "Afrobeat Night",
+      date: "August 5, 2024",
+      location: "Victoria Island, Lagos",
+      image: "https://images.pexels.com/photos/1190298/pexels-photo-1190298.jpeg?auto=compress&cs=tinysrgb&w=300"
+    },
+    {
+      id: 5,
+      name: "Jazz Evening",
+      date: "September 12, 2024",
+      location: "Ikoyi, Lagos",
+      image: "https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg?auto=compress&cs=tinysrgb&w=300"
+    }
+  ];
+
   const handleBackToHome = () => {
     navigate('/home');
   };
@@ -257,7 +282,7 @@ export const Profile = (): JSX.Element | null => {
             </button>
 
             {/* Profile Header */}
-            <div className="bg-[#2a2a2a] rounded-2xl p-8 mb-8 animate-fade-in">
+            <div className="bg-[#2a2a2a] rounded-2xl p-8 mb-8 animate-fade-in border border-black">
               <div className="flex items-start justify-between">
                 <div className="flex items-center space-x-6">
                   <div className="relative">
@@ -295,7 +320,7 @@ export const Profile = (): JSX.Element | null => {
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              <div className="bg-[#2a2a2a] rounded-xl p-6 text-white animate-slide-up">
+              <div className="bg-[#2a2a2a] rounded-xl p-6 text-white animate-slide-up border border-black">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-gray-400 text-sm">Events Attended</p>
@@ -304,7 +329,7 @@ export const Profile = (): JSX.Element | null => {
                   <Calendar className="w-8 h-8 text-gray-500" />
                 </div>
               </div>
-              <div className="bg-[#2a2a2a] rounded-xl p-6 text-white animate-slide-up" style={{ animationDelay: '0.1s' }}>
+              <div className="bg-[#2a2a2a] rounded-xl p-6 text-white animate-slide-up border border-black" style={{ animationDelay: '0.1s' }}>
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-gray-400 text-sm">Events Hosted</p>
@@ -313,7 +338,7 @@ export const Profile = (): JSX.Element | null => {
                   <Users className="w-8 h-8 text-gray-500" />
                 </div>
               </div>
-              <div className="bg-[#2a2a2a] rounded-xl p-6 text-white animate-slide-up" style={{ animationDelay: '0.2s' }}>
+              <div className="bg-[#2a2a2a] rounded-xl p-6 text-white animate-slide-up border border-black" style={{ animationDelay: '0.2s' }}>
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-gray-400 text-sm">Tickets Purchased</p>
@@ -322,7 +347,7 @@ export const Profile = (): JSX.Element | null => {
                   <Ticket className="w-8 h-8 text-gray-500" />
                 </div>
               </div>
-              <div className="bg-[#2a2a2a] rounded-xl p-6 text-white animate-slide-up" style={{ animationDelay: '0.3s' }}>
+              <div className="bg-[#2a2a2a] rounded-xl p-6 text-white animate-slide-up border border-black" style={{ animationDelay: '0.3s' }}>
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-gray-400 text-sm">Revenue Generated</p>
@@ -334,7 +359,7 @@ export const Profile = (): JSX.Element | null => {
             </div>
 
             {/* Navigation Tabs */}
-            <div className="flex space-x-1 mb-8 bg-[#2a2a2a] rounded-xl p-2">
+            <div className="flex space-x-1 mb-8 bg-[#2a2a2a] rounded-xl p-2 border border-black">
               <button 
                 onClick={() => setActiveTab('overview')}
                 className={`flex-1 py-3 px-6 rounded-lg font-semibold transition-all duration-300 ${
@@ -367,6 +392,7 @@ export const Profile = (): JSX.Element | null => {
               </button>
               <button 
                 onClick={() => setActiveTab('management')}
+                data-tab="management"
                 className={`flex-1 py-3 px-6 rounded-lg font-semibold transition-all duration-300 ${
                   activeTab === 'management' 
                     ? 'bg-[#FC1924] text-white' 
@@ -379,7 +405,7 @@ export const Profile = (): JSX.Element | null => {
 
             {/* Quick Actions */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-[#2a2a2a] rounded-xl p-6">
+              <div className="bg-[#2a2a2a] rounded-xl p-6 border border-black">
                 <h3 className="text-xl font-bold text-white mb-4">Upcoming Events</h3>
                 {upcomingEvents.length > 0 ? (
                   <div className="space-y-4">
@@ -402,7 +428,7 @@ export const Profile = (): JSX.Element | null => {
                 )}
               </div>
 
-              <div className="bg-[#2a2a2a] rounded-xl p-6">
+              <div className="bg-[#2a2a2a] rounded-xl p-6 border border-black">
                 <h3 className="text-xl font-bold text-white mb-4">Recent Activity</h3>
                 <div className="space-y-4">
                   <div className="flex items-center space-x-3">
@@ -452,7 +478,7 @@ export const Profile = (): JSX.Element | null => {
             {/* Header */}
             <div className="flex items-center justify-between mb-8">
               <h1 className="text-4xl font-bold text-white">My Tickets</h1>
-              <div className="flex space-x-1 bg-[#2a2a2a] rounded-xl p-2">
+              <div className="flex space-x-1 bg-[#2a2a2a] rounded-xl p-2 border border-black">
                 <button 
                   onClick={() => setActiveTab('overview')}
                   className="py-3 px-6 rounded-lg font-semibold transition-all duration-300 text-gray-400 hover:text-white hover:bg-[#3a3a3a]"
@@ -505,7 +531,7 @@ export const Profile = (): JSX.Element | null => {
             {/* Tickets Grid - Updated with white cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredTickets.map((ticket) => (
-                <div key={ticket.id} className="bg-white border border-gray-200 hover:border-gray-300 transition-all duration-300 rounded-xl p-6 shadow-lg hover:shadow-xl">
+                <div key={ticket.id} className="bg-white border-2 border-black hover:border-gray-300 transition-all duration-300 rounded-xl p-6 shadow-lg hover:shadow-xl">
                   <div className="flex justify-between items-start mb-4">
                     <div>
                       <h3 className="text-xl font-bold text-gray-900 mb-1">{ticket.eventName}</h3>
@@ -610,7 +636,7 @@ export const Profile = (): JSX.Element | null => {
             {/* Header */}
             <div className="flex items-center justify-between mb-8">
               <h1 className="text-4xl font-bold text-white">My Events</h1>
-              <div className="flex space-x-1 bg-[#2a2a2a] rounded-xl p-2">
+              <div className="flex space-x-1 bg-[#2a2a2a] rounded-xl p-2 border border-black">
                 <button 
                   onClick={() => setActiveTab('overview')}
                   className="py-3 px-6 rounded-lg font-semibold transition-all duration-300 text-gray-400 hover:text-white hover:bg-[#3a3a3a]"
@@ -644,7 +670,7 @@ export const Profile = (): JSX.Element | null => {
                 <h2 className="text-2xl font-bold text-white mb-6">Past Events Attended</h2>
                 <div className="space-y-4">
                   {attendedEvents.map((event) => (
-                    <div key={event.id} className="bg-[#2a2a2a] rounded-xl p-6 animate-fade-in">
+                    <div key={event.id} className="bg-[#2a2a2a] rounded-xl p-6 animate-fade-in border border-black">
                       <div className="flex items-center space-x-4">
                         <img src={event.image} alt={event.name} className="w-16 h-16 rounded-lg object-cover" />
                         <div className="flex-1">
@@ -679,7 +705,7 @@ export const Profile = (): JSX.Element | null => {
                 <h2 className="text-2xl font-bold text-white mb-6">Upcoming Events</h2>
                 <div className="space-y-4">
                   {upcomingEvents.map((event) => (
-                    <div key={event.id} className="bg-[#2a2a2a] rounded-xl p-6 animate-fade-in">
+                    <div key={event.id} className="bg-[#2a2a2a] rounded-xl p-6 animate-fade-in border border-black">
                       <div className="flex items-center space-x-4">
                         <img src={event.image} alt={event.name} className="w-16 h-16 rounded-lg object-cover" />
                         <div className="flex-1">
@@ -701,6 +727,34 @@ export const Profile = (): JSX.Element | null => {
                 </div>
               </div>
             </div>
+
+            {/* Liked Events Section */}
+            <div className="mt-12">
+              <h2 className="text-2xl font-bold text-white mb-6">Liked Events</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {likedEvents.map((event) => (
+                  <div key={event.id} className="bg-[#2a2a2a] rounded-xl p-6 animate-fade-in border border-black">
+                    <div className="flex items-center space-x-4">
+                      <img src={event.image} alt={event.name} className="w-16 h-16 rounded-lg object-cover" />
+                      <div className="flex-1">
+                        <h3 className="text-white font-semibold">{event.name}</h3>
+                        <p className="text-gray-400 text-sm">{event.date}</p>
+                        <p className="text-gray-500 text-sm">{event.location}</p>
+                      </div>
+                      <div className="flex flex-col space-y-2">
+                        <button className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-semibold transition-all duration-300 hover:scale-105 text-sm flex items-center space-x-1">
+                          <Heart className="w-4 h-4 fill-current" />
+                          <span>Liked</span>
+                        </button>
+                        <button className="bg-[#3a3a3a] hover:bg-[#4a4a4a] text-white px-4 py-2 rounded-lg font-semibold transition-all duration-300 hover:scale-105 text-sm">
+                          View
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -718,7 +772,7 @@ export const Profile = (): JSX.Element | null => {
             {/* Header */}
             <div className="flex items-center justify-between mb-8">
               <h1 className="text-4xl font-bold text-white">Event Management</h1>
-              <div className="flex space-x-1 bg-[#2a2a2a] rounded-xl p-2">
+              <div className="flex space-x-1 bg-[#2a2a2a] rounded-xl p-2 border border-black">
                 <button 
                   onClick={() => setActiveTab('overview')}
                   className="py-3 px-6 rounded-lg font-semibold transition-all duration-300 text-gray-400 hover:text-white hover:bg-[#3a3a3a]"
@@ -749,7 +803,7 @@ export const Profile = (): JSX.Element | null => {
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
               {managementStats.map((stat, index) => (
-                <div key={index} className={`bg-[#2a2a2a] rounded-xl p-6 text-white animate-slide-up cursor-pointer hover:scale-105 transition-transform duration-300`} style={{ animationDelay: `${index * 0.1}s` }}>
+                <div key={index} className={`bg-[#2a2a2a] rounded-xl p-6 text-white animate-slide-up cursor-pointer hover:scale-105 transition-transform duration-300 border border-black`} style={{ animationDelay: `${index * 0.1}s` }}>
                   <div className="text-center">
                     <p className="text-3xl font-bold mb-2">{stat.value}</p>
                     <p className="text-sm text-gray-400">{stat.label}</p>
@@ -784,7 +838,7 @@ export const Profile = (): JSX.Element | null => {
             </div>
 
             {/* Events List */}
-            <div className="bg-[#2a2a2a] rounded-xl p-6">
+            <div className="bg-[#2a2a2a] rounded-xl p-6 border border-black">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-white">Events</h2>
                 <button className="text-[#FC1924] hover:text-[#e01620] font-semibold transition-colors duration-200">
@@ -794,7 +848,7 @@ export const Profile = (): JSX.Element | null => {
 
               <div className="space-y-4">
                 {managedEvents.map((event, index) => (
-                  <div key={event.id} className="bg-[#3a3a3a] rounded-xl p-4 hover:bg-[#4a4a4a] transition-all duration-300 animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
+                  <div key={event.id} className="bg-[#3a3a3a] rounded-xl p-4 hover:bg-[#4a4a4a] transition-all duration-300 animate-fade-in border border-black" style={{ animationDelay: `${index * 0.1}s` }}>
                     <div className="flex items-center space-x-4">
                       <img src={event.image} alt={event.name} className="w-16 h-16 rounded-lg object-cover" />
                       <div className="flex-1">
