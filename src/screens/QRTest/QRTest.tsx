@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Plus, Trash2, Settings, Download } from 'lucide-react';
 import QRCodeDisplay from '../../components/ui/qr-code-display';
 import QRCodeService, { TicketData, QRCodeOptions } from '../../lib/qrCodeService';
@@ -21,6 +21,7 @@ interface EventData {
 
 export const QRTest = (): JSX.Element => {
   const navigate = useNavigate();
+  const { eventId } = useParams<{ eventId?: string }>();
   const [tickets, setTickets] = useState<TicketData[]>([]);
   const [qrOptions, setQrOptions] = useState<QRCodeOptions>({
     width: 256,
@@ -41,6 +42,17 @@ export const QRTest = (): JSX.Element => {
   const [showEventForm, setShowEventForm] = useState<boolean>(false);
 
   const { generateBulkQRCodes, isLoading, error } = useQRCode();
+
+  // Auto-select event if eventId is provided
+  useEffect(() => {
+    if (eventId && !selectedEvent) {
+      // Find the event in mock data or set a default
+      const event = mockEvents.find(e => e.id === eventId);
+      if (event) {
+        setSelectedEvent(eventId);
+      }
+    }
+  }, [eventId, selectedEvent]);
 
   // Mock events data - in real app this would come from API/database
   const mockEvents: EventData[] = [

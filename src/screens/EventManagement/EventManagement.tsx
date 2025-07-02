@@ -508,13 +508,21 @@ export const EventManagement = (): JSX.Element => {
           </div>
 
           {/* Action Buttons */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
             <button 
               onClick={handleScanTickets}
               className="bg-[#FC1924] hover:bg-[#e01620] text-white py-4 rounded-lg font-semibold transition-all duration-300 hover:scale-105 flex items-center justify-center space-x-2"
             >
               <Scan className="w-5 h-5" />
               <span>Scan QR Codes</span>
+            </button>
+            
+            <button 
+              onClick={() => navigate(`/qr-test/${eventId}`)}
+              className="bg-[#FC1924] hover:bg-[#e01620] text-white py-4 rounded-lg font-semibold transition-all duration-300 hover:scale-105 flex items-center justify-center space-x-2"
+            >
+              <QrCode className="w-5 h-5" />
+              <span>Generate QR</span>
             </button>
             
             <button 
