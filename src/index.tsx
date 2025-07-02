@@ -61,7 +61,7 @@ ReactDOM.createRoot(document.getElementById('app')!).render(
               <Route path="/event-management/:eventId" element={<EventManagement />} />
               <Route path="/event-edit/:eventId" element={<EventEdit />} />
               <Route path="/calendar" element={<Calendar />} />
-              <Route path="/qr-test" element={<QRTest />} />
+              <Route path="/qr-test/:eventId?" element={<QRTest />} />
             </Routes>
           </Suspense>
         </Router>
