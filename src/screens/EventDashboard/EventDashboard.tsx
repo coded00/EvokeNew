@@ -10,7 +10,9 @@ import {
   MapPin, 
   Clock,
   QrCode,
+  Download,
   Edit,
+  Share,
   Bell,
   CheckCircle,
   XCircle,
@@ -19,8 +21,7 @@ import {
   BarChart3,
   Settings,
   Eye,
-  EyeOff,
-  Scan
+  EyeOff
 } from "lucide-react";
 import { Sidebar } from "../../components/ui/sidebar";
 
@@ -58,6 +59,7 @@ export const EventDashboard = (): JSX.Element => {
   const [activeTab, setActiveTab] = useState('overview');
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
+  const [showQRCode, setShowQRCode] = useState(false);
   const [isLive, setIsLive] = useState(true);
 
   // Mock data - in real app this would come from API
@@ -132,11 +134,6 @@ export const EventDashboard = (): JSX.Element => {
     navigate('/profile', { state: { activeTab: 'management' } });
   };
 
-  const handlePromoteEvent = () => {
-    // Future promotional features will be implemented here
-    alert('Promote Event feature coming soon! This will include social sharing, boosting, and marketing tools.');
-  };
-
   return (
     <div className="min-h-screen bg-[#0f1419] flex relative overflow-hidden font-['Space_Grotesk']">
       <Sidebar currentPath="/event-dashboard" />
@@ -165,11 +162,15 @@ export const EventDashboard = (): JSX.Element => {
 
             <div className="flex items-center space-x-4">
               <button 
-                onClick={() => navigate(`/ticket-scanner?eventId=${eventId}`)}
+                onClick={() => navigate('/ticket-scanner')}
                 className="flex items-center space-x-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-all duration-300"
               >
                 <QrCode className="w-4 h-4" />
                 <span>Scan QR</span>
+              </button>
+              <button className="flex items-center space-x-2 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg transition-all duration-300">
+                <Download className="w-4 h-4" />
+                <span>Export</span>
               </button>
               <button 
                 onClick={() => navigate(`/event-edit/${eventId}`)}
@@ -178,12 +179,9 @@ export const EventDashboard = (): JSX.Element => {
                 <Edit className="w-4 h-4" />
                 <span>Edit</span>
               </button>
-              <button 
-                onClick={handlePromoteEvent}
-                className="flex items-center space-x-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-all duration-300"
-              >
-                <TrendingUp className="w-4 h-4" />
-                <span>Promote Event</span>
+              <button className="flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-all duration-300">
+                <Share className="w-4 h-4" />
+                <span>Share</span>
               </button>
             </div>
           </div>
@@ -467,13 +465,26 @@ export const EventDashboard = (): JSX.Element => {
                   <h3 className="text-xl font-bold text-white mb-4">QR Code Generator</h3>
                   <div className="flex items-center space-x-4">
                     <button 
-                      onClick={() => navigate(`/qr-test/${eventId}`)}
+                      onClick={() => setShowQRCode(!showQRCode)}
                       className="flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-all duration-300"
                     >
                       <QrCode className="w-4 h-4" />
-                      <span>Generate QR Codes</span>
+                      <span>{showQRCode ? 'Hide' : 'Show'} QR Code</span>
+                    </button>
+                    <button className="flex items-center space-x-2 bg-[#2a2f36] hover:bg-[#3a3f46] text-white px-4 py-2 rounded-lg transition-all duration-300 border border-gray-600">
+                      <Download className="w-4 h-4" />
+                      <span>Download All</span>
                     </button>
                   </div>
+                  
+                  {showQRCode && (
+                    <div className="mt-6 p-6 bg-white rounded-xl inline-block">
+                      <div className="w-48 h-48 bg-gray-100 rounded-lg flex items-center justify-center">
+                        <QrCode className="w-32 h-32 text-gray-400" />
+                      </div>
+                      <p className="text-center text-gray-600 mt-2 text-sm">Event QR Code</p>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
