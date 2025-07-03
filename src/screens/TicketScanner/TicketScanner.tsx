@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowLeft, Camera, Flashlight, CheckCircle, XCircle, AlertTriangle } from "lucide-react";
 import QRCodeService, { TicketData } from "../../lib/qrCodeService";
 
@@ -11,13 +11,19 @@ interface ScanResult {
 
 export const TicketScanner = (): JSX.Element => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const eventId = searchParams.get('eventId');
   const [isScanning, setIsScanning] = useState(false);
   const [flashOn, setFlashOn] = useState(false);
   const [scanResult, setScanResult] = useState<ScanResult | null>(null);
   const [scanHistory, setScanHistory] = useState<ScanResult[]>([]);
 
-  const handleBackToProfile = () => {
-    navigate('/profile');
+  const handleBackToEventDashboard = () => {
+    if (eventId) {
+      navigate(`/event-dashboard/${eventId}`);
+    } else {
+      navigate('/profile');
+    }
   };
 
   const validateTicket = (qrData: string): ScanResult => {
@@ -202,11 +208,11 @@ export const TicketScanner = (): JSX.Element => {
       {/* Header */}
       <div className="flex items-center justify-between p-6">
         <button 
-          onClick={handleBackToProfile}
+          onClick={handleBackToEventDashboard}
           className="flex items-center space-x-2 text-white/80 hover:text-white transition-colors duration-200"
         >
           <ArrowLeft className="w-6 h-6" />
-          <span>Back</span>
+          <span>Back to Event Dashboard</span>
         </button>
         
         <h1 className="text-2xl font-bold text-white">Ticket Scanner</h1>
