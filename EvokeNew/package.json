@@ -1,0 +1,86 @@
+{
+  "version": "1.0.0",
+  "source": "./index.html",
+  "type": "module",
+  "name": "evoke-app",
+  "description": "EVOKE - Discover & Create Unforgettable Events. A modern event management and ticketing platform.",
+  "keywords": [
+    "events",
+    "tickets",
+    "event-management",
+    "social-events",
+    "community"
+  ],
+  "author": "EVOKE Team",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview",
+    "postbuild": "react-snap",
+    "analyze": "vite-bundle-analyzer",
+    "lighthouse": "lighthouse http://localhost:4173 --output html --output-path ./lighthouse-report.html",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "@radix-ui/react-checkbox": "^1.1.2",
+    "@radix-ui/react-separator": "^1.1.0",
+    "@radix-ui/react-slot": "^1.1.0",
+    "@types/qrcode": "^1.5.5",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "2.1.1",
+    "lucide-react": "^0.453.0",
+    "qrcode": "^1.5.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-helmet-async": "^2.0.5",
+    "react-router-dom": "^6.8.1",
+    "tailwind-merge": "2.5.4",
+    "zustand": "^5.0.5"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/react": "18.2.0",
+    "@types/react-dom": "18.2.0",
+    "@vitejs/plugin-react": "4.3.4",
+    "@vitest/ui": "^3.2.4",
+    "esbuild": "^0.25.5",
+    "globals": "15.12.0",
+    "jsdom": "^26.1.0",
+    "lighthouse": "^12.7.0",
+    "react-snap": "^1.13.1",
+    "tailwindcss": "3.4.16",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5",
+    "vite-bundle-analyzer": "^0.7.0",
+    "vitest": "^3.2.4"
+  },
+  "alias": {
+    "@/*": "./src/components/ui/$1"
+  },
+  "reactSnap": {
+    "include": [
+      "/",
+      "/events",
+      "/create-event",
+      "/profile"
+    ],
+    "destination": "dist",
+    "source": "dist",
+    "minifyHtml": {
+      "collapseWhitespace": false,
+      "removeComments": false
+    },
+    "inlineCss": true,
+    "removeBlobs": true,
+    "removeScriptTags": false,
+    "fixWebpackChunksIssue": false,
+    "skipThirdPartyRequests": false
+  }
+}
