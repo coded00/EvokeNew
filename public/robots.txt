@@ -1,0 +1,25 @@
+User-agent: *
+Allow: /
+
+# Allow all pages except private/user-specific areas
+Disallow: /ticket-scanner/
+Disallow: /event-dashboard/
+Disallow: /messages/
+Disallow: /profile/
+
+# Allow important public pages
+Allow: /home
+Allow: /discovery
+Allow: /calendar
+Allow: /create-event
+Allow: /create-vibe
+Allow: /support
+Allow: /games
+Allow: /login
+Allow: /signup
+
+# Sitemap location
+Sitemap: https://evoke-app.com/sitemap.xml
+
+# Crawl delay (optional - be respectful to server)
+Crawl-delay: 1 

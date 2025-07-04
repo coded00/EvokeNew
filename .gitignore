@@ -1,13 +1,19 @@
 # Dependencies
 node_modules/
+
+# Logs
+logs
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+lerna-debug.log*
 
 # Build outputs
 dist/
 build/
+dist-ssr
 *.tsbuildinfo
 
 # Environment variables
@@ -16,10 +22,7 @@ build/
 .env.development.local
 .env.test.local
 .env.production.local
-
-# Logs
-logs/
-*.log
+*.local
 
 # Runtime data
 pids/
@@ -78,8 +81,15 @@ tmp/
 temp/
 
 # Editor directories and files
-.vscode/
-.idea/
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 *.swp
 *.swo
 *~
@@ -117,4 +127,4 @@ backend/dist/
 # Frontend specific
 EvokeNew/dist/
 EvokeNew/build/
-EvokeNew/.vite/ 
+EvokeNew/.vite/

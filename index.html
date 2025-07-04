@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    
+    <!-- Primary Meta Tags -->
+    <title>EVOKE - Discover & Create Unforgettable Events</title>
+    <meta name="title" content="EVOKE - Discover & Create Unforgettable Events" />
+    <meta name="description" content="Join EVOKE to discover amazing events, create your own vibes, and connect with communities. Buy tickets, manage events, and experience unforgettable moments." />
+    <meta name="keywords" content="events, tickets, event management, social events, community, entertainment, nightlife, concerts, festivals, event planning" />
+    <meta name="author" content="EVOKE" />
+    <meta name="robots" content="index, follow" />
+    <meta name="language" content="English" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://evoke-app.com/" />
+    <meta property="og:title" content="EVOKE - Discover & Create Unforgettable Events" />
+    <meta property="og:description" content="Join EVOKE to discover amazing events, create your own vibes, and connect with communities. Buy tickets, manage events, and experience unforgettable moments." />
+    <meta property="og:image" content="https://evoke-app.com/og-image.jpg" />
+    <meta property="og:site_name" content="EVOKE" />
+    <meta property="og:locale" content="en_US" />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://evoke-app.com/" />
+    <meta property="twitter:title" content="EVOKE - Discover & Create Unforgettable Events" />
+    <meta property="twitter:description" content="Join EVOKE to discover amazing events, create your own vibes, and connect with communities. Buy tickets, manage events, and experience unforgettable moments." />
+    <meta property="twitter:image" content="https://evoke-app.com/twitter-image.jpg" />
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    
+    <!-- Preconnect to external domains for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <!-- Fonts -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500&family=Poppins:wght@500;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500&family=Poppins:wght@500;700&display=swap" /></noscript>
+    
+    <!-- Styles -->
+    <link href="tailwind.css" rel="stylesheet" />
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "EVOKE",
+      "description": "Discover and create unforgettable events. Buy tickets, manage events, and connect with communities.",
+      "url": "https://evoke-app.com",
+      "applicationCategory": "EntertainmentApplication",
+      "operatingSystem": "Web",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "creator": {
+        "@type": "Organization",
+        "name": "EVOKE"
+      }
+    }
+    </script>
+    
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#6366f1" />
+    <meta name="msapplication-TileColor" content="#6366f1" />
+    
+    <!-- Security Headers -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta http-equiv="X-Frame-Options" content="DENY" />
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="./src/index.tsx"></script>
+    
+    <!-- Service Worker Registration for PWA -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then(registration => console.log('SW registered'))
+            .catch(error => console.log('SW registration failed'));
+        });
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,1 @@
+export { QRTest } from './QRTest'; 
