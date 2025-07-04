@@ -1,8 +1,8 @@
 {
-  "name": "evoke-app",
   "version": "1.0.0",
   "source": "./index.html",
   "type": "module",
+  "name": "evoke-app",
   "description": "EVOKE - Discover & Create Unforgettable Events. A modern event management and ticketing platform.",
   "keywords": [
     "events",
