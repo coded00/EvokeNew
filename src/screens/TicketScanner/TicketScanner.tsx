@@ -185,7 +185,7 @@ export const TicketScanner = (): JSX.Element => {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col relative overflow-hidden font-['Space_Grotesk']">
+    <div className="min-h-screen bg-[#1a1a1a] flex flex-col relative overflow-hidden font-['Space_Grotesk']">
       {/* Scan Result Notification */}
       {scanResult && (
         <div className={`fixed top-6 left-1/2 transform -translate-x-1/2 z-50 px-6 py-4 rounded-lg shadow-lg animate-fade-in ${getResultColor(scanResult.type)}`}>
@@ -206,21 +206,21 @@ export const TicketScanner = (): JSX.Element => {
       )}
 
       {/* Header */}
-      <div className="flex items-center justify-between p-6 border-b border-gray-200">
+      <div className="flex items-center justify-between p-6">
         <button 
           onClick={handleBackToEventDashboard}
-          className="flex items-center space-x-2 text-gray-600 hover:text-gray-800 transition-colors duration-200"
+          className="flex items-center space-x-2 text-white/80 hover:text-white transition-colors duration-200"
         >
           <ArrowLeft className="w-6 h-6" />
           <span>Back to Event Dashboard</span>
         </button>
         
-        <h1 className="text-2xl font-bold text-gray-900">Ticket Scanner</h1>
+        <h1 className="text-2xl font-bold text-white">Ticket Scanner</h1>
         
         <button 
           onClick={toggleFlash}
-          className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 border-2 ${
-            flashOn ? 'bg-yellow-500 text-black border-yellow-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border-gray-300'
+          className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 ${
+            flashOn ? 'bg-yellow-500 text-black' : 'bg-[#2a2a2a] text-white hover:bg-[#3a3a3a]'
           }`}
         >
           <Flashlight className="w-6 h-6" />
@@ -231,8 +231,8 @@ export const TicketScanner = (): JSX.Element => {
       <div className="flex-1 flex items-center justify-center p-8">
         <div className="max-w-md w-full">
           {/* QR Code Scanner Frame */}
-          <div className="relative bg-white rounded-2xl p-8 shadow-2xl border-2 border-black">
-            <div className="aspect-square bg-gray-100 rounded-xl flex items-center justify-center relative overflow-hidden border border-gray-300">
+          <div className="relative bg-white rounded-2xl p-8 shadow-2xl animate-fade-in">
+            <div className="aspect-square bg-gray-100 rounded-xl flex items-center justify-center relative overflow-hidden">
               {/* Camera View Simulation */}
               <div className="w-full h-full relative bg-gradient-to-br from-gray-200 to-gray-300">
                 <div className="absolute inset-0 flex items-center justify-center">
@@ -266,8 +266,8 @@ export const TicketScanner = (): JSX.Element => {
               disabled={isScanning}
               className={`px-12 py-4 rounded-xl font-bold text-lg transition-all duration-300 hover:scale-105 ${
                 isScanning 
-                  ? 'bg-gray-400 text-gray-600 cursor-not-allowed' 
-                  : 'bg-red-600 hover:bg-red-700 text-white hover:shadow-lg'
+                  ? 'bg-gray-500 text-gray-300 cursor-not-allowed' 
+                  : 'bg-[#FC1924] hover:bg-[#e01620] text-white hover:shadow-lg'
               }`}
             >
               {isScanning ? 'Scanning...' : 'Scan QR Code'}
@@ -276,10 +276,10 @@ export const TicketScanner = (): JSX.Element => {
 
           {/* Instructions */}
           <div className="text-center mt-6">
-            <p className="text-gray-600 text-sm mb-2">
+            <p className="text-gray-400 text-sm mb-2">
               Position the QR code from purchased tickets within the frame
             </p>
-            <p className="text-yellow-600 text-xs">
+            <p className="text-yellow-400 text-xs">
               ⚠️ Only scans tickets purchased through EVOKE platform
             </p>
           </div>
@@ -288,16 +288,16 @@ export const TicketScanner = (): JSX.Element => {
 
       {/* Scan History */}
       {scanHistory.length > 0 && (
-        <div className="bg-gray-50 p-6 border-t border-gray-200">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Recent Scans</h2>
+        <div className="bg-[#2a2a2a] p-6">
+          <h2 className="text-xl font-bold text-white mb-4">Recent Scans</h2>
           <div className="space-y-2 max-h-40 overflow-y-auto">
             {scanHistory.map((scan, index) => (
-              <div key={index} className="flex items-center space-x-3 bg-white rounded-lg p-3 border border-gray-200">
+              <div key={index} className="flex items-center space-x-3 bg-[#3a3a3a] rounded-lg p-3">
                 <div className={`w-3 h-3 rounded-full ${getResultColor(scan.type)}`}></div>
                 <div className="flex-1">
-                  <p className="text-gray-900 text-sm">{scan.message}</p>
+                  <p className="text-white text-sm">{scan.message}</p>
                   {scan.ticketData && (
-                    <p className="text-gray-600 text-xs">
+                    <p className="text-gray-400 text-xs">
                       {scan.ticketData.attendeeName} - {scan.ticketData.ticketId}
                     </p>
                   )}
