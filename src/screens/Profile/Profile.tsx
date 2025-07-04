@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { 
   ArrowLeft, 
@@ -46,7 +46,7 @@ export const Profile = (): JSX.Element | null => {
   }, [location.state]);
 
   // Mock user data
-  const userData = {
+  const userData = useMemo(() => ({
     name: "Solomon Adebayo",
     bio: "Event enthusiast & community builder",
     location: "Lagos, Nigeria",
@@ -58,17 +58,17 @@ export const Profile = (): JSX.Element | null => {
       revenueGenerated: 2450000
     },
     badges: ["Early Adopter", "Community Builder", "Top Host"]
-  };
+  }), []);
 
   // Mock event management data
-  const managementStats = [
+  const managementStats = useMemo(() => [
     { label: "Events Listed", value: "12", color: "from-gray-600 to-gray-700" },
     { label: "Tickets Sold", value: "2,940", color: "from-gray-600 to-gray-700" },
     { label: "Revenue", value: "₦24.5m", color: "from-gray-600 to-gray-700" },
     { label: "Active Events", value: "3", color: "from-gray-600 to-gray-700" }
-  ];
+  ], []);
 
-  const managedEvents = [
+  const managedEvents = useMemo(() => [
     {
       id: 1,
       name: "Afrobeat Night",
@@ -109,10 +109,10 @@ export const Profile = (): JSX.Element | null => {
       status: "Draft",
       statusColor: "bg-orange-500"
     }
-  ];
+  ], []);
 
   // Mock tickets data
-  const allTickets = [
+  const allTickets = useMemo(() => [
     {
       id: "TKT-001",
       eventName: "Wet & Rave",
@@ -152,17 +152,19 @@ export const Profile = (): JSX.Element | null => {
       status: "Active" as const,
       transferable: true
     }
-  ];
+  ], []);
 
-  const filteredTickets = allTickets.filter(ticket => {
-    if (activeTicketFilter === 'all') return true;
-    return ticket.status.toLowerCase() === activeTicketFilter;
-  });
+  const filteredTickets = useMemo(() => {
+    return allTickets.filter(ticket => {
+      if (activeTicketFilter === 'all') return true;
+      return ticket.status.toLowerCase() === activeTicketFilter;
+    });
+  }, [allTickets, activeTicketFilter]);
 
-  const activeTickets = allTickets.filter(ticket => ticket.status === 'Active');
-  const usedTickets = allTickets.filter(ticket => ticket.status === 'Used');
+  const activeTickets = useMemo(() => allTickets.filter(ticket => ticket.status === 'Active'), [allTickets]);
+  const usedTickets = useMemo(() => allTickets.filter(ticket => ticket.status === 'Used'), [allTickets]);
 
-  const attendedEvents = [
+  const attendedEvents = useMemo(() => [
     {
       id: 1,
       name: "Summer Vibes Festival",
@@ -179,9 +181,9 @@ export const Profile = (): JSX.Element | null => {
       rating: 4,
       image: "https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg?auto=compress&cs=tinysrgb&w=300"
     }
-  ];
+  ], []);
 
-  const upcomingEvents = [
+  const upcomingEvents = useMemo(() => [
     {
       id: 3,
       name: "Wet & Rave",
@@ -189,9 +191,9 @@ export const Profile = (): JSX.Element | null => {
       countdown: "15 days",
       image: "https://images.pexels.com/photos/1540406/pexels-photo-1540406.jpeg?auto=compress&cs=tinysrgb&w=300"
     }
-  ];
+  ], []);
 
-  const likedEvents = [
+  const likedEvents = useMemo(() => [
     {
       id: 4,
       name: "Afrobeat Night",
@@ -206,52 +208,52 @@ export const Profile = (): JSX.Element | null => {
       location: "Ikoyi, Lagos",
       image: "https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg?auto=compress&cs=tinysrgb&w=300"
     }
-  ];
+  ], []);
 
-  const handleBackToHome = () => {
+  const handleBackToHome = useCallback(() => {
     navigate('/home');
-  };
+  }, [navigate]);
 
-  const handleEventView = (eventId: number) => {
+  const handleEventView = useCallback((eventId: number) => {
     navigate(`/event-dashboard/${eventId}`);
-  };
+  }, [navigate]);
 
-  const handleEventEdit = (eventId: number) => {
+  const handleEventEdit = useCallback((eventId: number) => {
     navigate(`/event-edit/${eventId}`);
-  };
+  }, [navigate]);
 
-  const nextTicket = () => {
+  const nextTicket = useCallback(() => {
     setCurrentTicketIndex((prev) => (prev + 1) % activeTickets.length);
-  };
+  }, [activeTickets.length]);
 
-  const prevTicket = () => {
+  const prevTicket = useCallback(() => {
     setCurrentTicketIndex((prev) => (prev - 1 + activeTickets.length) % activeTickets.length);
-  };
+  }, [activeTickets.length]);
 
-  const nextUsedTicket = () => {
+  const nextUsedTicket = useCallback(() => {
     setCurrentUsedTicketIndex((prev) => (prev + 1) % usedTickets.length);
-  };
+  }, [usedTickets.length]);
 
-  const prevUsedTicket = () => {
+  const prevUsedTicket = useCallback(() => {
     setCurrentUsedTicketIndex((prev) => (prev - 1 + usedTickets.length) % usedTickets.length);
-  };
+  }, [usedTickets.length]);
 
-  const handleDownloadTicket = (ticketId: string) => {
+  const handleDownloadTicket = useCallback((ticketId: string) => {
     console.info(`Downloading ticket ${ticketId}...`);
     alert('Ticket download started! (Feature coming soon)');
-  };
+  }, []);
 
-  const handleShareTicket = (ticketId: string) => {
+  const handleShareTicket = useCallback((ticketId: string) => {
     console.info(`Sharing ticket ${ticketId}...`);
     alert('Share feature coming soon!');
-  };
+  }, []);
 
-  const handleTransferTicket = (ticketId: string) => {
+  const handleTransferTicket = useCallback((ticketId: string) => {
     console.info(`Transferring ticket ${ticketId}...`);
     alert('Transfer feature coming soon!');
-  };
+  }, []);
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = useCallback((status: string) => {
     switch (status) {
       case 'Active':
         return 'bg-green-500';
@@ -262,7 +264,7 @@ export const Profile = (): JSX.Element | null => {
       default:
         return 'bg-gray-500';
     }
-  };
+  }, []);
 
   // Profile Overview Tab
   if (activeTab === 'overview') {

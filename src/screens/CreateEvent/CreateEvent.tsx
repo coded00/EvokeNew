@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Upload, Plus, X, Check } from "lucide-react";
 import { Sidebar } from "../../components/ui/sidebar";
 
 interface EventData {
   name: string;
-  category: string;
+  categories: string[];
   description: string;
   poster: File | null;
   location: string;
@@ -13,7 +13,7 @@ interface EventData {
   endDate: string;
   startTime: string;
   endTime: string;
-  vibe: string;
+  vibes: string[];
   eventTask: string;
   specialAppearances: string;
   promoCode: string;
@@ -36,7 +36,7 @@ export const CreateEvent = (): JSX.Element | null => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [eventData, setEventData] = useState<EventData>({
     name: "",
-    category: "",
+    categories: [],
     description: "",
     poster: null,
     location: "",
@@ -44,7 +44,7 @@ export const CreateEvent = (): JSX.Element | null => {
     endDate: "",
     startTime: "",
     endTime: "",
-    vibe: "",
+    vibes: [],
     eventTask: "",
     specialAppearances: "",
     promoCode: "",
@@ -54,46 +54,46 @@ export const CreateEvent = (): JSX.Element | null => {
     teamMembers: []
   });
 
-  const handleBackToCreateVibe = () => {
+  const handleBackToCreateVibe = useCallback(() => {
     navigate('/create-vibe');
-  };
+  }, [navigate]);
 
-  const handleBackToHome = () => {
+  const handleBackToHome = useCallback(() => {
     navigate('/home');
-  };
+  }, [navigate]);
 
-  const handleInputChange = (field: keyof EventData, value: string | number) => {
+  const handleInputChange = useCallback((field: keyof EventData, value: string | number | string[]) => {
     setEventData(prev => ({ ...prev, [field]: value }));
-  };
+  }, []);
 
-  const handleFileUpload = (file: File) => {
+  const handleFileUpload = useCallback((file: File) => {
     setEventData(prev => ({ ...prev, poster: file }));
-  };
+  }, []);
 
-  const addTeamMember = () => {
+  const addTeamMember = useCallback(() => {
     setEventData(prev => ({
       ...prev,
       teamMembers: [...prev.teamMembers, { name: "", responsibility: "" }]
     }));
-  };
+  }, []);
 
-  const updateTeamMember = (index: number, field: 'name' | 'responsibility', value: string) => {
+  const updateTeamMember = useCallback((index: number, field: 'name' | 'responsibility', value: string) => {
     setEventData(prev => ({
       ...prev,
       teamMembers: prev.teamMembers.map((member, i) => 
         i === index ? { ...member, [field]: value } : member
       )
     }));
-  };
+  }, []);
 
-  const removeTeamMember = (index: number) => {
+  const removeTeamMember = useCallback((index: number) => {
     setEventData(prev => ({
       ...prev,
       teamMembers: prev.teamMembers.filter((_, i) => i !== index)
     }));
-  };
+  }, []);
 
-  const addTicketType = () => {
+  const addTicketType = useCallback(() => {
     setEventData(prev => ({
       ...prev,
       ticketTypes: [...prev.ticketTypes, {
@@ -104,43 +104,61 @@ export const CreateEvent = (): JSX.Element | null => {
         quantity: 0
       }]
     }));
-  };
+  }, []);
 
-  const updateTicketType = (index: number, field: keyof EventData['ticketTypes'][0], value: string | number) => {
+  const updateTicketType = useCallback((index: number, field: keyof EventData['ticketTypes'][0], value: string | number) => {
     setEventData(prev => ({
       ...prev,
       ticketTypes: prev.ticketTypes.map((ticket, i) => 
         i === index ? { ...ticket, [field]: value } : ticket
       )
     }));
-  };
+  }, []);
 
-  const removeTicketType = (index: number) => {
+  const removeTicketType = useCallback((index: number) => {
     setEventData(prev => ({
       ...prev,
       ticketTypes: prev.ticketTypes.filter((_, i) => i !== index)
     }));
-  };
+  }, []);
 
-  const nextStep = () => {
+  const nextStep = useCallback(() => {
     if (currentStep < 4) {
       setCurrentStep(currentStep + 1);
     }
-  };
+  }, [currentStep]);
 
-  const prevStep = () => {
+  const prevStep = useCallback(() => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
     }
-  };
+  }, [currentStep]);
 
-  const handlePublish = async () => {
+  const handlePublish = useCallback(async () => {
     setIsPublishing(true);
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 2000));
     setIsPublishing(false);
     setShowSuccess(true);
-  };
+  }, []);
+
+  const handleCategoryToggle = useCallback((category: string) => {
+    setEventData(prev => ({
+      ...prev,
+      categories: prev.categories.includes(category)
+        ? prev.categories.filter(c => c !== category)
+        : [...prev.categories, category]
+    }));
+  }, []);
+
+  const handleVibeToggle = useCallback((vibe: string) => {
+    setEventData(prev => ({
+      ...prev,
+      vibes: prev.vibes.includes(vibe)
+        ? prev.vibes.filter(v => v !== vibe)
+        : [...prev.vibes, vibe]
+    }));
+  }, []);
 
   const categories = [
     "Music & Concerts",
@@ -256,20 +274,27 @@ export const CreateEvent = (): JSX.Element | null => {
               </div>
 
               <div>
-                <label className="block text-white text-sm font-medium mb-2">Category</label>
-                <div className="relative">
-                  <select
-                    value={eventData.category}
-                    onChange={(e) => handleInputChange('category', e.target.value)}
-                    className="w-full bg-[#2a2a2a] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#FC1924] transition-all duration-200 appearance-none"
-                  >
-                    <option value="">Select category</option>
-                    {categories.map(category => (
-                      <option key={category} value={category}>{category}</option>
-                    ))}
-                  </select>
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 bg-[#FC1924] rounded"></div>
+                <label className="block text-white text-sm font-medium mb-2">Categories</label>
+                <div className="grid grid-cols-2 gap-2">
+                  {categories.map(category => (
+                    <button
+                      key={category}
+                      onClick={() => handleCategoryToggle(category)}
+                      className={`p-3 rounded-lg text-sm font-medium transition-all duration-200 ${
+                        eventData.categories.includes(category)
+                          ? 'bg-[#FC1924] text-white'
+                          : 'bg-[#2a2a2a] text-gray-400 hover:text-white hover:bg-[#3a3a3a]'
+                      }`}
+                    >
+                      {category}
+                    </button>
+                  ))}
                 </div>
+                {eventData.categories.length > 0 && (
+                  <p className="text-gray-400 text-sm mt-2">
+                    Selected: {eventData.categories.join(', ')}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -301,7 +326,7 @@ export const CreateEvent = (): JSX.Element | null => {
                 onClick={nextStep}
                 className="bg-[#FC1924] hover:bg-[#e01620] text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105"
               >
-                Next {'>'}
+                Next {'→'}
               </button>
             </div>
           </div>
@@ -388,19 +413,26 @@ export const CreateEvent = (): JSX.Element | null => {
 
               <div>
                 <label className="block text-white text-sm font-medium mb-2">What's the Vibe(s)</label>
-                <div className="relative">
-                  <select
-                    value={eventData.vibe}
-                    onChange={(e) => handleInputChange('vibe', e.target.value)}
-                    className="w-full bg-[#2a2a2a] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#FC1924] transition-all duration-200 appearance-none"
-                  >
-                    <option value="">Select vibe</option>
-                    {vibes.map(vibe => (
-                      <option key={vibe} value={vibe}>{vibe}</option>
-                    ))}
-                  </select>
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 bg-[#FC1924] rounded"></div>
+                <div className="grid grid-cols-2 gap-2">
+                  {vibes.map(vibe => (
+                    <button
+                      key={vibe}
+                      onClick={() => handleVibeToggle(vibe)}
+                      className={`p-3 rounded-lg text-sm font-medium transition-all duration-200 ${
+                        eventData.vibes.includes(vibe)
+                          ? 'bg-[#FC1924] text-white'
+                          : 'bg-[#2a2a2a] text-gray-400 hover:text-white hover:bg-[#3a3a3a]'
+                      }`}
+                    >
+                      {vibe}
+                    </button>
+                  ))}
                 </div>
+                {eventData.vibes.length > 0 && (
+                  <p className="text-gray-400 text-sm mt-2">
+                    Selected: {eventData.vibes.join(', ')}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -455,7 +487,7 @@ export const CreateEvent = (): JSX.Element | null => {
                 onClick={nextStep}
                 className="bg-[#FC1924] hover:bg-[#e01620] text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105"
               >
-                Next {'>'}
+                Next {'→'}
               </button>
             </div>
           </div>
@@ -701,7 +733,7 @@ export const CreateEvent = (): JSX.Element | null => {
                 onClick={nextStep}
                 className="bg-[#FC1924] hover:bg-[#e01620] text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105"
               >
-                Next {'>'}
+                Next {'→'}
               </button>
             </div>
           </div>
@@ -790,8 +822,13 @@ export const CreateEvent = (): JSX.Element | null => {
               </div>
 
               <div className="bg-[#2a2a2a] rounded-lg p-4">
-                <span className="text-gray-400 text-sm">Vibes :</span>
-                <p className="text-white mt-1">{eventData.vibe || "Not set"}</p>
+                <span className="text-gray-400 text-sm">Categories:</span>
+                <p className="text-white mt-1">{eventData.categories.join(', ') || "Not set"}</p>
+              </div>
+
+              <div className="bg-[#2a2a2a] rounded-lg p-4">
+                <span className="text-gray-400 text-sm">Vibes:</span>
+                <p className="text-white mt-1">{eventData.vibes.join(', ') || "Not set"}</p>
               </div>
 
               <div className="bg-[#2a2a2a] rounded-lg p-4">

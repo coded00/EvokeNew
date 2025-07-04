@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowLeft, Camera, Flashlight, CheckCircle, XCircle, AlertTriangle } from "lucide-react";
 import QRCodeService, { TicketData } from "../../lib/qrCodeService";
@@ -18,15 +18,15 @@ export const TicketScanner = (): JSX.Element => {
   const [scanResult, setScanResult] = useState<ScanResult | null>(null);
   const [scanHistory, setScanHistory] = useState<ScanResult[]>([]);
 
-  const handleBackToEventDashboard = () => {
+  const handleBackToEventDashboard = useCallback(() => {
     if (eventId) {
       navigate(`/event-dashboard/${eventId}`);
     } else {
       navigate('/profile');
     }
-  };
+  }, [navigate, eventId]);
 
-  const validateTicket = (qrData: string): ScanResult => {
+  const validateTicket = useCallback((qrData: string): ScanResult => {
     try {
       // Validate the QR code data using our service
       const validation = QRCodeService.validateTicketData(qrData);
@@ -76,9 +76,9 @@ export const TicketScanner = (): JSX.Element => {
         message: 'Unable to read QR code. Please ensure the code is clear and try again.'
       };
     }
-  };
+  }, []);
 
-  const handleScan = () => {
+  const handleScan = useCallback(() => {
     setIsScanning(true);
     setScanResult(null);
     
@@ -138,11 +138,11 @@ export const TicketScanner = (): JSX.Element => {
       setScanResult(result);
       setScanHistory(prev => [result, ...prev.slice(0, 9)]); // Keep last 10 scans
     }, 2000);
-  };
+  }, [validateTicket]);
 
-  const toggleFlash = () => {
-    setFlashOn(!flashOn);
-  };
+  const toggleFlash = useCallback(() => {
+    setFlashOn(prev => !prev);
+  }, []);
 
   // Clear scan result after 5 seconds
   useEffect(() => {
@@ -154,7 +154,7 @@ export const TicketScanner = (): JSX.Element => {
     }
   }, [scanResult]);
 
-  const getResultIcon = (type: string) => {
+  const getResultIcon = useCallback((type: string) => {
     switch (type) {
       case 'success':
         return <CheckCircle className="w-8 h-8 text-green-500" />;
@@ -167,9 +167,9 @@ export const TicketScanner = (): JSX.Element => {
       default:
         return null;
     }
-  };
+  }, []);
 
-  const getResultColor = (type: string) => {
+  const getResultColor = useCallback((type: string) => {
     switch (type) {
       case 'success':
         return 'bg-green-500';
@@ -182,7 +182,7 @@ export const TicketScanner = (): JSX.Element => {
       default:
         return 'bg-gray-500';
     }
-  };
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#1a1a1a] flex flex-col relative overflow-hidden font-['Space_Grotesk']">

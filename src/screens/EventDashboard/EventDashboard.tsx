@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { 
   ArrowLeft, 
@@ -10,10 +10,7 @@ import {
   MapPin, 
   Clock,
   QrCode,
-  Download,
   Edit,
-  Share,
-  Bell,
   CheckCircle,
   XCircle,
   Search,
@@ -21,7 +18,8 @@ import {
   BarChart3,
   Settings,
   Eye,
-  EyeOff
+  EyeOff,
+  Scan
 } from "lucide-react";
 import { Sidebar } from "../../components/ui/sidebar";
 
@@ -60,10 +58,9 @@ export const EventDashboard = (): JSX.Element => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [showQRCode, setShowQRCode] = useState(false);
-  const [isLive, setIsLive] = useState(true);
 
   // Mock data - in real app this would come from API
-  const eventData = {
+  const eventData = useMemo(() => ({
     id: eventId || '1',
     name: 'Wet & Wild Summer Party',
     date: '2025-06-15',
@@ -72,67 +69,77 @@ export const EventDashboard = (): JSX.Element => {
     status: 'active',
     capacity: 500,
     image: 'https://images.pexels.com/photos/1190298/pexels-photo-1190298.jpeg?auto=compress&cs=tinysrgb&w=800'
-  };
+  }), [eventId]);
 
-  const stats: EventStats = {
+  const stats: EventStats = useMemo(() => ({
     totalAttendees: 342,
     checkedIn: 287,
     totalRevenue: 2850000,
     ticketsSold: 342,
     totalCapacity: 500,
     checkInRate: 84
-  };
+  }), []);
 
-  const ticketTypes: TicketType[] = [
+  const ticketTypes: TicketType[] = useMemo(() => [
     { name: 'Regular', price: 5000, sold: 200, total: 300, revenue: 1000000 },
     { name: 'VIP', price: 10000, sold: 100, total: 150, revenue: 1000000 },
     { name: 'Premium', price: 15000, sold: 42, total: 50, revenue: 630000 }
-  ];
+  ], []);
 
-  const attendees: Attendee[] = [
+  const attendees: Attendee[] = useMemo(() => [
     { id: '1', name: 'John Doe', email: 'john@example.com', ticketType: 'VIP', purchaseDate: '2025-01-10', checkInStatus: 'checked-in', checkInTime: '2025-06-15 19:30', amount: 10000 },
     { id: '2', name: 'Jane Smith', email: 'jane@example.com', ticketType: 'Regular', purchaseDate: '2025-01-12', checkInStatus: 'checked-in', checkInTime: '2025-06-15 20:15', amount: 5000 },
     { id: '3', name: 'Mike Johnson', email: 'mike@example.com', ticketType: 'Premium', purchaseDate: '2025-01-15', checkInStatus: 'not-checked-in', amount: 15000 },
     { id: '4', name: 'Sarah Wilson', email: 'sarah@example.com', ticketType: 'Regular', purchaseDate: '2025-01-18', checkInStatus: 'cancelled', amount: 5000 },
     { id: '5', name: 'David Brown', email: 'david@example.com', ticketType: 'VIP', purchaseDate: '2025-01-20', checkInStatus: 'checked-in', checkInTime: '2025-06-15 21:00', amount: 10000 }
-  ];
+  ], []);
 
-  const filteredAttendees = attendees.filter(attendee => {
-    const matchesSearch = attendee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         attendee.email.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter = filterStatus === 'all' || attendee.checkInStatus === filterStatus;
-    return matchesSearch && matchesFilter;
-  });
+  const filteredAttendees = useMemo(() => {
+    return attendees.filter(attendee => {
+      const matchesSearch = attendee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           attendee.email.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesFilter = filterStatus === 'all' || attendee.checkInStatus === filterStatus;
+      return matchesSearch && matchesFilter;
+    });
+  }, [attendees, searchTerm, filterStatus]);
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = useCallback((status: string) => {
     switch (status) {
       case 'checked-in': return 'text-green-500 bg-green-100';
       case 'not-checked-in': return 'text-yellow-500 bg-yellow-100';
       case 'cancelled': return 'text-red-500 bg-red-100';
       default: return 'text-gray-500 bg-gray-100';
     }
-  };
+  }, []);
 
-  const getStatusIcon = (status: string) => {
+  const getStatusIcon = useCallback((status: string) => {
     switch (status) {
       case 'checked-in': return <CheckCircle className="w-4 h-4" />;
       case 'not-checked-in': return <Clock className="w-4 h-4" />;
       case 'cancelled': return <XCircle className="w-4 h-4" />;
       default: return <Clock className="w-4 h-4" />;
     }
-  };
+  }, []);
 
-  const formatCurrency = (amount: number) => {
+  const formatCurrency = useCallback((amount: number) => {
     return new Intl.NumberFormat('en-NG', {
       style: 'currency',
       currency: 'NGN',
       minimumFractionDigits: 0
     }).format(amount);
-  };
+  }, []);
 
-  const handleBackToEventManagement = () => {
+  const handleBackToEventManagement = useCallback(() => {
     navigate('/profile', { state: { activeTab: 'management' } });
-  };
+  }, [navigate]);
+
+  const handlePromoteEvent = useCallback(() => {
+    alert('Promotion tools coming soon! This will include social sharing, boosting, and marketing features.');
+  }, []);
+
+  const handleScanQR = useCallback(() => {
+    navigate(`/ticket-scanner?eventId=${eventId}`);
+  }, [navigate, eventId]);
 
   return (
     <div className="min-h-screen bg-[#0f1419] flex relative overflow-hidden font-['Space_Grotesk']">
@@ -162,15 +169,11 @@ export const EventDashboard = (): JSX.Element => {
 
             <div className="flex items-center space-x-4">
               <button 
-                onClick={() => navigate('/ticket-scanner')}
+                onClick={handleScanQR}
                 className="flex items-center space-x-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-all duration-300"
               >
                 <QrCode className="w-4 h-4" />
                 <span>Scan QR</span>
-              </button>
-              <button className="flex items-center space-x-2 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg transition-all duration-300">
-                <Download className="w-4 h-4" />
-                <span>Export</span>
               </button>
               <button 
                 onClick={() => navigate(`/event-edit/${eventId}`)}
@@ -179,9 +182,12 @@ export const EventDashboard = (): JSX.Element => {
                 <Edit className="w-4 h-4" />
                 <span>Edit</span>
               </button>
-              <button className="flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-all duration-300">
-                <Share className="w-4 h-4" />
-                <span>Share</span>
+              <button 
+                onClick={handlePromoteEvent}
+                className="flex items-center space-x-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-all duration-300"
+              >
+                <TrendingUp className="w-4 h-4" />
+                <span>Promote Event</span>
               </button>
             </div>
           </div>
@@ -471,9 +477,12 @@ export const EventDashboard = (): JSX.Element => {
                       <QrCode className="w-4 h-4" />
                       <span>{showQRCode ? 'Hide' : 'Show'} QR Code</span>
                     </button>
-                    <button className="flex items-center space-x-2 bg-[#2a2f36] hover:bg-[#3a3f46] text-white px-4 py-2 rounded-lg transition-all duration-300 border border-gray-600">
-                      <Download className="w-4 h-4" />
-                      <span>Download All</span>
+                    <button 
+                      onClick={() => navigate(`/qr-test/${eventId}`)}
+                      className="flex items-center space-x-2 bg-[#2a2f36] hover:bg-[#3a3f46] text-white px-4 py-2 rounded-lg transition-all duration-300 border border-gray-600"
+                    >
+                      <QrCode className="w-4 h-4" />
+                      <span>Generate QR Codes</span>
                     </button>
                   </div>
                   
