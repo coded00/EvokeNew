@@ -16,9 +16,9 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "build:snap": "tsc && vite build && react-snap",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "postbuild": "react-snap",
     "analyze": "vite-bundle-analyzer",
     "lighthouse": "lighthouse http://localhost:4173 --output html --output-path ./lighthouse-report.html",
     "test": "vitest",
@@ -54,6 +54,7 @@
     "globals": "15.12.0",
     "jsdom": "^26.1.0",
     "lighthouse": "^12.7.0",
+    "puppeteer": "^23.9.0",
     "react-snap": "^1.13.1",
     "tailwindcss": "3.4.16",
     "typescript": "^5.8.3",
@@ -81,6 +82,15 @@
     "removeBlobs": true,
     "removeScriptTags": false,
     "fixWebpackChunksIssue": false,
-    "skipThirdPartyRequests": false
+    "skipThirdPartyRequests": false,
+    "puppeteerArgs": [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-dev-shm-usage",
+      "--disable-accelerated-2d-canvas",
+      "--no-first-run",
+      "--no-zygote",
+      "--disable-gpu"
+    ]
   }
 }
