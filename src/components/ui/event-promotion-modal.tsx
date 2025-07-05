@@ -1,14 +1,5 @@
 import React, { useState } from 'react';
-import { X, Copy, Check, Share2, MessageCircle, Camera, Send, Users, TrendingUp } from 'lucide-react';
-
-// Social media platform icons (using Lucide icons as placeholders)
-const platformIcons = {
-  whatsapp: MessageCircle,
-  instagram: Camera,
-  twitter: Send,
-  snapchat: Camera,
-  facebook: Users
-};
+import { X, Share2, Copy, Facebook, Twitter, Instagram, MessageCircle, Mail, Download, QrCode, TrendingUp, Users, Calendar, MapPin, Clock, Star } from 'lucide-react';
 
 interface EventData {
   id: string;
@@ -28,274 +19,351 @@ interface EventPromotionModalProps {
   onClose: () => void;
 }
 
-const EventPromotionModal: React.FC<EventPromotionModalProps> = ({ eventData, isOpen, onClose }) => {
+const EventPromotionModal: React.FC<EventPromotionModalProps> = ({
+  eventData,
+  isOpen,
+  onClose
+}) => {
+  const [activeTab, setActiveTab] = useState<'share' | 'promote' | 'analytics'>('share');
+  const [copiedLink, setCopiedLink] = useState(false);
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
-  const [showGenerated, setShowGenerated] = useState(false);
-  const [copied, setCopied] = useState(false);
 
-  const platforms = [
-    { id: 'whatsapp', name: 'WhatsApp', color: 'bg-green-500', icon: MessageCircle },
-    { id: 'instagram', name: 'Instagram', color: 'bg-pink-500', icon: Camera },
-    { id: 'twitter', name: 'X (Twitter)', color: 'bg-black', icon: Send },
-    { id: 'snapchat', name: 'Snapchat', color: 'bg-yellow-400', icon: Camera },
-    { id: 'facebook', name: 'Facebook', color: 'bg-blue-600', icon: Users }
-  ];
+  if (!isOpen) return null;
 
-  // Generate promotional content
-  const generateContent = () => {
-    const captions: Record<string, string> = {
-      whatsapp: `🎉 *${eventData.name}* is happening!\n\n📅 ${eventData.date} at ${eventData.time}\n📍 ${eventData.location}\n💰 ${eventData.price}\n\n🔥 Vibe: ${eventData.vibe}\n\nDon't miss out! Get your tickets now 🎫`,
-      
-      instagram: `🎵 Ready for an unforgettable night? ${eventData.name} is calling your name! ✨\n\n📅 ${eventData.date}\n⏰ ${eventData.time}\n📍 ${eventData.location}\n💸 ${eventData.price}\n\nBring your energy and let's create magic together! 🔥`,
-      
-      twitter: `🎉 ${eventData.name} is happening ${eventData.date}!\n\n📍 ${eventData.location}\n⏰ ${eventData.time}\n💰 ${eventData.price}\n\nGet ready for the ${eventData.vibe.toLowerCase()} vibes! 🔥`,
-      
-      snapchat: `🎵 ${eventData.name} 🎵\n${eventData.date} • ${eventData.time}\n📍 ${eventData.location}\n\nLet's vibe together! 🔥✨`,
-      
-      facebook: `🎉 Exciting news! ${eventData.name} is happening and you're invited!\n\n📅 When: ${eventData.date} at ${eventData.time}\n📍 Where: ${eventData.location}\n💰 Tickets: ${eventData.price}\n\nJoin us for an amazing night filled with ${eventData.vibe.toLowerCase()} vibes! This is going to be epic! 🔥\n\nTag your friends who need to be there! 👥`
-    };
+  const eventUrl = `https://evoke-app.com/event/${eventData.id}`;
 
-    const hashtags = `#${eventData.name.replace(/\s+/g, '')} #LagosEvents #Afrobeat #NightLife #${eventData.location.replace(/\s+/g, '')} #EvokeEvents #LagosVibes #${eventData.date.replace(/\s+/g, '')}`;
-
-    return { captions, hashtags };
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(eventUrl);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy link:', err);
+    }
   };
 
-  const handlePlatformToggle = (platformId: string) => {
+  const handlePlatformToggle = (platform: string) => {
     setSelectedPlatforms(prev => 
-      prev.includes(platformId) 
-        ? prev.filter(id => id !== platformId)
-        : [...prev, platformId]
+      prev.includes(platform) 
+        ? prev.filter(p => p !== platform)
+        : [...prev, platform]
     );
   };
 
-  const handleGenerateContent = () => {
-    if (selectedPlatforms.length === 0) {
-      alert('Please select at least one platform!');
-      return;
+  const shareOptions = [
+    { 
+      id: 'facebook', 
+      name: 'Facebook', 
+      icon: Facebook, 
+      color: 'from-blue-600 to-blue-700',
+      url: `https://facebook.com/sharer/sharer.php?u=${encodeURIComponent(eventUrl)}`
+    },
+    { 
+      id: 'twitter', 
+      name: 'Twitter', 
+      icon: Twitter, 
+      color: 'from-sky-500 to-sky-600',
+      url: `https://twitter.com/intent/tweet?url=${encodeURIComponent(eventUrl)}&text=${encodeURIComponent(`Check out ${eventData.name} on EVOKE!`)}`
+    },
+    { 
+      id: 'instagram', 
+      name: 'Instagram', 
+      icon: Instagram, 
+      color: 'from-pink-500 to-purple-600',
+      url: '#'
+    },
+    { 
+      id: 'whatsapp', 
+      name: 'WhatsApp', 
+      icon: MessageCircle, 
+      color: 'from-green-500 to-green-600',
+      url: `https://wa.me/?text=${encodeURIComponent(`Check out ${eventData.name} on EVOKE! ${eventUrl}`)}`
+    },
+    { 
+      id: 'email', 
+      name: 'Email', 
+      icon: Mail, 
+      color: 'from-gray-600 to-gray-700',
+      url: `mailto:?subject=${encodeURIComponent(`Invitation: ${eventData.name}`)}&body=${encodeURIComponent(`You're invited to ${eventData.name}! Check it out: ${eventUrl}`)}`
     }
-    setShowGenerated(true);
-  };
+  ];
 
-  const handleDirectShare = (platform: string) => {
-    const { captions, hashtags } = generateContent();
-    const fullContent = `${captions[platform]}\n\n${hashtags}`;
-    
-    const shareUrls: Record<string, string> = {
-      whatsapp: `https://wa.me/?text=${encodeURIComponent(fullContent)}`,
-      twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(fullContent)}`,
-      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}&quote=${encodeURIComponent(fullContent)}`,
-      // Instagram and Snapchat don't support direct web sharing
-    };
-
-    if (shareUrls[platform]) {
-      window.open(shareUrls[platform], '_blank', 'width=600,height=400');
-    } else {
-      // Copy to clipboard for Instagram/Snapchat
-      handleCopyToClipboard(platform);
-    }
-  };
-
-  const handleCopyToClipboard = (platform: string) => {
-    const { captions, hashtags } = generateContent();
-    const fullContent = `${captions[platform]}\n\n${hashtags}`;
-    
-    navigator.clipboard.writeText(fullContent).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
-  };
-
-  const handleCopyAll = () => {
-    const { captions, hashtags } = generateContent();
-    let allContent = '';
-    
-    selectedPlatforms.forEach(platform => {
-      allContent += `--- ${platforms.find(p => p.id === platform)?.name} ---\n`;
-      allContent += `${captions[platform]}\n\n${hashtags}\n\n`;
-    });
-    
-    navigator.clipboard.writeText(allContent).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
-  };
-
-  const resetModal = () => {
-    setSelectedPlatforms([]);
-    setShowGenerated(false);
-    setCopied(false);
-  };
-
-  const closeModal = () => {
-    onClose();
-    resetModal();
-  };
-
-  if (!isOpen) {
-    return null;
-  }
+  const promotionStats = [
+    { label: 'Potential Reach', value: '2.5K', icon: Users, color: 'text-blue-400' },
+    { label: 'Engagement Rate', value: '12.3%', icon: TrendingUp, color: 'text-green-400' },
+    { label: 'Shares Expected', value: '45', icon: Share2, color: 'text-purple-400' },
+    { label: 'Click-through Rate', value: '8.7%', icon: Star, color: 'text-yellow-400' }
+  ];
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 font-['Space_Grotesk']">
-      <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border-2 border-black">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
+      <div className="bg-[#1a1a1a] rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-hidden border border-gray-800 shadow-2xl animate-slide-up">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-2xl font-bold text-gray-900">
-            {!showGenerated ? 'Promote Event' : 'Generated Content'}
-          </h2>
-          <button
-            onClick={closeModal}
-            className="text-gray-500 hover:text-gray-700 transition-colors duration-200"
-          >
-            <X size={24} />
-          </button>
+        <div className="relative bg-gradient-to-r from-[#FC1924] to-[#e01620] p-6">
+          <div className="absolute inset-0 bg-black/20"></div>
+          <div className="relative flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                <TrendingUp className="w-8 h-8 text-white" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-white">Promote Event</h2>
+                <p className="text-white/80">Boost your event's visibility</p>
+              </div>
+            </div>
+            <button 
+              onClick={onClose}
+              className="w-10 h-10 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center backdrop-blur-sm transition-all duration-300 hover:scale-110"
+            >
+              <X className="w-5 h-5 text-white" />
+            </button>
+          </div>
         </div>
 
-        {!showGenerated ? (
-          // Platform Selection View
-          <div className="p-6">
-            <div className="text-center mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Where would you like to share this event?
-              </h3>
-              <p className="text-gray-600">
-                Select one or more platforms to generate promotional content
-              </p>
-            </div>
+        {/* Navigation Tabs */}
+        <div className="flex border-b border-gray-800 bg-[#2a2a2a]">
+          {[
+            { id: 'share', label: 'Share Event', icon: Share2 },
+            { id: 'promote', label: 'Boost Promotion', icon: TrendingUp },
+            { id: 'analytics', label: 'Analytics', icon: BarChart3 }
+          ].map((tab) => {
+            const Icon = tab.icon;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as any)}
+                className={`flex-1 flex items-center justify-center space-x-2 py-4 px-6 font-semibold transition-all duration-300 ${
+                  activeTab === tab.id
+                    ? 'bg-[#FC1924] text-white border-b-2 border-white'
+                    : 'text-gray-400 hover:text-white hover:bg-[#3a3a3a]'
+                }`}
+              >
+                <Icon className="w-4 h-4" />
+                <span>{tab.label}</span>
+              </button>
+            );
+          })}
+        </div>
 
-            {/* Event Preview */}
-            <div className="bg-gray-50 rounded-lg p-4 mb-6 border border-gray-200">
-              <div className="flex items-center gap-4">
-                <img
-                  src={eventData.poster}
-                  alt={eventData.name}
-                  className="w-16 h-16 rounded-lg object-cover border border-gray-300"
-                />
-                <div>
-                  <h4 className="font-semibold text-gray-900">{eventData.name}</h4>
-                  <p className="text-sm text-gray-600">{eventData.date} • {eventData.location}</p>
+        <div className="p-6 overflow-y-auto max-h-[60vh]">
+          {/* Share Tab */}
+          {activeTab === 'share' && (
+            <div className="space-y-8">
+              {/* Event Preview Card */}
+              <div className="bg-gradient-to-br from-[#2a2a2a] to-[#3a3a3a] rounded-2xl p-6 border border-gray-700">
+                <div className="flex items-start space-x-6">
+                  <div className="w-24 h-32 rounded-xl overflow-hidden bg-gradient-to-br from-purple-500 to-pink-500 flex-shrink-0">
+                    <img 
+                      src={eventData.poster} 
+                      alt={eventData.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="flex-1 space-y-3">
+                    <h3 className="text-2xl font-bold text-white">{eventData.name}</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                      <div className="flex items-center space-x-2 text-gray-300">
+                        <Calendar className="w-4 h-4 text-[#FC1924]" />
+                        <span>{eventData.date}</span>
+                      </div>
+                      <div className="flex items-center space-x-2 text-gray-300">
+                        <Clock className="w-4 h-4 text-[#FC1924]" />
+                        <span>{eventData.time}</span>
+                      </div>
+                      <div className="flex items-center space-x-2 text-gray-300">
+                        <MapPin className="w-4 h-4 text-[#FC1924]" />
+                        <span className="truncate">{eventData.location}</span>
+                      </div>
+                      <div className="flex items-center space-x-2 text-gray-300">
+                        <Users className="w-4 h-4 text-[#FC1924]" />
+                        <span>by {eventData.organizer}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-4">
+                      <span className="bg-gradient-to-r from-[#FC1924] to-[#e01620] text-white px-4 py-2 rounded-full text-sm font-semibold">
+                        {eventData.price}
+                      </span>
+                      <span className="bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full text-sm">
+                        {eventData.vibe}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Copy Link Section */}
+              <div className="bg-[#2a2a2a] rounded-2xl p-6 border border-gray-700">
+                <h4 className="text-lg font-bold text-white mb-4">Share Link</h4>
+                <div className="flex items-center space-x-3">
+                  <div className="flex-1 bg-[#1a1a1a] rounded-xl p-4 border border-gray-600">
+                    <p className="text-gray-300 text-sm font-mono truncate">{eventUrl}</p>
+                  </div>
+                  <button
+                    onClick={handleCopyLink}
+                    className={`px-6 py-4 rounded-xl font-semibold transition-all duration-300 hover:scale-105 flex items-center space-x-2 ${
+                      copiedLink 
+                        ? 'bg-green-500 text-white' 
+                        : 'bg-[#FC1924] hover:bg-[#e01620] text-white'
+                    }`}
+                  >
+                    <Copy className="w-4 h-4" />
+                    <span>{copiedLink ? 'Copied!' : 'Copy'}</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Social Media Platforms */}
+              <div className="bg-[#2a2a2a] rounded-2xl p-6 border border-gray-700">
+                <h4 className="text-lg font-bold text-white mb-6">Share on Social Media</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {shareOptions.map((option) => {
+                    const Icon = option.icon;
+                    const isSelected = selectedPlatforms.includes(option.id);
+                    return (
+                      <div key={option.id} className="relative">
+                        <button
+                          onClick={() => {
+                            handlePlatformToggle(option.id);
+                            if (option.url !== '#') {
+                              window.open(option.url, '_blank', 'width=600,height=400');
+                            }
+                          }}
+                          className={`w-full p-4 rounded-xl border-2 transition-all duration-300 hover:scale-105 ${
+                            isSelected
+                              ? 'border-[#FC1924] bg-[#FC1924]/10'
+                              : 'border-gray-600 hover:border-gray-500'
+                          }`}
+                        >
+                          <div className="flex items-center space-x-3">
+                            <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${option.color} flex items-center justify-center`}>
+                              <Icon className="w-6 h-6 text-white" />
+                            </div>
+                            <div className="text-left">
+                              <p className="text-white font-semibold">{option.name}</p>
+                              <p className="text-gray-400 text-sm">Share to {option.name}</p>
+                            </div>
+                          </div>
+                        </button>
+                        {isSelected && (
+                          <div className="absolute -top-2 -right-2 w-6 h-6 bg-[#FC1924] rounded-full flex items-center justify-center">
+                            <div className="w-3 h-3 bg-white rounded-full"></div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Quick Actions */}
+              <div className="flex flex-col sm:flex-row gap-4">
+                <button className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-4 px-6 rounded-xl font-semibold transition-all duration-300 hover:scale-105 flex items-center justify-center space-x-2">
+                  <QrCode className="w-5 h-5" />
+                  <span>Generate QR Code</span>
+                </button>
+                <button className="flex-1 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white py-4 px-6 rounded-xl font-semibold transition-all duration-300 hover:scale-105 flex items-center justify-center space-x-2">
+                  <Download className="w-5 h-5" />
+                  <span>Download Assets</span>
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Promote Tab */}
+          {activeTab === 'promote' && (
+            <div className="space-y-8">
+              {/* Promotion Stats */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {promotionStats.map((stat, index) => {
+                  const Icon = stat.icon;
+                  return (
+                    <div key={index} className="bg-[#2a2a2a] rounded-xl p-6 border border-gray-700 text-center">
+                      <div className="w-12 h-12 bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl flex items-center justify-center mx-auto mb-3">
+                        <Icon className={`w-6 h-6 ${stat.color}`} />
+                      </div>
+                      <p className="text-2xl font-bold text-white mb-1">{stat.value}</p>
+                      <p className="text-gray-400 text-sm">{stat.label}</p>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Boost Options */}
+              <div className="bg-[#2a2a2a] rounded-2xl p-6 border border-gray-700">
+                <h4 className="text-lg font-bold text-white mb-6">Boost Your Event</h4>
+                <div className="space-y-4">
+                  <div className="bg-gradient-to-r from-[#FC1924]/10 to-[#e01620]/10 border border-[#FC1924]/30 rounded-xl p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <div>
+                        <h5 className="text-white font-semibold text-lg">Featured Placement</h5>
+                        <p className="text-gray-300 text-sm">Get your event featured on the homepage</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-[#FC1924] font-bold text-xl">₦5,000</p>
+                        <p className="text-gray-400 text-sm">24 hours</p>
+                      </div>
+                    </div>
+                    <button className="w-full bg-[#FC1924] hover:bg-[#e01620] text-white py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105">
+                      Boost Now
+                    </button>
+                  </div>
+
+                  <div className="bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/30 rounded-xl p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <div>
+                        <h5 className="text-white font-semibold text-lg">Social Media Push</h5>
+                        <p className="text-gray-300 text-sm">Promote across all EVOKE social channels</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-purple-400 font-bold text-xl">₦10,000</p>
+                        <p className="text-gray-400 text-sm">3 days</p>
+                      </div>
+                    </div>
+                    <button className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105">
+                      Boost Now
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
+          )}
 
-            {/* Platform Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-              {platforms.map((platform) => {
-                const Icon = platform.icon;
-                const isSelected = selectedPlatforms.includes(platform.id);
-                
-                return (
-                  <button
-                    key={platform.id}
-                    onClick={() => handlePlatformToggle(platform.id)}
-                    className={`flex items-center gap-3 p-4 rounded-lg border-2 transition-all duration-300 hover:scale-105 ${
-                      isSelected
-                        ? 'border-[#FC1924] bg-red-50'
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                  >
-                    <div className={`w-10 h-10 rounded-lg ${platform.color} flex items-center justify-center`}>
-                      <Icon size={20} className="text-white" />
-                    </div>
-                    <span className="font-medium text-gray-900">{platform.name}</span>
-                    {isSelected && (
-                      <Check size={20} className="text-[#FC1924] ml-auto" />
-                    )}
-                  </button>
-                );
-              })}
+          {/* Analytics Tab */}
+          {activeTab === 'analytics' && (
+            <div className="space-y-8">
+              <div className="text-center py-12">
+                <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
+                  <BarChart3 className="w-10 h-10 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-2">Analytics Coming Soon</h3>
+                <p className="text-gray-400 max-w-md mx-auto">
+                  Track your event's performance, engagement metrics, and audience insights with our advanced analytics dashboard.
+                </p>
+              </div>
             </div>
+          )}
+        </div>
 
-            {/* Generate Button */}
+        {/* Footer */}
+        <div className="bg-[#2a2a2a] border-t border-gray-800 p-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-gradient-to-br from-[#FC1924] to-[#e01620] rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-sm">E</span>
+              </div>
+              <div>
+                <p className="text-white font-semibold text-sm">EVOKE</p>
+                <p className="text-gray-400 text-xs">Powered by community</p>
+              </div>
+            </div>
             <button
-              onClick={handleGenerateContent}
-              disabled={selectedPlatforms.length === 0}
-              className={`w-full py-3 px-4 rounded-lg font-semibold transition-all duration-300 hover:scale-105 ${
-                selectedPlatforms.length === 0
-                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : 'bg-[#FC1924] hover:bg-[#e01620] text-white'
-              }`}
+              onClick={onClose}
+              className="bg-[#3a3a3a] hover:bg-[#4a4a4a] text-white px-6 py-2 rounded-lg font-semibold transition-all duration-300 hover:scale-105"
             >
-              Generate Content ({selectedPlatforms.length} platform{selectedPlatforms.length !== 1 ? 's' : ''})
+              Close
             </button>
           </div>
-        ) : (
-          // Generated Content View
-          <div className="p-6">
-            <div className="mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Your promotional content is ready!
-              </h3>
-              <p className="text-gray-600">
-                Share directly or copy the content to your clipboard
-              </p>
-            </div>
-
-            {/* Generated Content for Each Platform */}
-            <div className="space-y-4 mb-6">
-              {selectedPlatforms.map(platformId => {
-                const platform = platforms.find(p => p.id === platformId);
-                const { captions, hashtags } = generateContent();
-                const Icon = platform!.icon;
-                
-                return (
-                  <div key={platformId} className="border border-gray-200 rounded-lg p-4">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-8 h-8 rounded-lg ${platform!.color} flex items-center justify-center`}>
-                          <Icon size={16} className="text-white" />
-                        </div>
-                        <span className="font-medium text-gray-900">{platform!.name}</span>
-                      </div>
-                      <div className="flex gap-2">
-                        {(platformId === 'whatsapp' || platformId === 'twitter' || platformId === 'facebook') && (
-                          <button
-                            onClick={() => handleDirectShare(platformId)}
-                            className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm font-medium transition-all duration-300 hover:scale-105"
-                          >
-                            Share
-                          </button>
-                        )}
-                        <button
-                          onClick={() => handleCopyToClipboard(platformId)}
-                          className="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded text-sm font-medium transition-all duration-300 hover:scale-105 flex items-center gap-1"
-                        >
-                          {copied ? <Check size={14} /> : <Copy size={14} />}
-                          Copy
-                        </button>
-                      </div>
-                    </div>
-                    <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
-                      <p className="text-sm text-gray-800 whitespace-pre-line">
-                        {captions[platformId]}
-                      </p>
-                      <p className="text-sm text-blue-600 mt-2">
-                        {hashtags}
-                      </p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex gap-3">
-              <button
-                onClick={handleCopyAll}
-                className="flex-1 bg-[#FC1924] hover:bg-[#e01620] text-white py-3 px-4 rounded-lg font-semibold transition-all duration-300 hover:scale-105 flex items-center justify-center gap-2"
-              >
-                {copied ? <Check size={18} /> : <Copy size={18} />}
-                Copy All Content
-              </button>
-              <button
-                onClick={resetModal}
-                className="bg-gray-600 hover:bg-gray-700 text-white py-3 px-4 rounded-lg font-semibold transition-all duration-300 hover:scale-105"
-              >
-                Back
-              </button>
-            </div>
-          </div>
-        )}
+        </div>
       </div>
     </div>
   );
