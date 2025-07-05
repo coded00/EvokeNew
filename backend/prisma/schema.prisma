@@ -1,0 +1,445 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User Management
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  username      String    @unique
+  firstName     String
+  lastName      String
+  passwordHash  String
+  avatar        String?
+  phone         String?
+  dateOfBirth   DateTime?
+  isVerified    Boolean   @default(false)
+  isActive      Boolean   @default(true)
+  role          UserRole  @default(USER)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  events        Event[]           @relation("EventOrganizer")
+  tickets       Ticket[]
+  orders        Order[]
+  payments      Payment[]
+  userEvents    UserEvent[]
+  messages      Message[]         @relation("MessageSender")
+  receivedMessages Message[]      @relation("MessageReceiver")
+  notifications Notification[]
+  qrCodes       QRCode[]
+  analytics     EventAnalytics[]
+
+  @@map("users")
+}
+
+// Event Management
+model Event {
+  id              String    @id @default(cuid())
+  title           String
+  description     String
+  shortDescription String?
+  slug            String    @unique
+  startDate       DateTime
+  endDate         DateTime
+  timezone        String    @default("UTC")
+  isPublished     Boolean   @default(false)
+  isCancelled     Boolean   @default(false)
+  maxAttendees    Int?
+  currentAttendees Int      @default(0)
+  price           Decimal   @default(0)
+  currency        String    @default("USD")
+  organizerId     String
+  venueId         String?
+  featured        Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relations
+  organizer       User              @relation("EventOrganizer", fields: [organizerId], references: [id], onDelete: Cascade)
+  venue           Venue?            @relation(fields: [venueId], references: [id])
+  ticketTypes     TicketType[]
+  tickets         Ticket[]
+  orders          Order[]
+  images          EventImage[]
+  categories      EventCategory[]
+  userEvents      UserEvent[]
+  qrCodes         QRCode[]
+  analytics       EventAnalytics[]
+  messages        Message[]
+
+  @@map("events")
+}
+
+// Venue Management
+model Venue {
+  id          String   @id @default(cuid())
+  name        String
+  address     String
+  city        String
+  state       String?
+  country     String
+  postalCode  String?
+  latitude    Float?
+  longitude   Float?
+  capacity    Int?
+  description String?
+  website     String?
+  phone       String?
+  email       String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  events      Event[]
+
+  @@map("venues")
+}
+
+// Category Management
+model Category {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  icon        String?
+  color       String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  eventCategories EventCategory[]
+
+  @@map("categories")
+}
+
+// Event-Category Junction
+model EventCategory {
+  id         String   @id @default(cuid())
+  eventId    String
+  categoryId String
+  createdAt  DateTime @default(now())
+
+  // Relations
+  event      Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, categoryId])
+  @@map("event_categories")
+}
+
+// Ticket Type Management
+model TicketType {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  price       Decimal
+  currency    String   @default("USD")
+  quantity    Int
+  sold        Int      @default(0)
+  isActive    Boolean  @default(true)
+  eventId     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  tickets     Ticket[]
+
+  @@map("ticket_types")
+}
+
+// Ticket Management
+model Ticket {
+  id           String       @id @default(cuid())
+  ticketNumber String       @unique
+  status       TicketStatus @default(ACTIVE)
+  purchaseDate DateTime     @default(now())
+  userId       String
+  eventId      String
+  ticketTypeId String
+  orderId      String?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  // Relations
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event        Event        @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  ticketType   TicketType   @relation(fields: [ticketTypeId], references: [id])
+  order        Order?       @relation(fields: [orderId], references: [id])
+  qrCode       QRCode?
+
+  @@map("tickets")
+}
+
+// Order Management
+model Order {
+  id          String      @id @default(cuid())
+  orderNumber String      @unique
+  status      OrderStatus @default(PENDING)
+  totalAmount Decimal
+  currency    String      @default("USD")
+  userId      String
+  eventId     String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Relations
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event       Event?      @relation(fields: [eventId], references: [id])
+  tickets     Ticket[]
+  payments    Payment[]
+
+  @@map("orders")
+}
+
+// Payment Management
+model Payment {
+  id            String        @id @default(cuid())
+  amount        Decimal
+  currency      String        @default("USD")
+  status        PaymentStatus @default(PENDING)
+  paymentMethod PaymentMethod
+  transactionId String?       @unique
+  userId        String
+  orderId       String
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  // Relations
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  order         Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@map("payments")
+}
+
+// User-Event Junction (for favorites, attendance tracking)
+model UserEvent {
+  id        String        @id @default(cuid())
+  userId    String
+  eventId   String
+  status    UserEventStatus @default(INTERESTED)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  // Relations
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event     Event         @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, eventId])
+  @@map("user_events")
+}
+
+// Event Images
+model EventImage {
+  id        String   @id @default(cuid())
+  url       String
+  alt       String?
+  isPrimary Boolean  @default(false)
+  eventId   String
+  createdAt DateTime @default(now())
+
+  // Relations
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@map("event_images")
+}
+
+// Messaging System
+model Message {
+  id        String   @id @default(cuid())
+  content   String
+  isRead    Boolean  @default(false)
+  senderId  String
+  receiverId String
+  eventId   String?
+  createdAt DateTime @default(now())
+
+  // Relations
+  sender    User     @relation("MessageSender", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver  User     @relation("MessageReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+  event     Event?   @relation(fields: [eventId], references: [id])
+
+  @@map("messages")
+}
+
+// Notifications
+model Notification {
+  id        String           @id @default(cuid())
+  title     String
+  message   String
+  type      NotificationType
+  isRead    Boolean          @default(false)
+  userId    String
+  eventId   String?
+  createdAt DateTime         @default(now())
+
+  // Relations
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event     Event?           @relation(fields: [eventId], references: [id])
+
+  @@map("notifications")
+}
+
+// QR Code Management
+model QRCode {
+  id        String   @id @default(cuid())
+  code      String   @unique
+  isUsed    Boolean  @default(false)
+  usedAt    DateTime?
+  userId    String
+  eventId   String
+  ticketId  String?
+  createdAt DateTime @default(now())
+
+  // Relations
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  ticket    Ticket?  @relation(fields: [ticketId], references: [id])
+
+  @@map("qr_codes")
+}
+
+// Event Analytics
+model EventAnalytics {
+  id              String   @id @default(cuid())
+  eventId         String
+  userId          String?
+  action          String
+  metadata        Json?
+  ipAddress       String?
+  userAgent       String?
+  createdAt       DateTime @default(now())
+
+  // Relations
+  event           Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user            User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("event_analytics")
+}
+
+// Enums
+enum UserRole {
+  USER
+  ORGANIZER
+  ADMIN
+  MODERATOR
+}
+
+enum TicketStatus {
+  ACTIVE
+  USED
+  CANCELLED
+  EXPIRED
+  REFUNDED
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  REFUNDED
+  COMPLETED
+}
+
+enum PaymentStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  CANCELLED
+  REFUNDED
+}
+
+enum PaymentMethod {
+  CREDIT_CARD
+  DEBIT_CARD
+  PAYPAL
+  STRIPE
+  BANK_TRANSFER
+  CRYPTO
+}
+
+enum UserEventStatus {
+  INTERESTED
+  GOING
+  NOT_GOING
+  MAYBE
+}
+
+enum NotificationType {
+  EVENT_REMINDER
+  TICKET_PURCHASE
+  EVENT_UPDATE
+  MESSAGE
+  SYSTEM
+}
+
+// Indexes for better performance
+model User {
+  @@index([email])
+  @@index([username])
+  @@index([isActive])
+}
+
+model Event {
+  @@index([organizerId])
+  @@index([startDate])
+  @@index([isPublished])
+  @@index([featured])
+  @@index([slug])
+}
+
+model Ticket {
+  @@index([userId])
+  @@index([eventId])
+  @@index([status])
+  @@index([ticketNumber])
+}
+
+model Order {
+  @@index([userId])
+  @@index([status])
+  @@index([orderNumber])
+}
+
+model Payment {
+  @@index([userId])
+  @@index([orderId])
+  @@index([status])
+  @@index([transactionId])
+}
+
+model Message {
+  @@index([senderId])
+  @@index([receiverId])
+  @@index([isRead])
+}
+
+model Notification {
+  @@index([userId])
+  @@index([isRead])
+  @@index([type])
+}
+
+model QRCode {
+  @@index([code])
+  @@index([eventId])
+  @@index([isUsed])
+}
+
+model EventAnalytics {
+  @@index([eventId])
+  @@index([action])
+  @@index([createdAt])
+} 
