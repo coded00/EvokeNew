@@ -246,6 +246,10 @@ export const EventManagement = (): JSX.Element => {
     navigate(`/event-dashboard/${eventId}`);
   };
 
+  const handleBackToProfile = () => {
+    navigate('/profile', { state: { activeTab: 'management' } });
+  };
+
   const openPermissionsModal = (member: TeamMember) => {
     setSelectedMember(member);
     setShowPermissionsModal(true);
@@ -279,7 +283,7 @@ export const EventManagement = (): JSX.Element => {
           {/* Header */}
           <div className="flex items-center justify-between mb-8">
             <button 
-              onClick={() => navigate('/profile')}
+              onClick={handleBackToProfile}
               className="flex items-center space-x-2 text-white/80 hover:text-white transition-colors duration-200"
             >
               <ArrowLeft className="w-5 h-5" />

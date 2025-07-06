@@ -182,12 +182,20 @@ export const QRTest = (): JSX.Element => {
     }
   };
 
+  const handleBackToEventManagement = () => {
+    if (eventId) {
+      navigate(`/event-management/${eventId}`);
+    } else {
+      navigate('/home');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#1a1a1a] p-8 font-['Space_Grotesk']">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <button 
-          onClick={() => eventId ? navigate(`/event-management/${eventId}`) : navigate('/home')}
+          onClick={handleBackToEventManagement}
           className="flex items-center space-x-2 text-white/80 hover:text-white transition-colors duration-200"
         >
           <ArrowLeft className="w-5 h-5" />
@@ -415,4 +423,4 @@ export const QRTest = (): JSX.Element => {
       )}
     </div>
   );
-}; 
+};

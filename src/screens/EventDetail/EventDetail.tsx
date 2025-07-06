@@ -132,6 +132,10 @@ export const EventDetail = (): JSX.Element => {
     setIsLiked(!isLiked);
   };
 
+  const handleBackToHome = () => {
+    navigate('/home');
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-[#1a1a1a] flex items-center justify-center">
@@ -146,7 +150,7 @@ export const EventDetail = (): JSX.Element => {
         <div className="text-center">
           <h1 className="text-2xl font-bold text-white mb-4">Event Not Found</h1>
           <button 
-            onClick={() => navigate('/home')}
+            onClick={handleBackToHome}
             className="bg-[#FC1924] hover:bg-[#e01620] text-white px-6 py-2 rounded-lg"
           >
             Back to Home
@@ -196,7 +200,7 @@ export const EventDetail = (): JSX.Element => {
         
         {/* Back Button */}
         <button 
-          onClick={() => navigate('/home')}
+          onClick={handleBackToHome}
           className="absolute top-6 left-6 flex items-center space-x-2 text-white/80 hover:text-white transition-colors duration-200 bg-black/20 backdrop-blur-sm px-4 py-2 rounded-lg"
         >
           <ArrowLeft className="w-5 h-5" />
