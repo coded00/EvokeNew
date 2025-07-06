@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Share2, Copy, Facebook, Twitter, Instagram, MessageCircle, Mail, Download, QrCode, TrendingUp, Users, Calendar, MapPin, Clock, Star } from 'lucide-react';
+import { X, Share2, Copy, Facebook, Twitter, Instagram, MessageCircle, Mail, Download, QrCode, TrendingUp, Users, Calendar, MapPin, Clock, Star, BarChart3 } from 'lucide-react';
 
 interface EventData {
   id: string;
