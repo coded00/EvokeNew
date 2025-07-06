@@ -195,4 +195,4 @@ If you encounter any issues or have questions:
 
 ---
 
-**Built with ❤️ by the EVOKE Team**
+**Built with ❤️ by the EVOKE Team, more features ate still being built.**
