@@ -22,7 +22,7 @@ export const TicketScanner = (): JSX.Element => {
     if (eventId) {
       navigate(`/event-dashboard/${eventId}`);
     } else {
-      navigate('/profile');
+      navigate('/home');
     }
   }, [navigate, eventId]);
 

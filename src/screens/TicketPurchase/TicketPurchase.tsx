@@ -88,6 +88,10 @@ export const TicketPurchase = (): JSX.Element => {
     setPaymentData(prev => ({ ...prev, [field]: value }));
   };
 
+  const handleBackToEventDetail = () => {
+    navigate(`/event/${eventId}`);
+  };
+
   if (!event) {
     return <FullScreenLoading text="Loading event details..." />;
   }
@@ -125,11 +129,11 @@ export const TicketPurchase = (): JSX.Element => {
     <div className="min-h-screen bg-[#1a1a1a] p-8 font-['Space_Grotesk']">
       <div className="flex items-center space-x-4 mb-8">
         <button 
-          onClick={() => navigate('/home')}
+          onClick={handleBackToEventDetail}
           className="flex items-center space-x-2 text-white/80 hover:text-white transition-colors duration-200"
         >
           <ArrowLeft className="w-5 h-5" />
-          <span>Back to Events</span>
+          <span>Back to Event</span>
         </button>
       </div>
 
@@ -342,4 +346,4 @@ export const TicketPurchase = (): JSX.Element => {
       </div>
     </div>
   );
-}; 
+};

@@ -87,7 +87,7 @@ export const SignUp = (): JSX.Element => {
   };
 
   const handleSignInClick = () => {
-    navigate('/home');
+    navigate('/login');
   };
 
   const handleSignUpSubmit = async () => {

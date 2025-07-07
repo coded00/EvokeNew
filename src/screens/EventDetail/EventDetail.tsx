@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Calendar, MapPin, Clock, Users, Share2, Heart, Star, MessageCircle, Ticket, TrendingUp } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent } from "../../components/ui/card";
+import EventPromotionModal from "../../components/ui/event-promotion-modal";
 
 interface EventData {
   id: string;
@@ -37,6 +38,7 @@ export const EventDetail = (): JSX.Element => {
   const [isLiked, setIsLiked] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [showCopiedMessage, setShowCopiedMessage] = useState(false);
+  const [showPromotionModal, setShowPromotionModal] = useState(false);
 
   useEffect(() => {
     // Simulate API call
@@ -108,8 +110,7 @@ export const EventDetail = (): JSX.Element => {
   };
 
   const handlePromoteEvent = () => {
-    // Future promotional features will be implemented here
-    alert('Promote Event feature coming soon! This will include social sharing, boosting, and marketing tools.');
+    setShowPromotionModal(true);
   };
 
   const handleShare = () => {
@@ -131,6 +132,10 @@ export const EventDetail = (): JSX.Element => {
     setIsLiked(!isLiked);
   };
 
+  const handleBackToHome = () => {
+    navigate('/home');
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-[#1a1a1a] flex items-center justify-center">
@@ -145,7 +150,7 @@ export const EventDetail = (): JSX.Element => {
         <div className="text-center">
           <h1 className="text-2xl font-bold text-white mb-4">Event Not Found</h1>
           <button 
-            onClick={() => navigate('/home')}
+            onClick={handleBackToHome}
             className="bg-[#FC1924] hover:bg-[#e01620] text-white px-6 py-2 rounded-lg"
           >
             Back to Home
@@ -156,6 +161,19 @@ export const EventDetail = (): JSX.Element => {
   }
 
   const averageRating = event.reviews.reduce((sum, review) => sum + review.rating, 0) / event.reviews.length;
+
+  // Prepare event data for promotion modal
+  const promotionEventData = {
+    id: event.id,
+    name: event.title,
+    date: event.date,
+    time: event.time,
+    location: event.location,
+    vibe: event.vibes.join(', '),
+    price: `₦${Math.min(...Object.values(event.ticketTypes))} - ₦${Math.max(...Object.values(event.ticketTypes))}`,
+    organizer: event.host,
+    poster: event.image
+  };
 
   return (
     <div className="min-h-screen bg-[#1a1a1a] font-['Space_Grotesk']">
@@ -182,7 +200,7 @@ export const EventDetail = (): JSX.Element => {
         
         {/* Back Button */}
         <button 
-          onClick={() => navigate('/home')}
+          onClick={handleBackToHome}
           className="absolute top-6 left-6 flex items-center space-x-2 text-white/80 hover:text-white transition-colors duration-200 bg-black/20 backdrop-blur-sm px-4 py-2 rounded-lg"
         >
           <ArrowLeft className="w-5 h-5" />
@@ -241,7 +259,7 @@ export const EventDetail = (): JSX.Element => {
           {/* Left Column - Event Details */}
           <div className="lg:col-span-2 space-y-6">
             {/* About Section */}
-            <Card className="bg-[#2a2a2a] border-gray-700">
+            <Card className="bg-[#2a2a2a] border-2 border-black">
               <CardContent className="p-6">
                 <h2 className="text-2xl font-bold text-white mb-4">About This Event</h2>
                 <p className="text-gray-300 leading-relaxed">{event.about}</p>
@@ -249,7 +267,7 @@ export const EventDetail = (): JSX.Element => {
             </Card>
 
             {/* Vibes Section */}
-            <Card className="bg-[#2a2a2a] border-gray-700">
+            <Card className="bg-[#2a2a2a] border-2 border-black">
               <CardContent className="p-6">
                 <h2 className="text-2xl font-bold text-white mb-4">Event Vibes</h2>
                 <div className="flex flex-wrap gap-2">
@@ -266,7 +284,7 @@ export const EventDetail = (): JSX.Element => {
             </Card>
 
             {/* Reviews Section */}
-            <Card className="bg-[#2a2a2a] border-gray-700">
+            <Card className="bg-[#2a2a2a] border-2 border-black">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-bold text-white">Reviews</h2>
@@ -314,7 +332,7 @@ export const EventDetail = (): JSX.Element => {
           {/* Right Column - Ticket Info & Actions */}
           <div className="space-y-6">
             {/* Host Info */}
-            <Card className="bg-[#2a2a2a] border-gray-700">
+            <Card className="bg-[#2a2a2a] border-2 border-black">
               <CardContent className="p-6">
                 <h3 className="text-lg font-bold text-white mb-4">Hosted by</h3>
                 <div className="flex items-center space-x-3">
@@ -330,7 +348,7 @@ export const EventDetail = (): JSX.Element => {
             </Card>
 
             {/* Ticket Types */}
-            <Card className="bg-[#2a2a2a] border-gray-700">
+            <Card className="bg-[#2a2a2a] border-2 border-black">
               <CardContent className="p-6">
                 <h3 className="text-lg font-bold text-white mb-4">Available Tickets</h3>
                 <div className="space-y-3">
@@ -348,7 +366,7 @@ export const EventDetail = (): JSX.Element => {
             </Card>
 
             {/* Event Stats */}
-            <Card className="bg-[#2a2a2a] border-gray-700">
+            <Card className="bg-[#2a2a2a] border-2 border-black">
               <CardContent className="p-6">
                 <h3 className="text-lg font-bold text-white mb-4">Event Stats</h3>
                 <div className="space-y-3">
@@ -387,6 +405,13 @@ export const EventDetail = (): JSX.Element => {
           </div>
         </div>
       </div>
+
+      {/* Event Promotion Modal */}
+      <EventPromotionModal
+        eventData={promotionEventData}
+        isOpen={showPromotionModal}
+        onClose={() => setShowPromotionModal(false)}
+      />
     </div>
   );
 };

@@ -1,1 +1,0 @@
-export { QRTest } from './QRTest'; 
