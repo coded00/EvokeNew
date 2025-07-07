@@ -30,7 +30,9 @@
     "typescript",
     "nodejs",
     "prisma",
-    "postgresql"
+    "postgresql",
+    "oauth",
+    "jwt"
   ],
   "author": "EVOKE Team",
   "license": "MIT",
@@ -45,7 +47,8 @@
     "express-rate-limit": "^7.1.5",
     "express-validator": "^7.0.1",
     "multer": "^1.4.5-lts.1",
-    "@prisma/client": "^5.7.1"
+    "@prisma/client": "^5.7.1",
+    "axios": "^1.6.2"
   },
   "devDependencies": {
     "@types/node": "^20.10.0",
