@@ -8,6 +8,7 @@ import rateLimit from 'express-rate-limit';
 // Import routes
 import authRoutes from './routes/auth';
 import uploadRoutes from './routes/upload';
+import emailRoutes from './routes/email';
 
 // Load environment variables
 dotenv.config();
@@ -68,6 +69,7 @@ app.get('/health', (req, res) => {
 // API routes
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/upload', uploadRoutes);
+app.use('/api/v1/email', emailRoutes);
 
 // 404 handler
 app.use('*', (req, res) => {
@@ -114,6 +116,7 @@ app.listen(PORT, () => {
   console.log(`📁 Environment: ${process.env['NODE_ENV'] || 'development'}`);
   console.log(`🔗 Health check: http://localhost:${PORT}/health`);
   console.log(`📤 Upload endpoints: http://localhost:${PORT}/api/v1/upload`);
+  console.log(`📧 Email endpoints: http://localhost:${PORT}/api/v1/email`);
 });
 
 export default app; 
