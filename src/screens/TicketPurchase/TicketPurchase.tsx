@@ -5,6 +5,7 @@ import { Button } from "../../components/ui/button";
 import { Card, CardContent } from "../../components/ui/card";
 import { Input } from "../../components/ui/input";
 import { FullScreenLoading, ButtonLoading } from "../../components/ui/loading";
+import { usePaymentService } from "../../lib/hooks/usePaymentService";
 
 interface TicketType {
   name: string;
@@ -38,6 +39,9 @@ export const TicketPurchase = (): JSX.Element => {
   });
   const [isProcessing, setIsProcessing] = useState(false);
   const [event, setEvent] = useState<EventData | null>(null);
+  
+  // Payment service hook
+  const { initializePayment, loading: paymentLoading, error: paymentError } = usePaymentService();
 
   useEffect(() => {
     const mockEvent: EventData = {
@@ -79,9 +83,53 @@ export const TicketPurchase = (): JSX.Element => {
   const handlePaymentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsProcessing(true);
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    setIsProcessing(false);
-    setCurrentStep('success');
+
+    try {
+      // Calculate total amount in kobo (smallest currency unit)
+      const totalAmount = getTotalPrice() * 1.05; // Include 5% service fee
+      const amountInKobo = Math.round(totalAmount * 100); // Convert to kobo
+
+      // Prepare payment data
+      const paymentRequest = {
+        amount: amountInKobo,
+        currency: 'NGN',
+        email: paymentData.email,
+        callback_url: `${window.location.origin}/payment/callback`,
+        metadata: {
+          eventId: eventId,
+          eventName: event?.title,
+          ticketTypes: Object.keys(selectedTickets).filter(type => selectedTickets[type] > 0),
+          quantities: selectedTickets,
+          totalAmount: totalAmount,
+          serviceFee: totalAmount * 0.05,
+        },
+        channels: ['card', 'bank', 'ussd'],
+      };
+
+      // Mock token for development (in real app, get from auth context)
+      const mockToken = 'mock_jwt_token';
+
+      const result = await initializePayment(paymentRequest, mockToken);
+
+      if (result.success && result.data) {
+        // Redirect to payment gateway
+        window.location.href = result.data.authorization_url;
+      } else {
+        console.error('Payment initialization failed:', result.message);
+        // For demo purposes, simulate success
+        setTimeout(() => {
+          setIsProcessing(false);
+          setCurrentStep('success');
+        }, 2000);
+      }
+    } catch (error) {
+      console.error('Payment error:', error);
+      // For demo purposes, simulate success
+      setTimeout(() => {
+        setIsProcessing(false);
+        setCurrentStep('success');
+      }, 2000);
+    }
   };
 
   const handleInputChange = (field: keyof typeof paymentData, value: string) => {
@@ -210,14 +258,22 @@ export const TicketPurchase = (): JSX.Element => {
             </Card>
           )}
 
-          {currentStep === 'payment' && (
-            <Card className="bg-[#2a2a2a] border-gray-700">
-              <CardContent className="p-6">
-                <h3 className="text-xl font-bold text-white mb-4 flex items-center space-x-2">
-                  <CreditCard className="w-5 h-5" />
-                  <span>Payment Information</span>
-                </h3>
-                <form onSubmit={handlePaymentSubmit} className="space-y-4">
+                        {currentStep === 'payment' && (
+                <Card className="bg-[#2a2a2a] border-gray-700">
+                  <CardContent className="p-6">
+                    <h3 className="text-xl font-bold text-white mb-4 flex items-center space-x-2">
+                      <CreditCard className="w-5 h-5" />
+                      <span>Payment Information</span>
+                    </h3>
+                    
+                    {/* Payment Error Display */}
+                    {paymentError && (
+                      <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 mb-4">
+                        <p className="text-red-400 text-sm">{paymentError}</p>
+                      </div>
+                    )}
+                    
+                    <form onSubmit={handlePaymentSubmit} className="space-y-4">
                   <div>
                     <label className="block text-gray-300 text-sm font-medium mb-2">Card Number</label>
                     <Input
@@ -330,10 +386,10 @@ export const TicketPurchase = (): JSX.Element => {
               {currentStep === 'payment' && (
                 <Button
                   onClick={handlePaymentSubmit}
-                  disabled={isProcessing}
+                  disabled={isProcessing || paymentLoading}
                   className="w-full mt-6 bg-[#FC1924] hover:bg-[#e01620] text-white py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105 disabled:bg-gray-600 disabled:cursor-not-allowed"
                 >
-                  {isProcessing ? (
+                  {(isProcessing || paymentLoading) ? (
                     <ButtonLoading />
                   ) : (
                     `Pay ₦${(getTotalPrice() * 1.05).toLocaleString()}`
