@@ -1,139 +1,59 @@
-import { Router } from 'express';
-import { body } from 'express-validator';
-import rateLimit from 'express-rate-limit';
+import { Router, Request, Response } from 'express';
 import authController from '../controllers/authController';
 import authMiddleware from '../middleware/auth';
+import { createRateLimiters, validateInput, commonValidations } from '../middleware/security';
 
 const router = Router();
 
-// Rate limiting for auth endpoints
-const authRateLimit = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // limit each IP to 5 requests per windowMs
-  message: {
-    error: 'Too many authentication attempts',
-    message: 'Please try again later',
-  },
-  standardHeaders: true,
-  legacyHeaders: false,
-});
+// Initialize rate limiters
+const rateLimiters = createRateLimiters();
 
-// Validation rules
+// Validation rules using common validations
 const registerValidation = [
-  body('email')
-    .isEmail()
-    .withMessage('Please provide a valid email address')
-    .normalizeEmail(),
-  body('username')
-    .isLength({ min: 3, max: 30 })
-    .withMessage('Username must be between 3 and 30 characters')
-    .matches(/^[a-zA-Z0-9_]+$/)
-    .withMessage('Username can only contain letters, numbers, and underscores'),
-  body('firstName')
-    .isLength({ min: 1, max: 50 })
-    .withMessage('First name must be between 1 and 50 characters')
-    .trim()
-    .escape(),
-  body('lastName')
-    .isLength({ min: 1, max: 50 })
-    .withMessage('Last name must be between 1 and 50 characters')
-    .trim()
-    .escape(),
-  body('password')
-    .isLength({ min: 8 })
-    .withMessage('Password must be at least 8 characters long')
-    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/)
-    .withMessage('Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character'),
-  body('avatar')
-    .optional()
-    .isURL()
-    .withMessage('Avatar must be a valid URL'),
-  body('phone')
-    .optional()
-    .matches(/^\+?[\d\s\-\(\)]+$/)
-    .withMessage('Phone number must be in a valid format'),
-  body('dateOfBirth')
-    .optional()
-    .isISO8601()
-    .withMessage('Date of birth must be a valid date'),
+  commonValidations.email,
+  commonValidations.username,
+  commonValidations.firstName,
+  commonValidations.lastName,
+  commonValidations.password,
+  commonValidations.phone,
+  // Additional validations
+  commonValidations.avatar,
+  commonValidations.dateOfBirth,
 ];
 
 const loginValidation = [
-  body('email')
-    .isEmail()
-    .withMessage('Please provide a valid email address')
-    .normalizeEmail(),
-  body('password')
-    .notEmpty()
-    .withMessage('Password is required'),
+  commonValidations.email,
+  commonValidations.password,
 ];
 
 const refreshTokenValidation = [
-  body('refreshToken')
-    .notEmpty()
-    .withMessage('Refresh token is required'),
+  commonValidations.refreshToken,
 ];
 
 const logoutValidation = [
-  body('refreshToken')
-    .notEmpty()
-    .withMessage('Refresh token is required'),
+  commonValidations.refreshToken,
 ];
 
 const updateProfileValidation = [
-  body('firstName')
-    .optional()
-    .isLength({ min: 1, max: 50 })
-    .withMessage('First name must be between 1 and 50 characters')
-    .trim()
-    .escape(),
-  body('lastName')
-    .optional()
-    .isLength({ min: 1, max: 50 })
-    .withMessage('Last name must be between 1 and 50 characters')
-    .trim()
-    .escape(),
-  body('avatar')
-    .optional()
-    .isURL()
-    .withMessage('Avatar must be a valid URL'),
-  body('phone')
-    .optional()
-    .matches(/^\+?[\d\s\-\(\)]+$/)
-    .withMessage('Phone number must be in a valid format'),
-  body('dateOfBirth')
-    .optional()
-    .isISO8601()
-    .withMessage('Date of birth must be a valid date'),
+  commonValidations.firstName.optional(),
+  commonValidations.lastName.optional(),
+  commonValidations.avatar,
+  commonValidations.phone,
+  commonValidations.dateOfBirth,
 ];
 
 const changePasswordValidation = [
-  body('currentPassword')
-    .notEmpty()
-    .withMessage('Current password is required'),
-  body('newPassword')
-    .isLength({ min: 8 })
-    .withMessage('New password must be at least 8 characters long')
-    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/)
-    .withMessage('New password must contain at least one uppercase letter, one lowercase letter, one number, and one special character'),
+  commonValidations.password.withMessage('Current password is required'),
+  commonValidations.password.withMessage('New password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character'),
 ];
 
 const requestPasswordResetValidation = [
-  body('email')
-    .isEmail()
-    .withMessage('Please provide a valid email address')
-    .normalizeEmail(),
+  commonValidations.email,
 ];
 
 const resetPasswordValidation = [
-  body('resetToken')
-    .notEmpty()
-    .withMessage('Reset token is required'),
-  body('newPassword')
-    .isLength({ min: 8 })
-    .withMessage('New password must be at least 8 characters long')
-    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/)
-    .withMessage('New password must contain at least one uppercase letter, one lowercase letter, one number, and one special character'),
+  commonValidations.resetToken,
+  commonValidations.password.withMessage('New password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character'),
 ];
 
 // Public routes (no authentication required)
@@ -144,23 +64,25 @@ router.get('/health', authController.healthCheck);
 // User registration
 router.post(
   '/register',
-  authRateLimit,
+  rateLimiters.authLimiter,
   registerValidation,
+  validateInput,
   authController.register
 );
 
 // User login
 router.post(
   '/login',
-  authRateLimit,
+  rateLimiters.authLimiter,
   loginValidation,
+  validateInput,
   authController.login
 );
 
 // OAuth routes
 router.get(
   '/oauth/:provider',
-  authRateLimit,
+  rateLimiters.authLimiter,
   authMiddleware.validateOAuthState,
   (req, res) => {
     // Redirect to OAuth provider
@@ -178,7 +100,7 @@ router.get(
 
 router.get(
   '/oauth/:provider/callback',
-  authRateLimit,
+  rateLimiters.authLimiter,
   authMiddleware.validateOAuthState,
   authController.oauthCallback
 );
@@ -186,24 +108,27 @@ router.get(
 // Refresh token
 router.post(
   '/refresh',
-  authRateLimit,
+  rateLimiters.authLimiter,
   refreshTokenValidation,
+  validateInput,
   authController.refreshToken
 );
 
 // Request password reset
 router.post(
   '/forgot-password',
-  authRateLimit,
+  rateLimiters.authLimiter,
   requestPasswordResetValidation,
+  validateInput,
   authController.requestPasswordReset
 );
 
 // Reset password
 router.post(
   '/reset-password',
-  authRateLimit,
+  rateLimiters.authLimiter,
   resetPasswordValidation,
+  validateInput,
   authController.resetPassword
 );
 
@@ -220,6 +145,7 @@ router.post(
   '/logout',
   authMiddleware.verifyToken,
   logoutValidation,
+  validateInput,
   authController.logout
 );
 
@@ -235,6 +161,7 @@ router.put(
   '/profile',
   authMiddleware.verifyToken,
   updateProfileValidation,
+  validateInput,
   authController.updateProfile
 );
 
@@ -243,6 +170,7 @@ router.post(
   '/change-password',
   authMiddleware.verifyToken,
   changePasswordValidation,
+  validateInput,
   authController.changePassword
 );
 
@@ -253,7 +181,7 @@ router.get(
   '/users',
   authMiddleware.verifyToken,
   authMiddleware.requireAdmin,
-  (req, res) => {
+  (_req, res) => {
     res.json({
       success: true,
       message: 'Admin endpoint - get all users',
@@ -267,11 +195,11 @@ router.get(
   '/users/:userId',
   authMiddleware.verifyToken,
   authMiddleware.requireAdmin,
-  (req, res) => {
+  (req: Request, res: Response) => {
     res.json({
       success: true,
       message: 'Admin endpoint - get user by ID',
-      userId: req.params.userId,
+      userId: req.params['userId'],
       // Implementation would go here
     });
   }
@@ -283,15 +211,14 @@ router.patch(
   authMiddleware.verifyToken,
   authMiddleware.requireAdmin,
   [
-    body('role')
-      .isIn(['USER', 'ORGANIZER', 'MODERATOR', 'ADMIN'])
-      .withMessage('Role must be one of: USER, ORGANIZER, MODERATOR, ADMIN'),
+    commonValidations.role,
   ],
-  (req, res) => {
+  validateInput,
+  (req: Request, res: Response) => {
     res.json({
       success: true,
       message: 'Admin endpoint - update user role',
-      userId: req.params.userId,
+      userId: req.params['userId'],
       role: req.body.role,
       // Implementation would go here
     });
@@ -303,11 +230,11 @@ router.patch(
   '/users/:userId/deactivate',
   authMiddleware.verifyToken,
   authMiddleware.requireAdmin,
-  (req, res) => {
+  (req: Request, res: Response) => {
     res.json({
       success: true,
       message: 'Admin endpoint - deactivate user',
-      userId: req.params.userId,
+      userId: req.params['userId'],
       // Implementation would go here
     });
   }
@@ -320,7 +247,7 @@ router.get(
   '/oauth-providers',
   authMiddleware.verifyToken,
   authMiddleware.requireAdmin,
-  (req, res) => {
+  (req: Request, res: Response) => {
     res.json({
       success: true,
       message: 'Admin endpoint - get OAuth providers',
@@ -328,17 +255,17 @@ router.get(
         {
           name: 'Google',
           enabled: true,
-          clientId: process.env.GOOGLE_CLIENT_ID || 'not-configured',
+          clientId: process.env['GOOGLE_CLIENT_ID'] || 'not-configured',
         },
         {
           name: 'Facebook',
           enabled: false,
-          clientId: process.env.FACEBOOK_CLIENT_ID || 'not-configured',
+          clientId: process.env['FACEBOOK_CLIENT_ID'] || 'not-configured',
         },
         {
           name: 'GitHub',
           enabled: false,
-          clientId: process.env.GITHUB_CLIENT_ID || 'not-configured',
+          clientId: process.env['GITHUB_CLIENT_ID'] || 'not-configured',
         },
       ],
     });
@@ -351,23 +278,16 @@ router.put(
   authMiddleware.verifyToken,
   authMiddleware.requireAdmin,
   [
-    body('enabled')
-      .isBoolean()
-      .withMessage('Enabled must be a boolean'),
-    body('clientId')
-      .optional()
-      .isString()
-      .withMessage('Client ID must be a string'),
-    body('clientSecret')
-      .optional()
-      .isString()
-      .withMessage('Client secret must be a string'),
+    commonValidations.enabled,
+    commonValidations.clientId,
+    commonValidations.clientSecret,
   ],
-  (req, res) => {
+  validateInput,
+  (req: Request, res: Response) => {
     res.json({
       success: true,
       message: 'Admin endpoint - update OAuth provider',
-      provider: req.params.provider,
+      provider: req.params['provider'],
       config: req.body,
       // Implementation would go here
     });
@@ -375,7 +295,7 @@ router.put(
 );
 
 // Error handling middleware for auth routes
-router.use((error: any, req: any, res: any, next: any) => {
+router.use((error: any, _req: any, res: any, _next: any) => {
   console.error('Auth route error:', error);
   
   if (error.type === 'entity.parse.failed') {

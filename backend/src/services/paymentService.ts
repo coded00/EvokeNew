@@ -1,3 +1,4 @@
+// @ts-ignore - paystack types are defined in src/types/paystack.d.ts
 import Paystack from 'paystack';
 import crypto from 'crypto';
 

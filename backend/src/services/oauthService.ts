@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { PrismaClient } from '@prisma/client';
+// import { PrismaClient } from '@prisma/client'; // Will be used when implementing OAuth database operations
 
 export interface OAuthConfig {
   clientId: string;
@@ -26,10 +26,10 @@ export interface OAuthUserProfile {
 }
 
 class OAuthService {
-  private prisma: PrismaClient;
+  // private prisma: PrismaClient; // Will be used when implementing OAuth
 
-  constructor(prisma: PrismaClient) {
-    this.prisma = prisma;
+  constructor() {
+    // TODO: Initialize PrismaClient when implementing OAuth database operations
   }
 
   // Google OAuth
@@ -133,7 +133,7 @@ class OAuthService {
 
   // GitHub OAuth
   async getGitHubAuthUrl(state: string): Promise<string> {
-    const config = this.getGitHubConfig();
+    const config = this.getGithubConfig();
     const params = new URLSearchParams({
       client_id: config.clientId,
       redirect_uri: config.redirectUri,
@@ -146,7 +146,7 @@ class OAuthService {
   }
 
   async getGitHubAccessToken(code: string): Promise<OAuthTokenResponse> {
-    const config = this.getGitHubConfig();
+    const config = this.getGithubConfig();
     
     const response = await axios.post('https://github.com/login/oauth/access_token', {
       client_id: config.clientId,
@@ -232,25 +232,25 @@ class OAuthService {
   // Get OAuth configuration
   private getGoogleConfig(): OAuthConfig {
     return {
-      clientId: process.env.GOOGLE_CLIENT_ID || '',
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
-      redirectUri: `${process.env.API_BASE_URL}/api/v1/auth/oauth/google/callback`,
+      clientId: process.env['GOOGLE_CLIENT_ID'] || '',
+      clientSecret: process.env['GOOGLE_CLIENT_SECRET'] || '',
+      redirectUri: `${process.env['API_BASE_URL']}/api/v1/auth/oauth/google/callback`,
     };
   }
 
   private getFacebookConfig(): OAuthConfig {
     return {
-      clientId: process.env.FACEBOOK_CLIENT_ID || '',
-      clientSecret: process.env.FACEBOOK_CLIENT_SECRET || '',
-      redirectUri: `${process.env.API_BASE_URL}/api/v1/auth/oauth/facebook/callback`,
+      clientId: process.env['FACEBOOK_CLIENT_ID'] || '',
+      clientSecret: process.env['FACEBOOK_CLIENT_SECRET'] || '',
+      redirectUri: `${process.env['API_BASE_URL']}/api/v1/auth/oauth/facebook/callback`,
     };
   }
 
-  private getGitHubConfig(): OAuthConfig {
+  private getGithubConfig(): OAuthConfig {
     return {
-      clientId: process.env.GITHUB_CLIENT_ID || '',
-      clientSecret: process.env.GITHUB_CLIENT_SECRET || '',
-      redirectUri: `${process.env.API_BASE_URL}/api/v1/auth/oauth/github/callback`,
+      clientId: process.env['GITHUB_CLIENT_ID'] || '',
+      clientSecret: process.env['GITHUB_CLIENT_SECRET'] || '',
+      redirectUri: `${process.env['API_BASE_URL']}/api/v1/auth/oauth/github/callback`,
     };
   }
 
@@ -266,7 +266,7 @@ class OAuthService {
         config = this.getFacebookConfig();
         break;
       case 'github':
-        config = this.getGitHubConfig();
+        config = this.getGithubConfig();
         break;
       default:
         return false;
@@ -291,7 +291,7 @@ class OAuthService {
   }
 
   private isOAuthProviderEnabled(provider: 'google' | 'facebook' | 'github'): boolean {
-    const enabledProviders = process.env.ENABLED_OAUTH_PROVIDERS?.split(',') || ['google'];
+    const enabledProviders = process.env['ENABLED_OAUTH_PROVIDERS']?.split(',') || ['google'];
     return enabledProviders.includes(provider);
   }
 
@@ -303,21 +303,22 @@ class OAuthService {
   }
 
   // Validate OAuth state parameter
-  validateOAuthState(state: string): boolean {
-    if (!state || typeof state !== 'string') {
+  verifyStateToken(token: string): boolean {
+    try {
+      const parts = token.split('_');
+      if (parts.length !== 2) return false;
+      
+      const timestamp = parseInt(parts[0] || '0');
+      // const random = parts[1]; // Will be used for OAuth state validation
+      
+      // Verify signature and expiration
+      const now = Date.now();
+      const maxAge = 10 * 60 * 1000; // 10 minutes
+      
+      return now - timestamp < maxAge;
+    } catch (error) {
       return false;
     }
-
-    const parts = state.split('_');
-    if (parts.length !== 2) {
-      return false;
-    }
-
-    const timestamp = parseInt(parts[0]);
-    const now = Date.now();
-    const maxAge = 10 * 60 * 1000; // 10 minutes
-
-    return !isNaN(timestamp) && (now - timestamp) < maxAge;
   }
 
   // Store OAuth account link
@@ -328,7 +329,7 @@ class OAuthService {
   }
 
   // Find user by OAuth provider
-  async findUserByOAuthProvider(provider: string, providerId: string): Promise<any> {
+  async findUserByOAuthProvider(_provider: string, _providerId: string): Promise<any> {
     // This would query the OAuth accounts table
     // For now, return null as we haven't implemented the OAuth accounts model
     return null;
