@@ -1,23 +1,14 @@
 import { Router } from 'express';
 import { param } from 'express-validator';
-import rateLimit from 'express-rate-limit';
 import uploadController from '../controllers/uploadController';
 import authMiddleware from '../middleware/auth';
 import uploadService, { FILE_UPLOAD_CONFIG } from '../services/uploadService';
+import { createRateLimiters, validateInput } from '../middleware/security';
 
 const router = Router();
 
-// Rate limiting for upload endpoints
-const uploadRateLimit = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 20, // limit each IP to 20 upload requests per windowMs
-  message: {
-    error: 'Too many upload attempts',
-    message: 'Please try again later',
-  },
-  standardHeaders: true,
-  legacyHeaders: false,
-});
+// Initialize rate limiters
+const rateLimiters = createRateLimiters();
 
 // Validation rules
 const categoryValidation = [
@@ -38,8 +29,9 @@ const fileKeyValidation = [
 router.post(
   '/:category',
   authMiddleware.verifyToken,
-  uploadRateLimit,
+  rateLimiters.uploadLimiter,
   categoryValidation,
+  validateInput,
   (req: any, res: any, next: any) => {
     const { category } = req.params;
     if (category && uploadService.validateUploadConfig(category)) {
@@ -57,6 +49,7 @@ router.delete(
   '/:fileKey',
   authMiddleware.verifyToken,
   fileKeyValidation,
+  validateInput,
   uploadController.deleteFile
 );
 
@@ -64,6 +57,7 @@ router.delete(
 router.get(
   '/limits/:category',
   categoryValidation,
+  validateInput,
   uploadController.getUploadLimits
 );
 
@@ -78,6 +72,7 @@ router.get(
   '/presigned/:fileKey',
   authMiddleware.verifyToken,
   fileKeyValidation,
+  validateInput,
   uploadController.generatePresignedUrl
 );
 
@@ -85,6 +80,7 @@ router.get(
 router.get(
   '/info/:fileKey',
   fileKeyValidation,
+  validateInput,
   uploadController.getFileInfo
 );
 

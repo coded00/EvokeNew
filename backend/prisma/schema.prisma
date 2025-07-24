@@ -76,6 +76,7 @@ model Event {
   qrCodes         QRCode[]
   analytics       EventAnalytics[]
   messages        Message[]
+  notifications   Notification[]
 
   @@map("events")
 }
@@ -299,7 +300,7 @@ model QRCode {
   usedAt    DateTime?
   userId    String
   eventId   String
-  ticketId  String?
+  ticketId  String? @unique
   createdAt DateTime @default(now())
 
   // Relations
@@ -385,61 +386,4 @@ enum NotificationType {
   SYSTEM
 }
 
-// Indexes for better performance
-model User {
-  @@index([email])
-  @@index([username])
-  @@index([isActive])
-}
-
-model Event {
-  @@index([organizerId])
-  @@index([startDate])
-  @@index([isPublished])
-  @@index([featured])
-  @@index([slug])
-}
-
-model Ticket {
-  @@index([userId])
-  @@index([eventId])
-  @@index([status])
-  @@index([ticketNumber])
-}
-
-model Order {
-  @@index([userId])
-  @@index([status])
-  @@index([orderNumber])
-}
-
-model Payment {
-  @@index([userId])
-  @@index([orderId])
-  @@index([status])
-  @@index([transactionId])
-}
-
-model Message {
-  @@index([senderId])
-  @@index([receiverId])
-  @@index([isRead])
-}
-
-model Notification {
-  @@index([userId])
-  @@index([isRead])
-  @@index([type])
-}
-
-model QRCode {
-  @@index([code])
-  @@index([eventId])
-  @@index([isUsed])
-}
-
-model EventAnalytics {
-  @@index([eventId])
-  @@index([action])
-  @@index([createdAt])
-} 
+// Indexes are already defined in the model definitions above 

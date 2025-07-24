@@ -1,6 +1,7 @@
 import { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import multer from 'multer';
+// @ts-ignore - multer-s3 types are defined in src/types/multer-s3.d.ts
 import multerS3 from 'multer-s3';
 import path from 'path';
 import { Request } from 'express';
@@ -120,14 +121,14 @@ class UploadService {
           const key = `${config.folder}/${userId}/${fileName}`;
           cb(null, key);
         },
-        contentType: (req: Request, file: Express.Multer.File, cb: (error: any, contentType?: string) => void) => {
+        contentType: (_req: Request, file: Express.Multer.File, cb: (error: any, contentType?: string) => void) => {
           cb(null, file.mimetype);
         },
       }),
       limits: {
         fileSize: config.maxSize,
       },
-      fileFilter: (req: Request, file: Express.Multer.File, cb: (error: any, accept?: boolean) => void) => {
+      fileFilter: (_req: Request, file: Express.Multer.File, cb: (error: any, accept?: boolean) => void) => {
         if (config.types.includes(file.mimetype)) {
           cb(null, true);
         } else {
