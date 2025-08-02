@@ -592,12 +592,38 @@
 
 /* Responsive design improvements */
 @media (max-width: 768px) {
+  .ml-20 {
+    margin-left: 4rem; /* 64px for mobile sidebar */
+  }
+  
   .grid-cols-1.md\:grid-cols-2.lg\:grid-cols-4 {
     grid-template-columns: repeat(1, minmax(0, 1fr));
   }
   
   .grid-cols-1.md\:grid-cols-2.lg\:grid-cols-3 {
     grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+  
+  /* Text truncation utilities for mobile */
+  .line-clamp-1 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+  }
+  
+  .line-clamp-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+  
+  .line-clamp-3 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
   }
 }
 
@@ -608,5 +634,47 @@
   
   .grid-cols-1.md\:grid-cols-2.lg\:grid-cols-3 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Additional responsive utilities */
+@media (max-width: 640px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  /* Mobile-specific spacing adjustments */
+  .space-y-8 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 1.5rem;
+  }
+  
+  .space-y-12 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 2rem;
+  }
+}
+
+/* Ensure proper touch targets on mobile */
+@media (max-width: 768px) {
+  button, .cursor-pointer {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Adjust notification panel for mobile */
+  .notification-panel {
+    width: 100vw;
+  }
+}
+
+/* Landscape orientation adjustments */
+@media (max-height: 500px) and (orientation: landscape) {
+  .min-h-screen {
+    min-height: 100vh;
+  }
+  
+  /* Reduce vertical spacing in landscape */
+  .space-y-8 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 1rem;
   }
 }

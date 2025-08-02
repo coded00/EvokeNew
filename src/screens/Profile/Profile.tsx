@@ -273,7 +273,7 @@ export const Profile = (): JSX.Element | null => {
         <Sidebar currentPath="/profile" />
 
         <div className="flex-1 ml-20 p-8">
-          <div className="max-w-6xl mx-auto">
+          <div className="max-w-6xl mx-auto px-4 lg:px-0">
             {/* Back Button */}
             <button 
               onClick={handleBackToHome}
@@ -284,87 +284,87 @@ export const Profile = (): JSX.Element | null => {
             </button>
 
             {/* Profile Header */}
-            <div className="bg-[#2a2a2a] rounded-2xl p-8 mb-8 animate-fade-in border border-black">
-              <div className="flex items-start justify-between">
-                <div className="flex items-center space-x-6">
+            <div className="bg-[#2a2a2a] rounded-2xl p-4 lg:p-8 mb-6 lg:mb-8 animate-fade-in border border-black">
+              <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between space-y-4 lg:space-y-0">
+                <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-6 w-full lg:w-auto">
                   <div className="relative">
                     <img 
                       src={userData.profileImage} 
                       alt={userData.name}
-                      className="w-24 h-24 rounded-full object-cover border-4 border-[#FC1924]"
+                      className="w-20 h-20 lg:w-24 lg:h-24 rounded-full object-cover border-4 border-[#FC1924]"
                     />
-                    <button className="absolute -bottom-2 -right-2 w-8 h-8 bg-[#FC1924] rounded-full flex items-center justify-center hover:bg-[#e01620] transition-colors duration-200">
+                    <button className="absolute -bottom-1 -right-1 lg:-bottom-2 lg:-right-2 w-6 h-6 lg:w-8 lg:h-8 bg-[#FC1924] rounded-full flex items-center justify-center hover:bg-[#e01620] transition-colors duration-200">
                       <Camera className="w-4 h-4 text-white" />
                     </button>
                   </div>
-                  <div>
-                    <h1 className="text-3xl font-bold text-white mb-2">{userData.name}</h1>
-                    <p className="text-gray-400 mb-2">{userData.bio}</p>
+                  <div className="text-center sm:text-left">
+                    <h1 className="text-2xl lg:text-3xl font-bold text-white mb-2">{userData.name}</h1>
+                    <p className="text-gray-400 mb-2 text-sm lg:text-base">{userData.bio}</p>
                     <div className="flex items-center space-x-2 text-gray-500">
                       <MapPin className="w-4 h-4" />
-                      <span>{userData.location}</span>
+                      <span className="text-sm lg:text-base">{userData.location}</span>
                     </div>
-                    <div className="flex space-x-2 mt-3">
+                    <div className="flex flex-wrap justify-center sm:justify-start gap-2 mt-3">
                       {userData.badges.map((badge, index) => (
-                        <span key={index} className="bg-[#3a3a3a] text-gray-300 px-3 py-1 rounded-full text-sm font-medium border border-gray-600">
+                        <span key={index} className="bg-[#3a3a3a] text-gray-300 px-2 lg:px-3 py-1 rounded-full text-xs lg:text-sm font-medium border border-gray-600">
                           {badge}
                         </span>
                       ))}
                     </div>
                   </div>
                 </div>
-                <button className="bg-[#3a3a3a] hover:bg-[#4a4a4a] text-white px-6 py-2 rounded-lg font-semibold transition-all duration-300 hover:scale-105 flex items-center space-x-2">
+                <button className="bg-[#3a3a3a] hover:bg-[#4a4a4a] text-white px-4 lg:px-6 py-2 rounded-lg font-semibold transition-all duration-300 hover:scale-105 flex items-center space-x-2 w-full sm:w-auto justify-center">
                   <Settings className="w-4 h-4" />
-                  <span>Edit Profile</span>
+                  <span className="text-sm lg:text-base">Edit Profile</span>
                 </button>
               </div>
             </div>
 
             {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              <div className="bg-[#2a2a2a] rounded-xl p-6 text-white animate-slide-up border border-black">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-6 mb-6 lg:mb-8">
+              <div className="bg-[#2a2a2a] rounded-xl p-4 lg:p-6 text-white animate-slide-up border border-black">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-gray-400 text-sm">Events Attended</p>
-                    <p className="text-3xl font-bold">{userData.stats.eventsAttended}</p>
+                    <p className="text-gray-400 text-xs lg:text-sm">Events Attended</p>
+                    <p className="text-xl lg:text-3xl font-bold">{userData.stats.eventsAttended}</p>
                   </div>
-                  <Calendar className="w-8 h-8 text-gray-500" />
+                  <Calendar className="w-6 h-6 lg:w-8 lg:h-8 text-gray-500" />
                 </div>
               </div>
-              <div className="bg-[#2a2a2a] rounded-xl p-6 text-white animate-slide-up border border-black" style={{ animationDelay: '0.1s' }}>
+              <div className="bg-[#2a2a2a] rounded-xl p-4 lg:p-6 text-white animate-slide-up border border-black" style={{ animationDelay: '0.1s' }}>
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-gray-400 text-sm">Events Hosted</p>
-                    <p className="text-3xl font-bold">{userData.stats.eventsHosted}</p>
+                    <p className="text-gray-400 text-xs lg:text-sm">Events Hosted</p>
+                    <p className="text-xl lg:text-3xl font-bold">{userData.stats.eventsHosted}</p>
                   </div>
-                  <Users className="w-8 h-8 text-gray-500" />
+                  <Users className="w-6 h-6 lg:w-8 lg:h-8 text-gray-500" />
                 </div>
               </div>
-              <div className="bg-[#2a2a2a] rounded-xl p-6 text-white animate-slide-up border border-black" style={{ animationDelay: '0.2s' }}>
+              <div className="bg-[#2a2a2a] rounded-xl p-4 lg:p-6 text-white animate-slide-up border border-black" style={{ animationDelay: '0.2s' }}>
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-gray-400 text-sm">Tickets Purchased</p>
-                    <p className="text-3xl font-bold">{userData.stats.ticketsPurchased}</p>
+                    <p className="text-gray-400 text-xs lg:text-sm">Tickets Purchased</p>
+                    <p className="text-xl lg:text-3xl font-bold">{userData.stats.ticketsPurchased}</p>
                   </div>
-                  <Ticket className="w-8 h-8 text-gray-500" />
+                  <Ticket className="w-6 h-6 lg:w-8 lg:h-8 text-gray-500" />
                 </div>
               </div>
-              <div className="bg-[#2a2a2a] rounded-xl p-6 text-white animate-slide-up border border-black" style={{ animationDelay: '0.3s' }}>
+              <div className="bg-[#2a2a2a] rounded-xl p-4 lg:p-6 text-white animate-slide-up border border-black" style={{ animationDelay: '0.3s' }}>
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-gray-400 text-sm">Revenue Generated</p>
-                    <p className="text-3xl font-bold">₦{(userData.stats.revenueGenerated / 1000000).toFixed(1)}M</p>
+                    <p className="text-gray-400 text-xs lg:text-sm">Revenue Generated</p>
+                    <p className="text-xl lg:text-3xl font-bold">₦{(userData.stats.revenueGenerated / 1000000).toFixed(1)}M</p>
                   </div>
-                  <DollarSign className="w-8 h-8 text-gray-500" />
+                  <DollarSign className="w-6 h-6 lg:w-8 lg:h-8 text-gray-500" />
                 </div>
               </div>
             </div>
 
             {/* Navigation Tabs */}
-            <div className="flex space-x-1 mb-8 bg-[#2a2a2a] rounded-xl p-2 border border-black">
+            <div className="flex flex-wrap gap-1 mb-6 lg:mb-8 bg-[#2a2a2a] rounded-xl p-2 border border-black">
               <button 
                 onClick={() => setActiveTab('overview')}
-                className={`flex-1 py-3 px-6 rounded-lg font-semibold transition-all duration-300 ${
+                className={`flex-1 py-2 lg:py-3 px-3 lg:px-6 rounded-lg font-semibold transition-all duration-300 text-sm lg:text-base ${
                   activeTab === 'overview' 
                     ? 'bg-[#FC1924] text-white' 
                     : 'text-gray-400 hover:text-white hover:bg-[#3a3a3a]'
@@ -374,7 +374,7 @@ export const Profile = (): JSX.Element | null => {
               </button>
               <button 
                 onClick={() => setActiveTab('tickets')}
-                className={`flex-1 py-3 px-6 rounded-lg font-semibold transition-all duration-300 ${
+                className={`flex-1 py-2 lg:py-3 px-3 lg:px-6 rounded-lg font-semibold transition-all duration-300 text-sm lg:text-base ${
                   activeTab === 'tickets' 
                     ? 'bg-[#FC1924] text-white' 
                     : 'text-gray-400 hover:text-white hover:bg-[#3a3a3a]'
@@ -384,7 +384,7 @@ export const Profile = (): JSX.Element | null => {
               </button>
               <button 
                 onClick={() => setActiveTab('events')}
-                className={`flex-1 py-3 px-6 rounded-lg font-semibold transition-all duration-300 ${
+                className={`flex-1 py-2 lg:py-3 px-3 lg:px-6 rounded-lg font-semibold transition-all duration-300 text-sm lg:text-base ${
                   activeTab === 'events' 
                     ? 'bg-[#FC1924] text-white' 
                     : 'text-gray-400 hover:text-white hover:bg-[#3a3a3a]'
@@ -395,7 +395,7 @@ export const Profile = (): JSX.Element | null => {
               <button 
                 onClick={() => setActiveTab('management')}
                 data-tab="management"
-                className={`flex-1 py-3 px-6 rounded-lg font-semibold transition-all duration-300 ${
+                className={`flex-1 py-2 lg:py-3 px-3 lg:px-6 rounded-lg font-semibold transition-all duration-300 text-sm lg:text-base ${
                   activeTab === 'management' 
                     ? 'bg-[#FC1924] text-white' 
                     : 'text-gray-400 hover:text-white hover:bg-[#3a3a3a]'
@@ -406,20 +406,20 @@ export const Profile = (): JSX.Element | null => {
             </div>
 
             {/* Quick Actions */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-[#2a2a2a] rounded-xl p-6 border border-black">
-                <h3 className="text-xl font-bold text-white mb-4">Upcoming Events</h3>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+              <div className="bg-[#2a2a2a] rounded-xl p-4 lg:p-6 border border-black">
+                <h3 className="text-lg lg:text-xl font-bold text-white mb-4">Upcoming Events</h3>
                 {upcomingEvents.length > 0 ? (
                   <div className="space-y-4">
                     {upcomingEvents.map((event) => (
-                      <div key={event.id} className="flex items-center space-x-4 bg-[#3a3a3a] rounded-lg p-4">
-                        <img src={event.image} alt={event.name} className="w-16 h-16 rounded-lg object-cover" />
+                      <div key={event.id} className="flex items-center space-x-3 lg:space-x-4 bg-[#3a3a3a] rounded-lg p-3 lg:p-4">
+                        <img src={event.image} alt={event.name} className="w-12 h-12 lg:w-16 lg:h-16 rounded-lg object-cover" />
                         <div className="flex-1">
-                          <h4 className="text-white font-semibold">{event.name}</h4>
-                          <p className="text-gray-400 text-sm">{event.date}</p>
-                          <p className="text-[#FC1924] text-sm font-medium">{event.countdown} to go</p>
+                          <h4 className="text-white font-semibold text-sm lg:text-base line-clamp-1">{event.name}</h4>
+                          <p className="text-gray-400 text-xs lg:text-sm">{event.date}</p>
+                          <p className="text-[#FC1924] text-xs lg:text-sm font-medium">{event.countdown} to go</p>
                         </div>
-                        <button className="bg-[#FC1924] hover:bg-[#e01620] text-white px-4 py-2 rounded-lg font-semibold transition-all duration-300 hover:scale-105">
+                        <button className="bg-[#FC1924] hover:bg-[#e01620] text-white px-3 lg:px-4 py-2 rounded-lg font-semibold transition-all duration-300 hover:scale-105 text-sm lg:text-base">
                           View
                         </button>
                       </div>
@@ -430,33 +430,33 @@ export const Profile = (): JSX.Element | null => {
                 )}
               </div>
 
-              <div className="bg-[#2a2a2a] rounded-xl p-6 border border-black">
-                <h3 className="text-xl font-bold text-white mb-4">Recent Activity</h3>
+              <div className="bg-[#2a2a2a] rounded-xl p-4 lg:p-6 border border-black">
+                <h3 className="text-lg lg:text-xl font-bold text-white mb-4">Recent Activity</h3>
                 <div className="space-y-4">
                   <div className="flex items-center space-x-3">
-                    <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                    <div className="w-6 h-6 lg:w-8 lg:h-8 bg-green-500 rounded-full flex items-center justify-center">
                       <Ticket className="w-4 h-4 text-white" />
                     </div>
                     <div>
-                      <p className="text-white text-sm">Purchased ticket for Wet & Rave</p>
+                      <p className="text-white text-xs lg:text-sm">Purchased ticket for Wet & Rave</p>
                       <p className="text-gray-400 text-xs">2 hours ago</p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                    <div className="w-6 h-6 lg:w-8 lg:h-8 bg-blue-500 rounded-full flex items-center justify-center">
                       <Star className="w-4 h-4 text-white" />
                     </div>
                     <div>
-                      <p className="text-white text-sm">Rated Summer Vibes Festival</p>
+                      <p className="text-white text-xs lg:text-sm">Rated Summer Vibes Festival</p>
                       <p className="text-gray-400 text-xs">1 day ago</p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
+                    <div className="w-6 h-6 lg:w-8 lg:h-8 bg-purple-500 rounded-full flex items-center justify-center">
                       <Users className="w-4 h-4 text-white" />
                     </div>
                     <div>
-                      <p className="text-white text-sm">Created Afrobeat Night event</p>
+                      <p className="text-white text-xs lg:text-sm">Created Afrobeat Night event</p>
                       <p className="text-gray-400 text-xs">3 days ago</p>
                     </div>
                   </div>
