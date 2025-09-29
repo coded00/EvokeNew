@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Bell, MessageCircle, Gamepad2, Globe, User, HelpCircle, X, Search, Calendar, MapPin, Zap, ChevronLeft, ChevronRight, Share, Heart, Plus, Minus, ArrowLeft } from "lucide-react";
+import { Bell, MessageCircle, Gamepad2, Globe, User, CircleHelp as HelpCircle, X, Search, Calendar, MapPin, Zap, ChevronLeft, ChevronRight, Share, Heart, Plus, Minus, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import SEO from "../../components/SEO";
 import { Sidebar } from "../../components/ui/sidebar";
@@ -600,12 +600,7 @@ export const Home = (): JSX.Element => {
                     onClick={() => handleEventClick(event)}
                   >
                     <div className="relative h-40 lg:h-48">
-                      <img 
-                        src={event.image} 
-                        alt={event.title} 
-                        className="w-full h-full object-cover cursor-pointer" 
-                        onClick={() => navigate(`/event/${event.id}`)}
-                      />
+                      <img src={event.image} alt={event.title} className="w-full h-full object-cover" />
                       <div className="absolute top-2 lg:top-4 left-2 lg:left-4 flex flex-wrap gap-1 lg:gap-2">
                         <div className="bg-black/70 text-white px-2 lg:px-3 py-1 rounded-full text-xs lg:text-sm font-semibold">
                           {event.price}
@@ -659,12 +654,7 @@ export const Home = (): JSX.Element => {
                     onClick={() => handleEventClick(event)}
                   >
                     <div className="relative h-40 lg:h-48">
-                      <img 
-                        src={event.image} 
-                        alt={event.title} 
-                        className="w-full h-full object-cover cursor-pointer" 
-                        onClick={() => navigate(`/event/${event.id}`)}
-                      />
+                      <img src={event.image} alt={event.title} className="w-full h-full object-cover" />
                       <div className="absolute top-2 lg:top-4 left-2 lg:left-4 flex flex-wrap gap-1 lg:gap-2">
                         <div className="bg-black/70 text-white px-2 lg:px-3 py-1 rounded-full text-xs lg:text-sm font-semibold">
                           {event.price}
